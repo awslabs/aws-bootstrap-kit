@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
   
@@ -14,10 +15,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'monocdk-experiment';
 import { PipelineStack } from '../lib/cicd-stack';
 
 const app = new cdk.App();
-new PipelineStack(app, 'CicdStack');
+new PipelineStack(app, 'CicdStack', {env: {region: 'us-west-2'}});
