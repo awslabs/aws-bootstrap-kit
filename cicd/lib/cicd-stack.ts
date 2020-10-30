@@ -21,14 +21,13 @@ export class PipelineStack extends cdk.Stack {
   constructor(parent : cdk.App, id : string, props : cdk.StackProps = { }) {
     super(parent, id, props);
 
-    const repo = cdk.aws_codecommit.Repository.fromRepositoryName( this, 'AWSBootstrapKit',
-    'AWSBootstrapKit');
-
-
     const pipeline = new delivlib.Pipeline(this, 'AWSBootrapKitPipeline', {
-      repo: new delivlib.CodeCommitRepo(repo),
+      repo: new delivlib.GitHubRepo({
+        repository: 'awslabs/aws-bootstrap-kit',
+        tokenSecretArn: 'arn:aws:secretsmanager:us-west-2:226122282356:secret:github-token-jc23ht'
+      }),
       title: 'CDK Constructs',
-      branch: 'mainline',
+      branch: 'main',
       pipelineName: 'AWSBootsrapKit-cdk-constructs',
       notificationEmail: 'aws-emea-spe-build@amazon.com',
       buildSpec: cdk.aws_codebuild.BuildSpec.fromObject({
