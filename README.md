@@ -1,17 +1,15 @@
-## My Project
+# AWS Bootstrap Kit Overview
 
-TODO: Fill this README out!
+This is a strongly opinionated CDK set of constructs built for companies looking to follow AWS best practices on Day 1 while setting their development and deployment environment on AWS.
 
-Be sure to:
+Let's start small but with potential for future growth without adding tech debt.
 
-* Change the title in this README
-* Edit your repository description on GitHub
+## Getting started
 
-## Security
+Check our [examples repo](https://github.com/aws-samples/aws-bootstrap-kit-examples)
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+## Constructs
 
-## License
+As of today we expose only one global construct :
 
-This project is licensed under the Apache-2.0 License.
-
+* [AWS BootstrapKit](./source/aws-bootstrap-kit/README.md)
