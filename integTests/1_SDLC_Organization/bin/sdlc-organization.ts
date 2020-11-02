@@ -58,6 +58,6 @@ stackProps = {
     ]
 }
 
-new AWSBootstrapKitLandingZoneStage(app, 'AWSBootstrapKit-LandingZone-Dev', stackProps);
+new AWSBootstrapKitLandingZoneStage(app, 'Prod', stackProps);
 
 new AWSBootstrapKitLandingZonePipelineStack(app, 'AWSBootstrapKit-LandingZone-PipelineStack', stackProps);
