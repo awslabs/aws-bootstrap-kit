@@ -18,6 +18,6 @@ jobs:
       - name: Slack notification
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_CUSTOM_PAYLOAD: '{"Content": "@{{ GITHUB_ACTOR }} published a new pull request: {{ EVENT_PAYLOAD.pull_request.html_url }}."}'
+          SLACK_CUSTOM_PAYLOAD: '{"Content": "*{{ EVENT_PAYLOAD.pull_request.title}}*\n @{{ GITHUB_ACTOR }} published a new pull request: {{ EVENT_PAYLOAD.pull_request.html_url }}"}'
         uses: Ilshidur/action-slack@2.0.2
 
