@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,11 +15,13 @@ limitations under the License.
 */
 
 import * as cdk from '@aws-cdk/core';
+import * as sns from '@aws-cdk/aws-sns'
+import * as subs from '@aws-cdk/aws-sns-subscriptions';
 import {Organization} from './organization'
 import {OrganizationalUnit} from './organizational-unit'
-import { Account } from './account';
-import { SecureRootUser } from './secure-root-user';
-import { OrganizationTrail } from './organization-trail';
+import {Account} from './account';
+import {SecureRootUser} from './secure-root-user';
+import {OrganizationTrail} from './organization-trail';
 import {version} from '../package.json';
 
 /**
@@ -31,7 +33,7 @@ export interface AccountSpec {
    * The name of the AWS account
    */
   readonly name: string,
-  
+
   /**
    * The email associated to the AWS account
    */
@@ -52,7 +54,7 @@ export interface OUSpec {
  * @experimental
  */
 export interface AwsOrganizationsStackProps extends cdk.StackProps {
-  readonly email?: string,
+  readonly email: string,
   readonly nestedOU: OUSpec[]
 }
 
@@ -63,15 +65,15 @@ export class AwsOrganizationsStack extends cdk.Stack {
 
   private readonly emailPrefix?: string;
   private readonly domain?: string;
-  
-  private createOrganizationTree(oUSpec: OUSpec, parentId: string, previousSequentialConstruct:cdk.IDependable): cdk.IDependable {
+
+  private createOrganizationTree(oUSpec: OUSpec, parentId: string, previousSequentialConstruct: cdk.IDependable): cdk.IDependable {
 
     let organizationalUnit = new OrganizationalUnit(this, `${oUSpec.name}-OU`, {Name: oUSpec.name, ParentId: parentId});
     //adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
     organizationalUnit.node.addDependency(previousSequentialConstruct);
 
     previousSequentialConstruct = organizationalUnit;
-    
+
     oUSpec.accounts.forEach(accountSpec => {
 
       let accountEmail: string;
@@ -83,11 +85,16 @@ export class AwsOrganizationsStack extends cdk.Stack {
       {
         accountEmail = `${this.emailPrefix}+${accountSpec.name}-${cdk.Stack.of(this).account}@${this.domain}`
       }
-      else{
+      else
+      {
         throw new Error(`Master account email must be provided or an account email for account ${accountSpec.name}`)
       }
-      
-      let account = new Account(this, accountSpec.name, {email: accountEmail, name: accountSpec.name, parentOrganizationalUnitId: organizationalUnit.id});
+
+      let account = new Account(this, accountSpec.name, {
+        email: accountEmail,
+        name: accountSpec.name,
+        parentOrganizationalUnitId: organizationalUnit.id
+      });
       //adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
       account.node.addDependency(previousSequentialConstruct);
       previousSequentialConstruct = account;
@@ -102,9 +109,10 @@ export class AwsOrganizationsStack extends cdk.Stack {
 
   constructor(scope: cdk.Construct, id: string, props: AwsOrganizationsStackProps) {
     super(scope, id, {description: `Software development Landing Zone (uksb-1r7an8o45) (version:${version})`, ...props});
-    
 
-    if(props.nestedOU.length > 0){
+
+    if(props.nestedOU.length > 0)
+    {
       let org = new Organization(this, "Organization");
       if(props.email)
       {
@@ -118,14 +126,14 @@ export class AwsOrganizationsStack extends cdk.Stack {
         previousSequentialConstruct = this.createOrganizationTree(nestedOU, org.rootId, previousSequentialConstruct);
       });
 
-      let orgTrail = new OrganizationTrail(this, 'OrganizationTrail', { OrganizationId: org.id}); 
+      let orgTrail = new OrganizationTrail(this, 'OrganizationTrail', {OrganizationId: org.id});
       orgTrail.node.addDependency(org);
     }
-    
-    new SecureRootUser(this, 'SecureRootUser');
+
+    const secureRootUserConfigTopic = new sns.Topic(this, 'SecureRootUserConfigTopic');
+    secureRootUserConfigTopic.addSubscription(new subs.EmailSubscription(props.email));
+
+    new SecureRootUser(this, 'SecureRootUser', secureRootUserConfigTopic);
 
   }
 }
-
-
-                  

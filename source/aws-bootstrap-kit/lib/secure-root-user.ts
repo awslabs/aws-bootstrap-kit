@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,11 +16,13 @@ limitations under the License.
 
 import * as core from "@aws-cdk/core";
 import * as config from "@aws-cdk/aws-config";
-import { ConfigRecorder } from "./aws-config-recorder";
+import * as sns from '@aws-cdk/aws-sns'
+import * as targets from '@aws-cdk/aws-events-targets';
+import {ConfigRecorder} from "./aws-config-recorder";
 
 
 export class SecureRootUser extends core.Construct {
-  constructor(scope: core.Construct, id: string) {
+  constructor(scope: core.Construct, id: string, snsTopic: sns.Topic) {
     super(scope, id);
 
 
@@ -30,7 +32,7 @@ export class SecureRootUser extends core.Construct {
     const enforceMFARule = new config.ManagedRule(this, "EnableRootMfa", {
       identifier: "ROOT_ACCOUNT_MFA_ENABLED",
       maximumExecutionFrequency:
-        config.MaximumExecutionFrequency.TWENTY_FOUR_HOURS,
+      config.MaximumExecutionFrequency.TWENTY_FOUR_HOURS,
     });
 
     // Enforce No root access key
@@ -40,11 +42,18 @@ export class SecureRootUser extends core.Construct {
       {
         identifier: "IAM_ROOT_ACCESS_KEY_CHECK",
         maximumExecutionFrequency:
-          config.MaximumExecutionFrequency.TWENTY_FOUR_HOURS,
+        config.MaximumExecutionFrequency.TWENTY_FOUR_HOURS,
       }
     );
 
     enforceMFARule.node.addDependency(configRecorder);
     enforceNoAccessKeyRule.node.addDependency(configRecorder);
+
+    enforceMFARule.onComplianceChange('ComplianceChange', {
+      target: new targets.SnsTopic(snsTopic)
+    });
+    enforceNoAccessKeyRule.onComplianceChange('ComplianceChange', {
+      target: new targets.SnsTopic(snsTopic)
+    });
   }
 }
