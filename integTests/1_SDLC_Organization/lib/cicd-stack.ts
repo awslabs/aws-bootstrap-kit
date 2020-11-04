@@ -73,8 +73,8 @@ export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
   const INDEX_START_DEPLOY_STAGE =  prodStage.nextSequentialRunOrder() - 2; // 2 = Prepare (changeSet creation) + Deploy (cfn deploy)
   prodStage.addManualApprovalAction({actionName: 'Validate', runOrder: INDEX_START_DEPLOY_STAGE});
 
-  console.log(`regions to bootstrap = ${props.regionsToBootstrap}`);
   const arrayInShellScriptFormat = props.regionsToBootstrap.join(' ');
+
   prodStage.addActions(new ShellScriptAction(
     {
       actionName: 'CDKBootstrapAccounts',

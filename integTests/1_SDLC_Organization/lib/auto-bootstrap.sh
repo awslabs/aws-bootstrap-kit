@@ -1,3 +1,7 @@
+#!/bin/bash
+
+echo "SHELL=${SHELL}"
+
 CICD_ACCOUNT_ID=$(aws  organizations list-accounts | jq -r '.Accounts[] | select(.Name == "CICD") | .Id');
 
 ACCOUNTS=$(aws  organizations list-accounts | jq -c '.Accounts[] | select(.JoinedMethod == "CREATED")');
@@ -28,7 +32,7 @@ for ACCOUNT in $ACCOUNTS; do
             npm run cdk bootstrap -- --profile ${ACCOUNT_NAME}
             ;;
         Dev|Staging|Prod)
-            for $REGION in $REGIONS_TO_BOOTSTRAP; do
+            for REGION in $REGIONS_TO_BOOTSTRAP; do
                 npm run cdk bootstrap -- --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --trust ${CICD_ACCOUNT_ID} aws://${ACCOUNT_ID}/${REGION} --profile ${ACCOUNT_NAME}
             done
             ;;
