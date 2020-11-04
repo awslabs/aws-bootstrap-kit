@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,12 +20,16 @@ import { Stack } from "@aws-cdk/core";
 import {version} from '../package.json';
 
 test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack should have 2 OU constructs and 3 account constructs", () => {
-  
+
     const stack = new Stack();
 
     let awsOrganizationsStackProps: AwsOrganizationsStackProps;
     awsOrganizationsStackProps = {
         email: "test@test.com",
+        regionsToBootstrap: [
+          'us-east-1',
+          'eu-west-1'
+        ],
         nestedOU: [
             {
                 name: 'OU1',
@@ -48,7 +52,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
             }
         ]
     }
-  
+
     const awsOrganizationsStack = new AwsOrganizationsStack(stack, "AWSOrganizationsStack", awsOrganizationsStackProps);
 
     expect(awsOrganizationsStack.templateOptions.description).toMatch(`(version:${version})`);

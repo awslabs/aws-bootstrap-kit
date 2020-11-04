@@ -55,7 +55,8 @@ export interface OUSpec {
  */
 export interface AwsOrganizationsStackProps extends cdk.StackProps {
   readonly email: string,
-  readonly nestedOU: OUSpec[]
+  readonly nestedOU: OUSpec[],
+  readonly regionsToBootstrap: string[],
 }
 
 /**

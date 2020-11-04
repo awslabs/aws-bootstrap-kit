@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -24,6 +24,7 @@ const app = new cdk.App();
 let stackProps: bootstrapKit.AwsOrganizationsStackProps;
 stackProps = {
     email: app.node.tryGetContext("email"),
+    regionsToBootstrap: app.node.tryGetContext("regions_to_bootstrap"),
     nestedOU: [
         {
             name: 'SharedServices',
@@ -56,7 +57,7 @@ stackProps = {
             ]
         }
     ]
-}
+};
 
 new AWSBootstrapKitLandingZoneStage(app, 'Prod', stackProps);
 

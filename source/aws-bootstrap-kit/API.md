@@ -47,8 +47,9 @@ new AwsOrganizationsStack(scope: Construct, id: string, props: AwsOrganizationsS
   * **synthesizer** (<code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code>)  Synthesis method to use while deploying this stack. __*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
   * **tags** (<code>Map<string, string></code>)  Stack tags that will be applied to all the taggable resources and the stack itself. __*Default*__: {}
   * **terminationProtection** (<code>boolean</code>)  Whether to enable termination protection for this stack. __*Default*__: false
+  * **email** (<code>string</code>)  *No description* 
   * **nestedOU** (<code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code>)  *No description* 
-  * **email** (<code>string</code>)  *No description* __*Optional*__
+  * **regionsToBootstrap** (<code>Array<string></code>)  *No description* 
 
 
 
@@ -179,10 +180,11 @@ Properties for AWS SDLC Organizations Stack.
 
 Name | Type | Description 
 -----|------|-------------
+**email**🔹 | <code>string</code> | <span></span>
 **nestedOU**🔹 | <code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code> | <span></span>
+**regionsToBootstrap**🔹 | <code>Array<string></code> | <span></span>
 **analyticsReporting**?🔹 | <code>boolean</code> | Include runtime versioning information in this Stack.<br/>__*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 **description**?🔹 | <code>string</code> | A description of the stack.<br/>__*Default*__: No description.
-**email**?🔹 | <code>string</code> | __*Optional*__
 **env**?🔹 | <code>[Environment](#aws-cdk-core-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
 **stackName**?🔹 | <code>string</code> | Name to deploy the stack with.<br/>__*Default*__: Derived from construct path.
 **synthesizer**?🔹 | <code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code> | Synthesis method to use while deploying this stack.<br/>__*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.

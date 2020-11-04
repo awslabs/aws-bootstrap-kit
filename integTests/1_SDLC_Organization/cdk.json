@@ -5,7 +5,11 @@
     "aws-cdk:enableDiffNoFail": "true",
     "@aws-cdk/core:stackRelativeExports": "true",
     "@aws-cdk/core:newStyleStackSynthesis": true,
-    "github_alias": "flochaz",
-    "email": "admin@ilovemylocalfarmer.dev"
+    "github_alias": "awslabs",
+    "email": "admin@ilovemylocalfarmer.dev",
+    "regions_to_bootstrap": [
+      "us-east-1",
+      "eu-west-1"
+    ]
   }
 }

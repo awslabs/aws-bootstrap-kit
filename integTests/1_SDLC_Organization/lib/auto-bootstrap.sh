@@ -2,6 +2,9 @@ CICD_ACCOUNT_ID=$(aws  organizations list-accounts | jq -r '.Accounts[] | select
 
 ACCOUNTS=$(aws  organizations list-accounts | jq -c '.Accounts[] | select(.JoinedMethod == "CREATED")');
 
+REGIONS_TO_BOOTSTRAP=${1}
+echo "Bootstrapping the following regions: $REGIONS_TO_BOOTSTRAP"
+
 for ACCOUNT in $ACCOUNTS; do
     _jq() {
         echo ${ACCOUNT} | jq -r ${1};
@@ -23,9 +26,11 @@ for ACCOUNT in $ACCOUNTS; do
     case $ACCOUNT_NAME in
         CICD)
             npm run cdk bootstrap -- --profile ${ACCOUNT_NAME}
-            ;; 
-            Dev|Staging|Prod)
-            npm run cdk bootstrap -- --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --trust ${CICD_ACCOUNT_ID} aws://${ACCOUNT_ID}/eu-west-1 --profile ${ACCOUNT_NAME}
+            ;;
+        Dev|Staging|Prod)
+            for $REGION in $REGIONS_TO_BOOTSTRAP; do
+                npm run cdk bootstrap -- --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --trust ${CICD_ACCOUNT_ID} aws://${ACCOUNT_ID}/${REGION} --profile ${ACCOUNT_NAME}
+            done
             ;;
         *)
             echo "Unknown type of account, skipping"

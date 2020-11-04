@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -54,11 +54,11 @@ export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
       sourceAction: new codepipeline_actions.GitHubSourceAction({
         actionName: 'GitHub',
         output: sourceArtifact,
-        branch: 'chazalf/setupScript',
+        branch: 'chadvit/bootstrapMultiRegion',
         oauthToken: core.SecretValue.secretsManager('GITHUB_TOKEN'),
         owner: this.node.tryGetContext('github_alias'),
         // TODO: remove "-dev" before release
-        repo: 'AWSBootstrapKit-dev',
+        repo: 'aws-bootstrap-kit',
       }),
 
       synthAction: SimpleSynthAction.standardNpmSynth({
@@ -73,13 +73,16 @@ export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
   const INDEX_START_DEPLOY_STAGE =  prodStage.nextSequentialRunOrder() - 2; // 2 = Prepare (changeSet creation) + Deploy (cfn deploy)
   prodStage.addManualApprovalAction({actionName: 'Validate', runOrder: INDEX_START_DEPLOY_STAGE});
 
+  console.log(`regions to bootstrap = ${props.regionsToBootstrap}`);
+  const arrayInShellScriptFormat = props.regionsToBootstrap.join(' ');
   prodStage.addActions(new ShellScriptAction(
     {
       actionName: 'CDKBootstrapAccounts',
       commands: [
         'cd ./integTests/1_SDLC_Organization/',
         'cd ../../source/aws-bootstrap-kit/ && npm install && npm run build && npm run js-package && cd - && npm install',
-        './lib/auto-bootstrap.sh'
+        `REGIONS_TO_BOOTSTRAP=(${arrayInShellScriptFormat})`,
+        './lib/auto-bootstrap.sh $REGIONS_TO_BOOTSTRAP'
       ],
       additionalArtifacts: [sourceArtifact],
       rolePolicyStatements: [
