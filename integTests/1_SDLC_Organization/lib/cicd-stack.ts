@@ -22,13 +22,26 @@ import * as core from "@aws-cdk/core";
 import * as iam from '@aws-cdk/aws-iam';
 import * as bootstrapKit from 'aws-bootstrap-kit/lib/index.js';
 
+
 /**
-* Your application
-*
-* May consist of one or more Stacks (here, two)
-*
-* By declaring our DatabaseStack and our ComputeStack inside a Stage,
-* we make sure they are deployed together, or not at all.
+ * Properties for create Landing Zone pipeline stack
+ */
+export interface AWSBootstrapKitLandingZonePipelineStackProps extends bootstrapKit.AwsOrganizationsStackProps{
+
+  /**
+   * Regions for the applications to be deployed. The format of values is the region short-name (e.g. eu-west-1).
+   *
+   * We use AWS CDK to deploy applications in our application CI/CD pipeline. CDK requires some resources
+   * (e.g. AWS S3 bucket) to perform deployment. The regions specified here will be bootstraped with these resources
+   * so that it is deployable.
+   *
+   * See https://docs.aws.amazon.com/cdk/latest/guide/bootstrapping.html
+   */
+  readonly pipelineDeployableRegions: string[],
+}
+
+/**
+* Stage in the pipeline for deploying LandingZone via aws-bootstrap-kit
 */
 export class AWSBootstrapKitLandingZoneStage extends Stage {
   constructor(scope: Construct, id: string, props: bootstrapKit.AwsOrganizationsStackProps) {
@@ -39,10 +52,10 @@ export class AWSBootstrapKitLandingZoneStage extends Stage {
 }
 
 /**
-* Stack to hold the pipeline
+* Stack to hold the pipeline to deploy Landing Zone
 */
 export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
-  constructor(scope: Construct, id: string, props: bootstrapKit.AwsOrganizationsStackProps) {
+  constructor(scope: Construct, id: string, props: AWSBootstrapKitLandingZonePipelineStackProps) {
     super(scope, id, props);
 
     const sourceArtifact = new codepipeline.Artifact();

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import "@aws-cdk/assert/jest";
-import { AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib/aws-organizations-stack";
+import { AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib";
 import { Stack } from "@aws-cdk/core";
 import {version} from '../package.json';
 
@@ -26,10 +26,6 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
     let awsOrganizationsStackProps: AwsOrganizationsStackProps;
     awsOrganizationsStackProps = {
         email: "test@test.com",
-        pipelineDeployableRegions: [
-          'us-east-1',
-          'eu-west-1'
-        ],
         nestedOU: [
             {
                 name: 'OU1',
@@ -51,7 +47,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
                 ]
             }
         ]
-    }
+    };
 
     const awsOrganizationsStack = new AwsOrganizationsStack(stack, "AWSOrganizationsStack", awsOrganizationsStackProps);
 

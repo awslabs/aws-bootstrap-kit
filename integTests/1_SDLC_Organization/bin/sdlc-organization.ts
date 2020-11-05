@@ -16,49 +16,55 @@ limitations under the License.
 
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
-import * as bootstrapKit from 'aws-bootstrap-kit/lib/index.js';
-import {AWSBootstrapKitLandingZonePipelineStack, AWSBootstrapKitLandingZoneStage} from '../lib/cicd-stack';
+import {
+    AWSBootstrapKitLandingZonePipelineStack,
+    AWSBootstrapKitLandingZoneStage
+} from '../lib/cicd-stack';
 
 const app = new cdk.App();
 
-let stackProps: bootstrapKit.AwsOrganizationsStackProps;
-stackProps = {
-    email: app.node.tryGetContext("email"),
-    pipelineDeployableRegions: app.node.tryGetContext("pipeline_deployable_regions") ?? ['eu-west-1'],
-    nestedOU: [
-        {
-            name: 'SharedServices',
-            accounts: [
-                {
-                    name: 'CICD'
-                },
-                {
-                    name: 'DNS'
-                }
-            ]
-        },
-        {
-            name: 'SDLC',
-            accounts: [
-                {
-                    name: 'WorkloadA-Alpha'
-                },
-                {
-                    name: 'WorkloadA-Beta'
-                }
-            ]
-        },
-        {
-            name: 'Prod',
-            accounts: [
-                {
-                    name: 'WorkloadA-Prod'
-                }
-            ]
-        }
-    ]
-};
+const email = app.node.tryGetContext("email");
+const pipelineDeployableRegions = app.node.tryGetContext("pipeline_deployable_regions") ?? ['eu-west-1'];
+const nestedOU = [
+    {
+        name: 'SharedServices',
+        accounts: [
+            {
+                name: 'CICD'
+            },
+            {
+                name: 'DNS'
+            }
+        ]
+    },
+    {
+        name: 'SDLC',
+        accounts: [
+            {
+                name: 'WorkloadA-Alpha'
+            },
+            {
+                name: 'WorkloadA-Beta'
+            }
+        ]
+    },
+    {
+        name: 'Prod',
+        accounts: [
+            {
+                name: 'WorkloadA-Prod'
+            }
+        ]
+    }
+];
 
-new AWSBootstrapKitLandingZoneStage(app, 'Prod', stackProps);
+new AWSBootstrapKitLandingZoneStage(app, 'Prod', {
+    email,
+    nestedOU,
+});
 
-new AWSBootstrapKitLandingZonePipelineStack(app, 'AWSBootstrapKit-LandingZone-PipelineStack', stackProps);
+new AWSBootstrapKitLandingZonePipelineStack(app, 'AWSBootstrapKit-LandingZone-PipelineStack', {
+   email,
+   pipelineDeployableRegions,
+   nestedOU
+});

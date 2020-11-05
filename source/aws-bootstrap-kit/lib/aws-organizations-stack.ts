@@ -75,17 +75,6 @@ export interface AwsOrganizationsStackProps extends cdk.StackProps {
    * Specification of the sub Organizational Unit
    */
   readonly nestedOU: OUSpec[],
-
-  /**
-   * Regions for the applications to be deployed. The format of values is the region short-name (e.g. eu-west-1).
-   *
-   * We use AWS CDK to deploy applications in our application CI/CD pipeline. CDK requires some resources
-   * (e.g. AWS S3 bucket) to perform deployment. The regions specified here will be bootstraped with these resources
-   * so that it is deployable.
-   *
-   * See https://docs.aws.amazon.com/cdk/latest/guide/bootstrapping.html
-   */
-  readonly pipelineDeployableRegions: string[],
 }
 
 /**
