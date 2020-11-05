@@ -24,7 +24,7 @@ import {
 const app = new cdk.App();
 
 const email = app.node.tryGetContext("email");
-const pipelineDeployableRegions = app.node.tryGetContext("pipeline_deployable_regions") ?? ['eu-west-1'];
+const pipelineDeployableRegions = app.node.tryGetContext("pipeline_deployable_regions");
 const nestedOU = [
     {
         name: 'SharedServices',
@@ -64,7 +64,7 @@ new AWSBootstrapKitLandingZoneStage(app, 'Prod', {
 });
 
 new AWSBootstrapKitLandingZonePipelineStack(app, 'AWSBootstrapKit-LandingZone-PipelineStack', {
-   email,
-   pipelineDeployableRegions,
-   nestedOU
+    email,
+    pipelineDeployableRegions,
+    nestedOU
 });

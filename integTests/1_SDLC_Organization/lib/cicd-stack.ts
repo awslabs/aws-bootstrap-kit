@@ -86,7 +86,8 @@ export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
   const INDEX_START_DEPLOY_STAGE =  prodStage.nextSequentialRunOrder() - 2; // 2 = Prepare (changeSet creation) + Deploy (cfn deploy)
   prodStage.addManualApprovalAction({actionName: 'Validate', runOrder: INDEX_START_DEPLOY_STAGE});
 
-  const arrayInShellScriptFormat = props.pipelineDeployableRegions.join(' ');
+  const deployableRegions = props.pipelineDeployableRegions ?? [Stack.of(this).region];
+  const regionsInShellScriptArrayFormat = deployableRegions.join(' ');
 
   prodStage.addActions(new ShellScriptAction(
     {
@@ -94,7 +95,7 @@ export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
       commands: [
         'cd ./integTests/1_SDLC_Organization/',
         'cd ../../source/aws-bootstrap-kit/ && npm install && npm run build && npm run js-package && cd - && npm install',
-        `REGIONS_TO_BOOTSTRAP="${arrayInShellScriptFormat}"`,
+        `REGIONS_TO_BOOTSTRAP="${regionsInShellScriptArrayFormat}"`,
         './lib/auto-bootstrap.sh "$REGIONS_TO_BOOTSTRAP"'
       ],
       additionalArtifacts: [sourceArtifact],

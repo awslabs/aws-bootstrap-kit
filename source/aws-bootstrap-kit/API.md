@@ -4,7 +4,7 @@
 
 Name|Description
 ----|-----------
-[AwsOrganizationsStack](#aws-bootstrap-kit-awsorganizationsstack)|A Stack creating the Software Life Cycle (SDLC) Organization.
+[AwsOrganizationsStack](#aws-bootstrap-kit-awsorganizationsstack)|A Stack creating the Software Development Life Cycle (SDLC) Organization.
 [RootDNSStack](#aws-bootstrap-kit-rootdnsstack)|A Stack creating a root DNS Zone with subzone delegation capabilities.
 [RootDns](#aws-bootstrap-kit-rootdns)|A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation.
 
@@ -23,7 +23,7 @@ Name|Description
 
 ## class AwsOrganizationsStack  <a id="aws-bootstrap-kit-awsorganizationsstack"></a>
 
-A Stack creating the Software Life Cycle (SDLC) Organization.
+A Stack creating the Software Development Life Cycle (SDLC) Organization.
 
 __Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [ITaggable](#aws-cdk-core-itaggable)
 __Extends__: [Stack](#aws-cdk-core-stack)
@@ -49,7 +49,6 @@ new AwsOrganizationsStack(scope: Construct, id: string, props: AwsOrganizationsS
   * **terminationProtection** (<code>boolean</code>)  Whether to enable termination protection for this stack. __*Default*__: false
   * **email** (<code>string</code>)  Email address of the Root account. 
   * **nestedOU** (<code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code>)  Specification of the sub Organizational Unit. 
-  * **pipelineDeployableRegions** (<code>Array<string></code>)  Regions for the applications to be deployed. The format of values is the region short-name (e.g. eu-west-1). 
 
 
 
@@ -182,7 +181,6 @@ Name | Type | Description
 -----|------|-------------
 **email**🔹 | <code>string</code> | Email address of the Root account.
 **nestedOU**🔹 | <code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code> | Specification of the sub Organizational Unit.
-**pipelineDeployableRegions**🔹 | <code>Array<string></code> | Regions for the applications to be deployed. The format of values is the region short-name (e.g. eu-west-1).
 **analyticsReporting**?🔹 | <code>boolean</code> | Include runtime versioning information in this Stack.<br/>__*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 **description**?🔹 | <code>string</code> | A description of the stack.<br/>__*Default*__: No description.
 **env**?🔹 | <code>[Environment](#aws-cdk-core-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
