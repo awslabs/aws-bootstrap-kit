@@ -82,7 +82,7 @@ export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
         'cd ./integTests/1_SDLC_Organization/',
         'cd ../../source/aws-bootstrap-kit/ && npm install && npm run build && npm run js-package && cd - && npm install',
         `REGIONS_TO_BOOTSTRAP="${arrayInShellScriptFormat}"`,
-        './lib/auto-bootstrap.sh $REGIONS_TO_BOOTSTRAP'
+        './lib/auto-bootstrap.sh "$REGIONS_TO_BOOTSTRAP"'
       ],
       additionalArtifacts: [sourceArtifact],
       rolePolicyStatements: [
