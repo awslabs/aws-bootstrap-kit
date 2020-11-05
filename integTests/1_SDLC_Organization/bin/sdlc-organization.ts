@@ -34,6 +34,14 @@ stackProps = {
                 },
             ]
         },
+        {
+            name: 'Prod',
+            accounts: [
+                {
+                    name: 'WorkloadA-Prod'
+                }
+            ]
+        }
     ]
 };
 
