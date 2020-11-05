@@ -32,6 +32,20 @@ stackProps = {
                 {
                     name: 'CICD'
                 },
+                {
+                    name: 'DNS'
+                }
+            ]
+        },
+        {
+            name: 'SDLC',
+            accounts: [
+                {
+                    name: 'WorkloadA-Alpha'
+                },
+                {
+                    name: 'WorkloadA-Beta'
+                }
             ]
         },
         {
@@ -39,9 +53,6 @@ stackProps = {
             accounts: [
                 {
                     name: 'WorkloadA-Prod'
-                },
-                {
-                    name: 'Prod'
                 }
             ]
         }

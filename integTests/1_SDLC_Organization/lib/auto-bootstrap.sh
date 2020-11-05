@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "SHELL=${SHELL}"
-
 CICD_ACCOUNT_ID=$(aws  organizations list-accounts | jq -r '.Accounts[] | select(.Name == "CICD") | .Id');
 
 ACCOUNTS=$(aws  organizations list-accounts | jq -c '.Accounts[] | select(.JoinedMethod == "CREATED")');

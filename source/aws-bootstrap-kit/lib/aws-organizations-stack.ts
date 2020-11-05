@@ -44,8 +44,19 @@ export interface AccountSpec {
  * Organizational Unit Input details
  */
 export interface OUSpec {
+  /**
+   * Name of the Organizational Unit
+   */
   readonly name: string,
+
+  /**
+   * Accounts' specification inside in this Organizational Unit
+   */
   readonly accounts: AccountSpec[],
+
+  /**
+   * Specification of sub Organizational Unit
+   */
   readonly nestedOU?: OUSpec[]
 }
 
@@ -54,8 +65,20 @@ export interface OUSpec {
  * @experimental
  */
 export interface AwsOrganizationsStackProps extends cdk.StackProps {
+
+  /**
+   * Email address of the Root account
+   */
   readonly email: string,
+
+  /**
+   * Specification of the sub Organizational Unit
+   */
   readonly nestedOU: OUSpec[],
+
+  /**
+   * Regions to be bootstrap with CDK for deployment. The format of values is the region short-name (e.g. eu-west-1)
+   */
   readonly regionsToBootstrap: string[],
 }
 
