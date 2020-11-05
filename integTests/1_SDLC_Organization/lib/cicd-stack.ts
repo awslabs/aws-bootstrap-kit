@@ -54,7 +54,7 @@ export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
       sourceAction: new codepipeline_actions.GitHubSourceAction({
         actionName: 'GitHub',
         output: sourceArtifact,
-        branch: 'chazalf/setupScript',
+        branch: 'chadvit/bootstrapMultiRegion',
         oauthToken: core.SecretValue.secretsManager('GITHUB_TOKEN'),
         owner: this.node.tryGetContext('github_alias'),
         // TODO: remove "-dev" before release
