@@ -73,7 +73,7 @@ export class AWSBootstrapKitLandingZonePipelineStack extends Stack {
   const INDEX_START_DEPLOY_STAGE =  prodStage.nextSequentialRunOrder() - 2; // 2 = Prepare (changeSet creation) + Deploy (cfn deploy)
   prodStage.addManualApprovalAction({actionName: 'Validate', runOrder: INDEX_START_DEPLOY_STAGE});
 
-  const arrayInShellScriptFormat = props.regionsToBootstrap.join(' ');
+  const arrayInShellScriptFormat = props.pipelineDeployableRegions.join(' ');
 
   prodStage.addActions(new ShellScriptAction(
     {
