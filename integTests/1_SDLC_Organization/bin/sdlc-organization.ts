@@ -39,6 +39,9 @@ stackProps = {
             accounts: [
                 {
                     name: 'WorkloadA-Prod'
+                },
+                {
+                    name: 'Prod'
                 }
             ]
         }
