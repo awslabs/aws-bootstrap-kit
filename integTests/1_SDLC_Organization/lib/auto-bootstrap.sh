@@ -27,6 +27,7 @@ for ACCOUNT in $ACCOUNTS; do
     aws configure set profile.$ACCOUNT_NAME.aws_session_token `echo $assumes_role | jq -r .Credentials.SessionToken`;
 
     # Bootstrap
+    echo "Bootrapping account $ACCOUNT_NAME..."
     case $ACCOUNT_NAME in
         CICD)
             npm run cdk bootstrap -- --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess --profile ${ACCOUNT_NAME}
