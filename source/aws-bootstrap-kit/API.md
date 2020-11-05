@@ -49,7 +49,7 @@ new AwsOrganizationsStack(scope: Construct, id: string, props: AwsOrganizationsS
   * **terminationProtection** (<code>boolean</code>)  Whether to enable termination protection for this stack. __*Default*__: false
   * **email** (<code>string</code>)  Email address of the Root account. 
   * **nestedOU** (<code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code>)  Specification of the sub Organizational Unit. 
-  * **regionsToBootstrap** (<code>Array<string></code>)  Regions to be bootstrap with CDK for deployment. 
+  * **pipelineDeployableRegions** (<code>Array<string></code>)  Regions for the applications to be deployed. The format of values is the region short-name (e.g. eu-west-1). 
 
 
 
@@ -182,7 +182,7 @@ Name | Type | Description
 -----|------|-------------
 **email**🔹 | <code>string</code> | Email address of the Root account.
 **nestedOU**🔹 | <code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code> | Specification of the sub Organizational Unit.
-**regionsToBootstrap**🔹 | <code>Array<string></code> | Regions to be bootstrap with CDK for deployment.
+**pipelineDeployableRegions**🔹 | <code>Array<string></code> | Regions for the applications to be deployed. The format of values is the region short-name (e.g. eu-west-1).
 **analyticsReporting**?🔹 | <code>boolean</code> | Include runtime versioning information in this Stack.<br/>__*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 **description**?🔹 | <code>string</code> | A description of the stack.<br/>__*Default*__: No description.
 **env**?🔹 | <code>[Environment](#aws-cdk-core-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.

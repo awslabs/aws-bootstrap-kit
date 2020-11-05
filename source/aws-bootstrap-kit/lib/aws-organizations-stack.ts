@@ -15,10 +15,10 @@ limitations under the License.
 */
 
 import * as cdk from '@aws-cdk/core';
-import * as sns from '@aws-cdk/aws-sns'
+import * as sns from '@aws-cdk/aws-sns';
 import * as subs from '@aws-cdk/aws-sns-subscriptions';
-import {Organization} from './organization'
-import {OrganizationalUnit} from './organizational-unit'
+import {Organization} from './organization';
+import {OrganizationalUnit} from './organizational-unit';
 import {Account} from './account';
 import {SecureRootUser} from './secure-root-user';
 import {OrganizationTrail} from './organization-trail';
@@ -77,13 +77,19 @@ export interface AwsOrganizationsStackProps extends cdk.StackProps {
   readonly nestedOU: OUSpec[],
 
   /**
-   * Regions to be bootstrap with CDK for deployment. The format of values is the region short-name (e.g. eu-west-1)
+   * Regions for the applications to be deployed. The format of values is the region short-name (e.g. eu-west-1).
+   *
+   * We use AWS CDK to deploy applications in our application CI/CD pipeline. CDK requires some resources
+   * (e.g. AWS S3 bucket) to perform deployment. The regions specified here will be bootstraped with these resources
+   * so that it is deployable.
+   *
+   * See https://docs.aws.amazon.com/cdk/latest/guide/bootstrapping.html
    */
-  readonly regionsToBootstrap: string[],
+  readonly pipelineDeployableRegions: string[],
 }
 
 /**
- * A Stack creating the Software Life Cycle (SDLC) Organization
+ * A Stack creating the Software Development Life Cycle (SDLC) Organization
  */
 export class AwsOrganizationsStack extends cdk.Stack {
 

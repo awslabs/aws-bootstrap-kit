@@ -24,7 +24,7 @@ const app = new cdk.App();
 let stackProps: bootstrapKit.AwsOrganizationsStackProps;
 stackProps = {
     email: app.node.tryGetContext("email"),
-    regionsToBootstrap: app.node.tryGetContext("regions_to_bootstrap"),
+    pipelineDeployableRegions: app.node.tryGetContext("pipeline_deployable_regions") ?? ['eu-west-1'],
     nestedOU: [
         {
             name: 'SharedServices',

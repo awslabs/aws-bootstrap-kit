@@ -7,7 +7,7 @@
     "@aws-cdk/core:newStyleStackSynthesis": true,
     "github_alias": "awslabs",
     "email": "admin@ilovemylocalfarmer.dev",
-    "regions_to_bootstrap": [
+    "pipeline_deployable_regions": [
       "us-east-1",
       "eu-west-1"
     ]

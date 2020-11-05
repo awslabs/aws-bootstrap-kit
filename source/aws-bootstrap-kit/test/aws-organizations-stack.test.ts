@@ -26,7 +26,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
     let awsOrganizationsStackProps: AwsOrganizationsStackProps;
     awsOrganizationsStackProps = {
         email: "test@test.com",
-        regionsToBootstrap: [
+        pipelineDeployableRegions: [
           'us-east-1',
           'eu-west-1'
         ],
