@@ -15,10 +15,10 @@ limitations under the License.
 */
 
 import * as cdk from '@aws-cdk/core';
-import * as sns from '@aws-cdk/aws-sns'
+import * as sns from '@aws-cdk/aws-sns';
 import * as subs from '@aws-cdk/aws-sns-subscriptions';
-import {Organization} from './organization'
-import {OrganizationalUnit} from './organizational-unit'
+import {Organization} from './organization';
+import {OrganizationalUnit} from './organizational-unit';
 import {Account} from './account';
 import {SecureRootUser} from './secure-root-user';
 import {OrganizationTrail} from './organization-trail';
@@ -44,8 +44,19 @@ export interface AccountSpec {
  * Organizational Unit Input details
  */
 export interface OUSpec {
+  /**
+   * Name of the Organizational Unit
+   */
   readonly name: string,
+
+  /**
+   * Accounts' specification inside in this Organizational Unit
+   */
   readonly accounts: AccountSpec[],
+
+  /**
+   * Specification of sub Organizational Unit
+   */
   readonly nestedOU?: OUSpec[]
 }
 
@@ -54,12 +65,20 @@ export interface OUSpec {
  * @experimental
  */
 export interface AwsOrganizationsStackProps extends cdk.StackProps {
+
+  /**
+   * Email address of the Root account
+   */
   readonly email: string,
-  readonly nestedOU: OUSpec[]
+
+  /**
+   * Specification of the sub Organizational Unit
+   */
+  readonly nestedOU: OUSpec[],
 }
 
 /**
- * A Stack creating the Software Life Cycle (SDLC) Organization
+ * A Stack creating the Software Development Life Cycle (SDLC) Organization
  */
 export class AwsOrganizationsStack extends cdk.Stack {
 

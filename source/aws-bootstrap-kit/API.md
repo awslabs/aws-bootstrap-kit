@@ -4,7 +4,7 @@
 
 Name|Description
 ----|-----------
-[AwsOrganizationsStack](#aws-bootstrap-kit-awsorganizationsstack)|A Stack creating the Software Life Cycle (SDLC) Organization.
+[AwsOrganizationsStack](#aws-bootstrap-kit-awsorganizationsstack)|A Stack creating the Software Development Life Cycle (SDLC) Organization.
 [RootDNSStack](#aws-bootstrap-kit-rootdnsstack)|A Stack creating a root DNS Zone with subzone delegation capabilities.
 [RootDns](#aws-bootstrap-kit-rootdns)|A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation.
 
@@ -23,7 +23,7 @@ Name|Description
 
 ## class AwsOrganizationsStack  <a id="aws-bootstrap-kit-awsorganizationsstack"></a>
 
-A Stack creating the Software Life Cycle (SDLC) Organization.
+A Stack creating the Software Development Life Cycle (SDLC) Organization.
 
 __Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [ITaggable](#aws-cdk-core-itaggable)
 __Extends__: [Stack](#aws-cdk-core-stack)
@@ -47,8 +47,8 @@ new AwsOrganizationsStack(scope: Construct, id: string, props: AwsOrganizationsS
   * **synthesizer** (<code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code>)  Synthesis method to use while deploying this stack. __*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
   * **tags** (<code>Map<string, string></code>)  Stack tags that will be applied to all the taggable resources and the stack itself. __*Default*__: {}
   * **terminationProtection** (<code>boolean</code>)  Whether to enable termination protection for this stack. __*Default*__: false
-  * **nestedOU** (<code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code>)  *No description* 
-  * **email** (<code>string</code>)  *No description* __*Optional*__
+  * **email** (<code>string</code>)  Email address of the Root account. 
+  * **nestedOU** (<code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code>)  Specification of the sub Organizational Unit. 
 
 
 
@@ -179,10 +179,10 @@ Properties for AWS SDLC Organizations Stack.
 
 Name | Type | Description 
 -----|------|-------------
-**nestedOU**🔹 | <code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code> | <span></span>
+**email**🔹 | <code>string</code> | Email address of the Root account.
+**nestedOU**🔹 | <code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code> | Specification of the sub Organizational Unit.
 **analyticsReporting**?🔹 | <code>boolean</code> | Include runtime versioning information in this Stack.<br/>__*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 **description**?🔹 | <code>string</code> | A description of the stack.<br/>__*Default*__: No description.
-**email**?🔹 | <code>string</code> | __*Optional*__
 **env**?🔹 | <code>[Environment](#aws-cdk-core-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
 **stackName**?🔹 | <code>string</code> | Name to deploy the stack with.<br/>__*Default*__: Derived from construct path.
 **synthesizer**?🔹 | <code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code> | Synthesis method to use while deploying this stack.<br/>__*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
@@ -200,9 +200,9 @@ Organizational Unit Input details.
 
 Name | Type | Description 
 -----|------|-------------
-**accounts** | <code>Array<[AccountSpec](#aws-bootstrap-kit-accountspec)></code> | <span></span>
-**name** | <code>string</code> | <span></span>
-**nestedOU**? | <code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code> | __*Optional*__
+**accounts** | <code>Array<[AccountSpec](#aws-bootstrap-kit-accountspec)></code> | Accounts' specification inside in this Organizational Unit.
+**name** | <code>string</code> | Name of the Organizational Unit.
+**nestedOU**? | <code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code> | Specification of sub Organizational Unit.<br/>__*Optional*__
 
 
 
