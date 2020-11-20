@@ -14,15 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as AWS from "aws-sdk";
+import { SES, config } from "aws-sdk";
 import type {
   IsCompleteRequest,
   IsCompleteResponse,
   OnEventResponse
 } from "@aws-cdk/custom-resources/lib/provider-framework/types";
 
-AWS.config.update({ region: "us-east-1" });
-const ses = new AWS.SES();
+config.update({ region: "us-east-1" });
 
 export async function onEventHandler(
   event: any
@@ -30,15 +29,12 @@ export async function onEventHandler(
   console.log("Event: %j", event);
 
   if (event.RequestType === "Create") {
-    try {
-      await ses
-        .verifyEmailIdentity({ EmailAddress: event.ResourceProperties.email })
-        .promise();
+    const ses = new SES();
+    await ses
+      .verifyEmailIdentity({ EmailAddress: event.ResourceProperties.email })
+      .promise();
 
-      return { PhysicalResourceId: "validateEmail" };
-    } catch (error) {
-      throw error;
-    }
+    return { PhysicalResourceId: "validateEmail" };
   }
 }
 
@@ -53,20 +49,16 @@ export async function isCompleteHandler(
 
   const email = event.ResourceProperties.email;
   if (event.RequestType === "Create") {
-    try {
-      const response = await ses
-        .getIdentityVerificationAttributes({
-          Identities: [email]
-        })
-        .promise();
+    const ses = new SES();
+    const response = await ses
+      .getIdentityVerificationAttributes({
+        Identities: [email]
+      })
+      .promise();
 
-      return {
-        IsComplete:
-          response.VerificationAttributes[email]?.VerificationStatus ===
-          "Success"
-      };
-    } catch (error) {
-      throw error;
-    }
+    return {
+      IsComplete:
+        response.VerificationAttributes[email]?.VerificationStatus === "Success"
+    };
   }
 }

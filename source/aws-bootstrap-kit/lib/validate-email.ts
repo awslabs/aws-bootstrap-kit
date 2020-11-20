@@ -84,6 +84,7 @@ export default class ValidateEmailStack extends Stack {
 
     new CustomResource(this, "EmailValidateResource", {
       serviceToken: provider.serviceToken,
+      resourceType: "Custom::EmailValidation",
       properties: {
         email: subAddressedEmail
       }

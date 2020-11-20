@@ -23,6 +23,7 @@ import {Account} from './account';
 import {SecureRootUser} from './secure-root-user';
 import {OrganizationTrail} from './organization-trail';
 import {version} from '../package.json';
+import ValidateEmailStack from './validate-email';
 
 /**
  * AWS Account input details
@@ -137,6 +138,11 @@ export class AwsOrganizationsStack extends cdk.Stack {
       {
         this.emailPrefix = props.email.split('@', 2)[0];
         this.domain = props.email.split('@', 2)[1];
+
+        if(this.node.tryGetContext('force_email_verification')) {
+          const validateEmail = new ValidateEmailStack(this, 'EmailValidation', {email: props.email});
+          org.node.addDependency(validateEmail);
+        }
       }
 
       let previousSequentialConstruct: cdk.IDependable = org;
