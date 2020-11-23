@@ -76,6 +76,11 @@ export interface AwsOrganizationsStackProps extends cdk.StackProps {
    * Specification of the sub Organizational Unit
    */
   readonly nestedOU: OUSpec[],
+
+  /**
+   * Enable Email Verification Process
+   */
+  readonly forceEmailVerification?: boolean,
 }
 
 /**
@@ -129,25 +134,25 @@ export class AwsOrganizationsStack extends cdk.Stack {
 
   constructor(scope: cdk.Construct, id: string, props: AwsOrganizationsStackProps) {
     super(scope, id, {description: `Software development Landing Zone (uksb-1r7an8o45) (version:${version})`, ...props});
+    const {email, nestedOU, forceEmailVerification = true} = props;
 
-
-    if(props.nestedOU.length > 0)
+    if(nestedOU.length > 0)
     {
       let org = new Organization(this, "Organization");
-      if(props.email)
+      if(email)
       {
-        this.emailPrefix = props.email.split('@', 2)[0];
-        this.domain = props.email.split('@', 2)[1];
+        this.emailPrefix = email.split('@', 2)[0];
+        this.domain = email.split('@', 2)[1];
 
-        if(this.node.tryGetContext('force_email_verification')) {
-          const validateEmail = new ValidateEmailStack(this, 'EmailValidation', {email: props.email});
+        if(forceEmailVerification) {
+          const validateEmail = new ValidateEmailStack(this, 'EmailValidation', { email });
           org.node.addDependency(validateEmail);
         }
       }
 
       let previousSequentialConstruct: cdk.IDependable = org;
 
-      props.nestedOU.forEach(nestedOU => {
+      nestedOU.forEach(nestedOU => {
         previousSequentialConstruct = this.createOrganizationTree(nestedOU, org.rootId, previousSequentialConstruct);
       });
 
@@ -156,7 +161,7 @@ export class AwsOrganizationsStack extends cdk.Stack {
     }
 
     const secureRootUserConfigTopic = new sns.Topic(this, 'SecureRootUserConfigTopic');
-    secureRootUserConfigTopic.addSubscription(new subs.EmailSubscription(props.email));
+    secureRootUserConfigTopic.addSubscription(new subs.EmailSubscription(email));
 
     new SecureRootUser(this, 'SecureRootUser', secureRootUserConfigTopic);
 

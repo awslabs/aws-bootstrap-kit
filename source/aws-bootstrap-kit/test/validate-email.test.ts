@@ -26,21 +26,11 @@ import {
   onEventHandler
 } from "../lib/validate-email-handler";
 import { Stack } from "@aws-cdk/core";
-import ValidateEmailStack from "../lib/validate-email";
-
-test("It should have an AWS Custom Resource", () => {
-  const email = "test@test.com";
-  const validateEmailStack = new ValidateEmailStack(new Stack(), "TestStack", {
-    email
-  });
-  expect(validateEmailStack).toHaveResource("Custom::EmailValidation", {
-    email: "test+aws@test.com"
-  });
-});
+import ValidateEmail from "../lib/validate-email";
 
 test("Should throw Error if Email Prefix contains + ", () => {
   const validateEmailStack = () =>
-    new ValidateEmailStack(new Stack(), "TestStack", {
+    new ValidateEmail(new Stack(), "TestStack", {
       email: "test+test@test.com"
     });
 

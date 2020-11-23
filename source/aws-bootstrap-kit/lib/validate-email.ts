@@ -14,25 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as path from "path";
-import * as iam from "@aws-cdk/aws-iam";
-import * as lambda from "@aws-cdk/aws-lambda";
 import {
   Construct,
-  Duration,
-  Stack,
-  StackProps,
   CustomResource
 } from "@aws-cdk/core";
-import { Provider } from "@aws-cdk/custom-resources";
+import ValidateEmailProvider from './validate-email-provider'
 
-export interface ValidateEmailProps extends StackProps {
+
+interface ValidateEmailProps {
   readonly email: string;
 }
 
-export default class ValidateEmailStack extends Stack {
+export default class ValidateEmail extends Construct {
+
   constructor(scope: Construct, id: string, props: ValidateEmailProps) {
-    super(scope, id, props);
+    super(scope, id);
 
     const [prefix, domain] = props.email.split("@");
 
@@ -42,45 +38,7 @@ export default class ValidateEmailStack extends Stack {
 
     const subAddressedEmail = prefix + "+aws@" + domain;
 
-    const code = lambda.Code.fromAsset(
-      path.join(__dirname, "validate-email-handler")
-    );
-
-    const onEventHandler = new lambda.Function(this, "OnEventHandler", {
-      code,
-      runtime: lambda.Runtime.NODEJS_12_X,
-      handler: "index.onEventHandler",
-      timeout: Duration.minutes(5)
-    });
-
-    onEventHandler.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ["ses:verifyEmailIdentity"],
-        resources: ["*"]
-      })
-    );
-
-    const isCompleteHandler = new lambda.Function(this, "IsCompleteHandler", {
-      code,
-      runtime: lambda.Runtime.NODEJS_12_X,
-      handler: "index.isCompleteHandler",
-      timeout: Duration.minutes(10)
-    });
-
-    isCompleteHandler.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: [
-          "ses:getIdentityVerificationAttributes",
-        ],
-        resources: ["*"]
-      })
-    );
-
-    const provider = new Provider(this, "EmailValidationProvider", {
-      onEventHandler: onEventHandler,
-      isCompleteHandler: isCompleteHandler,
-      queryInterval: Duration.seconds(10)
-    });
+    const { provider } = ValidateEmailProvider.getOrCreate(this);
 
     new CustomResource(this, "EmailValidateResource", {
       serviceToken: provider.serviceToken,
@@ -90,4 +48,5 @@ export default class ValidateEmailStack extends Stack {
       }
     });
   }
+
 }
