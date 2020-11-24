@@ -23,6 +23,7 @@ import {Account} from './account';
 import {SecureRootUser} from './secure-root-user';
 import {OrganizationTrail} from './organization-trail';
 import {version} from '../package.json';
+import { RootDns } from './dns';
 
 /**
  * AWS Account input details
@@ -75,6 +76,16 @@ export interface AwsOrganizationsStackProps extends cdk.StackProps {
    * Specification of the sub Organizational Unit
    */
   readonly nestedOU: OUSpec[],
+
+  /**
+   * The main DNS domain name to manage
+   */
+  readonly rootHostedZoneDNSName?: string,
+
+  /**
+   * A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party
+   */
+  readonly thirdPartyProviderDNSUsed?: boolean,
 }
 
 /**
@@ -84,6 +95,7 @@ export class AwsOrganizationsStack extends cdk.Stack {
 
   private readonly emailPrefix?: string;
   private readonly domain?: string;
+  private readonly stageAccounts: Account[] = []; 
 
   private createOrganizationTree(oUSpec: OUSpec, parentId: string, previousSequentialConstruct: cdk.IDependable): cdk.IDependable {
 
@@ -94,7 +106,6 @@ export class AwsOrganizationsStack extends cdk.Stack {
     previousSequentialConstruct = organizationalUnit;
 
     oUSpec.accounts.forEach(accountSpec => {
-
       let accountEmail: string;
       if(accountSpec.email)
       {
@@ -114,9 +125,14 @@ export class AwsOrganizationsStack extends cdk.Stack {
         name: accountSpec.name,
         parentOrganizationalUnitId: organizationalUnit.id
       });
-      //adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
+      // Adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
       account.node.addDependency(previousSequentialConstruct);
       previousSequentialConstruct = account;
+
+      // Building stageAccounts array to be used for DNS delegation system
+      if(['Prod', 'SDLC'].includes(oUSpec.name)) {
+        this.stageAccounts.push(account);
+      }
     });
 
     oUSpec.nestedOU?.forEach(nestedOU => {
@@ -151,6 +167,15 @@ export class AwsOrganizationsStack extends cdk.Stack {
 
     const secureRootUserConfigTopic = new sns.Topic(this, 'SecureRootUserConfigTopic');
     secureRootUserConfigTopic.addSubscription(new subs.EmailSubscription(props.email));
+
+    if(props.rootHostedZoneDNSName){
+      new RootDns(this, 'RootDNS', {
+        stagesAccounts: this.stageAccounts,
+        rootHostedZoneDNSName: props.rootHostedZoneDNSName,
+        thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed
+      });
+    }
+    
 
     new SecureRootUser(this, 'SecureRootUser', secureRootUserConfigTopic);
 

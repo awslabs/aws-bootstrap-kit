@@ -53,10 +53,20 @@ export class CrossAccountZoneDelegationRecordProvider extends Construct {
             description: 'Cross-account zone delegation record OnEventHandler'
         });
 
+        // Allow to assume DNS account's updater role
+        // roleArn, if not provided will be resolved in the lambda itself but still need to be allowed to assume it.
         this.onEventHandler.addToRolePolicy(
             new iam.PolicyStatement({
                 actions: ['sts:AssumeRole'],
-                resources: [roleArnToAssume],
+                resources: [roleArnToAssume?roleArnToAssume:'arn:aws:iam:::role/*-dns-update'],
+            })
+        );
+
+        //Allow to retrieve dynamically the zoneId and the target accountId
+        this.onEventHandler.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ['route53:listHostedZonesByName', 'organizations:ListAccounts'],
+                resources: ['*'],
             })
         );
 

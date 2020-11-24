@@ -4,8 +4,9 @@
 
 Name|Description
 ----|-----------
+[Account](#aws-bootstrap-kit-account)|An AWS Account.
 [AwsOrganizationsStack](#aws-bootstrap-kit-awsorganizationsstack)|A Stack creating the Software Development Life Cycle (SDLC) Organization.
-[RootDNSStack](#aws-bootstrap-kit-rootdnsstack)|A Stack creating a root DNS Zone with subzone delegation capabilities.
+[CrossAccountDNSDelegator](#aws-bootstrap-kit-crossaccountdnsdelegator)|TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776 High-level construct that creates: 1. A public hosted zone in the current account 2. A record name in the hosted zone id of target account.
 [RootDns](#aws-bootstrap-kit-rootdns)|A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation.
 
 
@@ -16,8 +17,64 @@ Name|Description
 [AccountSpec](#aws-bootstrap-kit-accountspec)|AWS Account input details.
 [AwsOrganizationsStackProps](#aws-bootstrap-kit-awsorganizationsstackprops)|Properties for AWS SDLC Organizations Stack.
 [OUSpec](#aws-bootstrap-kit-ouspec)|Organizational Unit Input details.
-[RootDNSStackProps](#aws-bootstrap-kit-rootdnsstackprops)|Properties of the Root DNS Stack.
 [RootDnsProps](#aws-bootstrap-kit-rootdnsprops)|Properties for RootDns.
+
+
+**Interfaces**
+
+Name|Description
+----|-----------
+[IAccountProps](#aws-bootstrap-kit-iaccountprops)|Properties of an AWS account.
+[ICrossAccountDNSDelegatorProps](#aws-bootstrap-kit-icrossaccountdnsdelegatorprops)|Properties to create delegated subzone of a zone hosted in a different account.
+
+
+
+## class Account  <a id="aws-bootstrap-kit-account"></a>
+
+An AWS Account.
+
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
+__Extends__: [Construct](#aws-cdk-core-construct)
+
+### Initializer
+
+
+
+
+```ts
+new Account(scope: Construct, id: string, accountProps: IAccountProps)
+```
+
+* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **id** (<code>string</code>)  *No description*
+* **accountProps** (<code>[IAccountProps](#aws-bootstrap-kit-iaccountprops)</code>)  *No description*
+
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**accountId** | <code>string</code> | <span></span>
+**accountName** | <code>string</code> | Constructor.
+
+### Methods
+
+
+#### registerAsDelegatedAdministrator(accountId, servicePrincipal) <a id="aws-bootstrap-kit-account-registerasdelegatedadministrator"></a>
+
+
+
+```ts
+registerAsDelegatedAdministrator(accountId: string, servicePrincipal: string): void
+```
+
+* **accountId** (<code>string</code>)  *No description*
+* **servicePrincipal** (<code>string</code>)  *No description*
+
+
+
 
 
 
@@ -49,16 +106,41 @@ new AwsOrganizationsStack(scope: Construct, id: string, props: AwsOrganizationsS
   * **terminationProtection** (<code>boolean</code>)  Whether to enable termination protection for this stack. __*Default*__: false
   * **email** (<code>string</code>)  Email address of the Root account. 
   * **nestedOU** (<code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code>)  Specification of the sub Organizational Unit. 
+  * **rootHostedZoneDNSName** (<code>string</code>)  The main DNS domain name to manage. __*Optional*__
+  * **thirdPartyProviderDNSUsed** (<code>boolean</code>)  A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party. __*Optional*__
 
 
 
 
-## class RootDNSStack  <a id="aws-bootstrap-kit-rootdnsstack"></a>
+## class CrossAccountDNSDelegator  <a id="aws-bootstrap-kit-crossaccountdnsdelegator"></a>
 
-A Stack creating a root DNS Zone with subzone delegation capabilities.
+TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776 High-level construct that creates: 1. A public hosted zone in the current account 2. A record name in the hosted zone id of target account.
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [ITaggable](#aws-cdk-core-itaggable)
-__Extends__: [Stack](#aws-cdk-core-stack)
+Usage:
+Create a role with the following permission:
+{
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+          "route53:GetHostedZone",
+          "route53:ChangeResourceRecordSets"
+      ],
+      "Resource": "arn:aws:route53:::hostedzone/ZXXXXXXXXX"
+}
+
+Then use the construct like this:
+
+const crossAccountDNSDelegatorProps: ICrossAccountDNSDelegatorProps = {
+      targetAccount: '1234567890',
+      targetRoleToAssume: 'DelegateRecordUpdateRoleInThatAccount',
+      targetHostedZoneId: 'ZXXXXXXXXX',
+      zoneName: 'subdomain.mydomain.com',
+};
+
+new CrossAccountDNSDelegator(this, 'CrossAccountDNSDelegatorStack', crossAccountDNSDelegatorProps);
+
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
+__Extends__: [Construct](#aws-cdk-core-construct)
 
 ### Initializer
 
@@ -66,20 +148,12 @@ __Extends__: [Stack](#aws-cdk-core-stack)
 
 
 ```ts
-new RootDNSStack(scope: Construct, id: string, props: RootDNSStackProps)
+new CrossAccountDNSDelegator(scope: Construct, id: string, props: ICrossAccountDNSDelegatorProps)
 ```
 
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
-* **props** (<code>[RootDNSStackProps](#aws-bootstrap-kit-rootdnsstackprops)</code>)  *No description*
-  * **analyticsReporting** (<code>boolean</code>)  Include runtime versioning information in this Stack. __*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
-  * **description** (<code>string</code>)  A description of the stack. __*Default*__: No description.
-  * **env** (<code>[Environment](#aws-cdk-core-environment)</code>)  The AWS environment (account/region) where this stack will be deployed. __*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
-  * **stackName** (<code>string</code>)  Name to deploy the stack with. __*Default*__: Derived from construct path.
-  * **synthesizer** (<code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code>)  Synthesis method to use while deploying this stack. __*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
-  * **tags** (<code>Map<string, string></code>)  Stack tags that will be applied to all the taggable resources and the stack itself. __*Default*__: {}
-  * **terminationProtection** (<code>boolean</code>)  Whether to enable termination protection for this stack. __*Default*__: false
-  * **rootDnsProps** (<code>[RootDnsProps](#aws-bootstrap-kit-rootdnsprops)</code>)  Properties of the Root DNS Construct. 
+* **props** (<code>[ICrossAccountDNSDelegatorProps](#aws-bootstrap-kit-icrossaccountdnsdelegatorprops)</code>)  *No description*
 
 
 
@@ -88,7 +162,7 @@ new RootDNSStack(scope: Construct, id: string, props: RootDNSStackProps)
 
 Name | Type | Description 
 -----|------|-------------
-**rootDns** | <code>[RootDns](#aws-bootstrap-kit-rootdns)</code> | <span></span>
+**hostedZone** | <code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code> | <span></span>
 
 
 
@@ -112,6 +186,7 @@ new RootDns(scope: Construct, id: string, props: RootDnsProps)
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[RootDnsProps](#aws-bootstrap-kit-rootdnsprops)</code>)  *No description*
   * **rootHostedZoneDNSName** (<code>string</code>)  The top level domain name. 
+  * **stagesAccounts** (<code>Array<[Account](#aws-bootstrap-kit-account)></code>)  The stages Accounts taht will need their subzone delegation. 
   * **thirdPartyProviderDNSUsed** (<code>boolean</code>)  A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported). __*Optional*__
 
 
@@ -121,20 +196,21 @@ new RootDns(scope: Construct, id: string, props: RootDnsProps)
 
 Name | Type | Description 
 -----|------|-------------
-**dnsAutoUpdateRole** | <code>[Role](#aws-cdk-aws-iam-role)</code> | <span></span>
 **rootHostedZone** | <code>[IHostedZone](#aws-cdk-aws-route53-ihostedzone)</code> | <span></span>
 
 ### Methods
 
 
-#### createDNSAutoUpdateRole() <a id="aws-bootstrap-kit-rootdns-creatednsautoupdaterole"></a>
+#### createDNSAutoUpdateRole(account, stageSubZone) <a id="aws-bootstrap-kit-rootdns-creatednsautoupdaterole"></a>
 
 
 
 ```ts
-createDNSAutoUpdateRole(): Role
+createDNSAutoUpdateRole(account: Account, stageSubZone: HostedZone): Role
 ```
 
+* **account** (<code>[Account](#aws-bootstrap-kit-account)</code>)  *No description*
+* **stageSubZone** (<code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code>)  *No description*
 
 __Returns__:
 * <code>[Role](#aws-cdk-aws-iam-role)</code>
@@ -149,7 +225,22 @@ createRootHostedZone(props: RootDnsProps): HostedZone
 
 * **props** (<code>[RootDnsProps](#aws-bootstrap-kit-rootdnsprops)</code>)  *No description*
   * **rootHostedZoneDNSName** (<code>string</code>)  The top level domain name. 
+  * **stagesAccounts** (<code>Array<[Account](#aws-bootstrap-kit-account)></code>)  The stages Accounts taht will need their subzone delegation. 
   * **thirdPartyProviderDNSUsed** (<code>boolean</code>)  A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported). __*Optional*__
+
+__Returns__:
+* <code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code>
+
+#### createStageSubZone(account, rootHostedZoneDNSName) <a id="aws-bootstrap-kit-rootdns-createstagesubzone"></a>
+
+
+
+```ts
+createStageSubZone(account: Account, rootHostedZoneDNSName: string): HostedZone
+```
+
+* **account** (<code>[Account](#aws-bootstrap-kit-account)</code>)  *No description*
+* **rootHostedZoneDNSName** (<code>string</code>)  *No description*
 
 __Returns__:
 * <code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code>
@@ -184,10 +275,47 @@ Name | Type | Description
 **analyticsReporting**?🔹 | <code>boolean</code> | Include runtime versioning information in this Stack.<br/>__*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 **description**?🔹 | <code>string</code> | A description of the stack.<br/>__*Default*__: No description.
 **env**?🔹 | <code>[Environment](#aws-cdk-core-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
+**rootHostedZoneDNSName**?🔹 | <code>string</code> | The main DNS domain name to manage.<br/>__*Optional*__
 **stackName**?🔹 | <code>string</code> | Name to deploy the stack with.<br/>__*Default*__: Derived from construct path.
 **synthesizer**?🔹 | <code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code> | Synthesis method to use while deploying this stack.<br/>__*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
 **tags**?🔹 | <code>Map<string, string></code> | Stack tags that will be applied to all the taggable resources and the stack itself.<br/>__*Default*__: {}
 **terminationProtection**?🔹 | <code>boolean</code> | Whether to enable termination protection for this stack.<br/>__*Default*__: false
+**thirdPartyProviderDNSUsed**?🔹 | <code>boolean</code> | A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party.<br/>__*Optional*__
+
+
+
+## interface IAccountProps  <a id="aws-bootstrap-kit-iaccountprops"></a>
+
+
+Properties of an AWS account.
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**email** | <code>string</code> | The email to use to create the AWS account.
+**name** | <code>string</code> | The name of the AWS Account.
+**id**? | <code>string</code> | The AWS account Id.<br/>__*Optional*__
+**parentOrganizationalUnitId**? | <code>string</code> | The potential Organizational Unit Id the account should be placed in.<br/>__*Optional*__
+**parentOrganizationalUnitName**? | <code>string</code> | The potential Organizational Unit Name the account should be placed in.<br/>__*Optional*__
+
+
+
+## interface ICrossAccountDNSDelegatorProps  <a id="aws-bootstrap-kit-icrossaccountdnsdelegatorprops"></a>
+
+
+Properties to create delegated subzone of a zone hosted in a different account.
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**zoneName** | <code>string</code> | The sub zone name to be created.
+**targetAccount**? | <code>string</code> | The Account hosting the parent zone Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
+**targetHostedZoneId**? | <code>string</code> | The parent zone Id to add the sub zone delegation NS record to Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
+**targetRoleToAssume**? | <code>string</code> | The role to Assume in the parent zone's account which has permissions to update the parent zone Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
 
 
 
@@ -206,26 +334,6 @@ Name | Type | Description
 
 
 
-## struct RootDNSStackProps  <a id="aws-bootstrap-kit-rootdnsstackprops"></a>
-
-
-Properties of the Root DNS Stack.
-
-
-
-Name | Type | Description 
------|------|-------------
-**rootDnsProps** | <code>[RootDnsProps](#aws-bootstrap-kit-rootdnsprops)</code> | Properties of the Root DNS Construct.
-**analyticsReporting**? | <code>boolean</code> | Include runtime versioning information in this Stack.<br/>__*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
-**description**? | <code>string</code> | A description of the stack.<br/>__*Default*__: No description.
-**env**? | <code>[Environment](#aws-cdk-core-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
-**stackName**? | <code>string</code> | Name to deploy the stack with.<br/>__*Default*__: Derived from construct path.
-**synthesizer**? | <code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code> | Synthesis method to use while deploying this stack.<br/>__*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
-**tags**? | <code>Map<string, string></code> | Stack tags that will be applied to all the taggable resources and the stack itself.<br/>__*Default*__: {}
-**terminationProtection**? | <code>boolean</code> | Whether to enable termination protection for this stack.<br/>__*Default*__: false
-
-
-
 ## struct RootDnsProps  <a id="aws-bootstrap-kit-rootdnsprops"></a>
 
 
@@ -236,6 +344,7 @@ Properties for RootDns.
 Name | Type | Description 
 -----|------|-------------
 **rootHostedZoneDNSName** | <code>string</code> | The top level domain name.
+**stagesAccounts** | <code>Array<[Account](#aws-bootstrap-kit-account)></code> | The stages Accounts taht will need their subzone delegation.
 **thirdPartyProviderDNSUsed**? | <code>boolean</code> | A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported).<br/>__*Optional*__
 
 

@@ -58,6 +58,9 @@ export class Account extends core.Construct {
    * @param id This instance name
    * @param accountProps Account properties
    */
+  readonly accountName: string;
+  readonly accountId: string;
+
   constructor(scope: core.Construct, id: string, accountProps: IAccountProps) {
     super(scope, id);
 
@@ -79,7 +82,9 @@ export class Account extends core.Construct {
     let accountId = account.getAtt("AccountId").toString();
     
     accountProps.id = accountId;
-    
+    this.accountName = accountProps.name;
+    this.accountId = accountId;
+
     new ssm.StringParameter(this, `${accountProps.name}-AccountDetails`, {
       description: `Details of ${accountProps.name}`,
       parameterName: `/accounts/${accountProps.name}`,
@@ -146,14 +151,19 @@ export class Account extends core.Construct {
           }),
         }
       );
+
+      // Enabling Organizations listAccounts call for auto resolution of stages and DNS accounts Ids and Names
       if (accountProps.name === 'CICD') {
-        // Be careful extending this to other account, we are limited to 3 delegated admin per service
-        this.registerAsDelegatedAdministrator(accountId);
+        this.registerAsDelegatedAdministrator(accountId, 'ssm.amazonaws.com');
+      } else {
+       // Switching to another principal to workaround the max number of delegated administrators (which is set to 3 by default).
+        this.registerAsDelegatedAdministrator(accountId, 'config-multiaccountsetup.amazonaws.com');
       }
+
     }
   }
 
-  registerAsDelegatedAdministrator(accountId: string) {
+  registerAsDelegatedAdministrator(accountId: string, servicePrincipal: string) {
     new cr.AwsCustomResource(this, 
       "registerDelegatedAdministrator", 
       {
@@ -164,7 +174,7 @@ export class Account extends core.Construct {
           region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
           parameters: {
             AccountId: accountId,
-            ServicePrincipal: 'ssm.amazonaws.com'
+            ServicePrincipal: servicePrincipal
           }
         },
         onDelete: {
@@ -174,7 +184,7 @@ export class Account extends core.Construct {
           region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
           parameters: {
             AccountId: accountId,
-            ServicePrincipal: 'ssm.amazonaws.com'
+            ServicePrincipal: servicePrincipal
           }
         },
         installLatestAwsSdk: false,

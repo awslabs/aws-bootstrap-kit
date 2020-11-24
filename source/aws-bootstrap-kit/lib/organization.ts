@@ -110,37 +110,10 @@ export class Organization extends core.Construct {
           );
 
           // Enabling SSM AWS Service access to be able to register delegated adminstrator
-          const enableSSMAWSServiceAccess = new cr.AwsCustomResource(this,
-            "EnableSSMAWSServiceAccess",
-            {
-              onCreate: {
-                service: 'Organizations',
-                action: 'enableAWSServiceAccess', //call enableAWSServiceAcces of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#enableAWSServiceAccess-property
-                physicalResourceId: cr.PhysicalResourceId.of('EnableAWSServiceAccess'),
-                region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
-                parameters:
-                {
-                    ServicePrincipal: 'ssm.amazonaws.com',
-                }
-              },
-              onDelete: {
-                service: 'Organizations',
-                action: 'disableAWSServiceAccess', //call disableAWSServiceAcces of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#disableAWSServiceAccess-property
-                region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
-                parameters:
-                {
-                    ServicePrincipal: 'ssm.amazonaws.com',
-                }
-              },
-              installLatestAwsSdk: false,
-              policy: cr.AwsCustomResourcePolicy.fromSdkCalls(
-                {
-                  resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE
-                }
-              )
-            }
-          );
+          const enableSSMAWSServiceAccess = this.enableAWSServiceAccess('ssm.amazonaws.com');
+          const enableMultiAccountsSetupAWSServiceAccess = this.enableAWSServiceAccess('config-multiaccountsetup.amazonaws.com');
 
+          enableMultiAccountsSetupAWSServiceAccess.node.addDependency(org);
           enableSSMAWSServiceAccess.node.addDependency(org);
 
           //adding an explicit dependency as CloudFormation won't infer that calling listRoots must be done only when Organization creation is finished as there is no implicit dependency between the 
@@ -149,4 +122,37 @@ export class Organization extends core.Construct {
 
           this.rootId = root.getResponseField("Roots.0.Id");                        
     }
+
+  private enableAWSServiceAccess(principal: string) {
+    const resourceName = principal==='ssm.amazonaws.com'?"EnableSSMAWSServiceAccess":"EnableMultiAccountsSetup";
+
+    return new cr.AwsCustomResource(this,
+      resourceName,
+      {
+        onCreate: {
+          service: 'Organizations',
+          action: 'enableAWSServiceAccess',
+          physicalResourceId: cr.PhysicalResourceId.of(resourceName),
+          region: 'us-east-1',
+          parameters: {
+            ServicePrincipal: principal,
+          }
+        },
+        onDelete: {
+          service: 'Organizations',
+          action: 'disableAWSServiceAccess',
+          region: 'us-east-1',
+          parameters: {
+            ServicePrincipal: principal,
+          }
+        },
+        installLatestAwsSdk: false,
+        policy: cr.AwsCustomResourcePolicy.fromSdkCalls(
+          {
+            resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE
+          }
+        )
+      }
+    );
+  }
 }

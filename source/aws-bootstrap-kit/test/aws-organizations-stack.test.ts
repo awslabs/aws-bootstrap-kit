@@ -26,9 +26,11 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
     let awsOrganizationsStackProps: AwsOrganizationsStackProps;
     awsOrganizationsStackProps = {
         email: "test@test.com",
+        rootHostedZoneDNSName: "yourdomain.com",
+        thirdPartyProviderDNSUsed: true,
         nestedOU: [
             {
-                name: 'OU1',
+                name: 'SDLC',
                 accounts: [
                     {
                         name: 'Account1'
@@ -39,7 +41,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
                 ]
             },
             {
-                name: 'OU2',
+                name: 'Prod',
                 accounts: [
                     {
                         name: 'Account3'
@@ -78,7 +80,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
             },
             "region": "us-east-1",
             "parameters": {
-              "Name": "OU1",
+              "Name": "SDLC",
               "ParentId": {
                 "Fn::GetAtt": [
                   "OrganizationRootCustomResource9416950B",
@@ -130,7 +132,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
             },
             "region": "us-east-1",
             "parameters": {
-              "Name": "OU2",
+              "Name": "Prod",
               "ParentId": {
                 "Fn::GetAtt": [
                   "OrganizationRootCustomResource9416950B",
@@ -156,4 +158,24 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           },
           "AccountName": "Account3"
     });
+    expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
+      Name: "yourdomain.com."
+    });
+    expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+      Name: "Account1.yourdomain.com.",
+      Type: "NS"
+    });
+    expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+      Name: "Account2.yourdomain.com.",
+      Type: "NS"
+    });
+    expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+      Name: "Account3.yourdomain.com.",
+      Type: "NS"
+    });
+    expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
+      Name: "Account3.yourdomain.com."
+    });
+    expect(awsOrganizationsStack).toCountResources("AWS::Route53::RecordSet",3);
+    expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone",4);
 });

@@ -2,11 +2,12 @@ import * as core from "@aws-cdk/core";
 import {CrossAccountZoneDelegationRecordProvider} from "./cross-account-zone-delegation-record-provider";
 
 export interface CrossAccountZoneDelegationRecordProps {
-    targetAccount: string;
-    targetRoleToAssume: string;
-    targetHostedZoneId: string;
+    targetAccount?: string;
+    targetRoleToAssume?: string;
+    targetHostedZoneId?: string;
     recordName: string;
     toDelegateNameServers: string[];
+    currentAccountId: string;
 }
 
 /**
