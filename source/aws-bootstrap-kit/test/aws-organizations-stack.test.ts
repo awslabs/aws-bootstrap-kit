@@ -19,35 +19,34 @@ import { AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib";
 import { Stack } from "@aws-cdk/core";
 import {version} from '../package.json';
 
+const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
+  email: "test@test.com",
+  nestedOU: [
+    {
+      name: "OU1",
+      accounts: [
+        {
+          name: "Account1"
+        },
+        {
+          name: "Account2"
+        }
+      ]
+    },
+    {
+      name: "OU2",
+      accounts: [
+        {
+          name: "Account3"
+        }
+      ]
+    }
+  ]
+};
+
 test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack should have 2 OU constructs and 3 account constructs", () => {
 
     const stack = new Stack();
-
-    let awsOrganizationsStackProps: AwsOrganizationsStackProps;
-    awsOrganizationsStackProps = {
-        email: "test@test.com",
-        nestedOU: [
-            {
-                name: 'OU1',
-                accounts: [
-                    {
-                        name: 'Account1'
-                    },
-                    {
-                        name: 'Account2'
-                    }
-                ]
-            },
-            {
-                name: 'OU2',
-                accounts: [
-                    {
-                        name: 'Account3'
-                    }
-                ]
-            }
-        ]
-    };
 
     const awsOrganizationsStack = new AwsOrganizationsStack(stack, "AWSOrganizationsStack", awsOrganizationsStackProps);
 
@@ -156,4 +155,36 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           },
           "AccountName": "Account3"
     });
+});
+
+test("should have have email validation stack with forceEmailVerification set to true", () => {
+
+  const awsOrganizationsStack = new AwsOrganizationsStack(
+    new Stack(),
+    "AWSOrganizationsStack",
+    {...awsOrganizationsStackProps, forceEmailVerification: true}
+  );
+
+  expect(awsOrganizationsStack).toHaveResource("Custom::EmailValidation");
+})
+
+test("should not have have email validation stack with forceEmailVerification set to false", () => {
+
+  const awsOrganizationsStack = new AwsOrganizationsStack(
+    new Stack(),
+    "AWSOrganizationsStack",
+    {...awsOrganizationsStackProps, forceEmailVerification: false}
+  );
+
+  expect(awsOrganizationsStack).not.toHaveResource("Custom::EmailValidation");
+})
+
+test("should have have email validation stack by default without setting forceEmailVerification", () => {
+  const awsOrganizationsStack = new AwsOrganizationsStack(
+    new Stack(),
+    "AWSOrganizationsStack",
+    awsOrganizationsStackProps
+  );
+
+  expect(awsOrganizationsStack).toHaveResource("Custom::EmailValidation");
 });
