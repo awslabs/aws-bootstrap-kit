@@ -17,23 +17,36 @@ limitations under the License.
 import * as path from "path";
 import * as iam from "@aws-cdk/aws-iam";
 import * as lambda from "@aws-cdk/aws-lambda";
-import {
-  Construct,
-  Duration,
-  Stack,
-  NestedStack,
-} from "@aws-cdk/core";
+import { Construct, Duration, Stack, NestedStack } from "@aws-cdk/core";
 import { Provider } from "@aws-cdk/custom-resources";
 
+/**
+ * A Custom Resource provider capable of validating emails
+ */
 export default class ValidateEmailProvider extends NestedStack {
+  /**
+   * The custom resource provider.
+   */
   readonly provider: Provider;
 
+  /**
+   * Creates a stack-singleton resource provider nested stack.
+   */
   public static getOrCreate(scope: Construct) {
     const stack = Stack.of(scope);
-    const uid = '@aws-cdk/aws-bootstrap-kit.ValidateEmailProvider';
-    return stack.node.tryFindChild(uid) as ValidateEmailProvider || new ValidateEmailProvider(stack, uid);
+    const uid = "@aws-cdk/aws-bootstrap-kit.ValidateEmailProvider";
+    return (
+      (stack.node.tryFindChild(uid) as ValidateEmailProvider) ||
+      new ValidateEmailProvider(stack, uid)
+    );
   }
 
+  /**
+   * Constructor
+   *
+   * @param scope The parent Construct instantiating this construct
+   * @param id This instance name
+   */
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
@@ -64,9 +77,7 @@ export default class ValidateEmailProvider extends NestedStack {
 
     isCompleteHandler.addToRolePolicy(
       new iam.PolicyStatement({
-        actions: [
-          "ses:getIdentityVerificationAttributes",
-        ],
+        actions: ["ses:getIdentityVerificationAttributes"],
         resources: ["*"]
       })
     );

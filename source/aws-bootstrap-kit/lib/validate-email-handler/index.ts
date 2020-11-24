@@ -23,6 +23,11 @@ import type {
 
 config.update({ region: "us-east-1" });
 
+/**
+ * A function that send a verification email
+ * @param event An event with the following ResourceProperties: email (coresponding to the root email)
+ * @returns Returns a PhysicalResourceId
+ */
 export async function onEventHandler(
   event: any
 ): Promise<OnEventResponse | void> {
@@ -38,6 +43,11 @@ export async function onEventHandler(
   }
 }
 
+/**
+ * A function that checks email has been verified
+ * @param event An event with the following ResourceProperties: email (coresponding to the root email)
+ * @returns A payload containing the IsComplete Flag requested by cdk Custom Resource to figure out if the email has been verified and if not retries later
+ */
 export async function isCompleteHandler(
   event: IsCompleteRequest
 ): Promise<IsCompleteResponse | void> {

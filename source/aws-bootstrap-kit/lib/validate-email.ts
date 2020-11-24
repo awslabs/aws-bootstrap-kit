@@ -14,19 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  Construct,
-  CustomResource
-} from "@aws-cdk/core";
-import ValidateEmailProvider from './validate-email-provider'
+import { Construct, CustomResource } from "@aws-cdk/core";
+import ValidateEmailProvider from "./validate-email-provider";
 
-
+/**
+ * Properties of ValidateEmail
+ */
 interface ValidateEmailProps {
+  /**
+   * Email address of the Root account
+   */
   readonly email: string;
 }
 
+/**
+ * Email Validation
+ */
 export default class ValidateEmail extends Construct {
-
+  /**
+   * Constructor
+   *
+   * @param scope The parent Construct instantiating this construct
+   * @param id This instance name
+   * @param accountProps ValidateEmail properties
+   */
   constructor(scope: Construct, id: string, props: ValidateEmailProps) {
     super(scope, id);
 
@@ -48,5 +59,4 @@ export default class ValidateEmail extends Construct {
       }
     });
   }
-
 }

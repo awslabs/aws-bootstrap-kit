@@ -178,3 +178,13 @@ test("should not have have email validation stack with forceEmailVerification se
 
   expect(awsOrganizationsStack).not.toHaveResource("Custom::EmailValidation");
 })
+
+test("should have have email validation stack by default without setting forceEmailVerification", () => {
+  const awsOrganizationsStack = new AwsOrganizationsStack(
+    new Stack(),
+    "AWSOrganizationsStack",
+    awsOrganizationsStackProps
+  );
+
+  expect(awsOrganizationsStack).toHaveResource("Custom::EmailValidation");
+});
