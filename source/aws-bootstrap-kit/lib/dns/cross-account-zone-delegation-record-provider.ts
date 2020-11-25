@@ -39,7 +39,7 @@ export class CrossAccountZoneDelegationRecordProvider extends Construct {
      */
     public readonly onEventHandler: lambda.Function;
 
-    constructor(scope: Construct, id: string, roleArnToAssume: string) {
+    constructor(scope: Construct, id: string, roleArnToAssume?: string) {
         super(scope, id);
 
         const code = lambda.Code.fromAsset(path.join(__dirname, 'delegation-record-handler'));
@@ -58,7 +58,7 @@ export class CrossAccountZoneDelegationRecordProvider extends Construct {
         this.onEventHandler.addToRolePolicy(
             new iam.PolicyStatement({
                 actions: ['sts:AssumeRole'],
-                resources: [roleArnToAssume?roleArnToAssume:'arn:aws:iam:::role/*-dns-update'],
+                resources: [ roleArnToAssume ? roleArnToAssume : '*'],
             })
         );
 

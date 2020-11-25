@@ -21,6 +21,7 @@ import * as AWS from "aws-sdk";
 import { APIVersions } from "aws-sdk/lib/config";
 import { ServiceConfigurationOptions } from "aws-sdk/lib/service";
 import { ResourceRecords } from "aws-sdk/clients/route53";
+import Route53 = require("aws-sdk/clients/route53");
 
 const AWS_API_VERSION = "2013-04-01";
 
@@ -142,13 +143,13 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
             ? `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`
             : await resolveRoleArn(recordName, currentAccountId);
 
-    const _targetHostedZoneId = targetHostedZoneId?targetHostedZoneId:await resolveParentHostedZoneId(recordName);
-
     const roleSessionName = event.LogicalResourceId.substr(0, 64);
     const route53 = await assumeRoleAndGetRoute53Client(
         roleArn,
         roleSessionName
     );
+    
+    const _targetHostedZoneId = targetHostedZoneId?targetHostedZoneId:await resolveParentHostedZoneId(route53, recordName);
 
     console.log("roleArn = ", roleArn);
     console.log("targetHostedZoneId = ", _targetHostedZoneId);
@@ -197,8 +198,7 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
  * @param recordName The full DNS record name which will be stripped to extract the parent dns zone name used to resolved the zone id
  * @returns ParentHostedZoneId
  */
-async function resolveParentHostedZoneId(recordName: string) {
-    const route53Client = new AWS.Route53();
+async function resolveParentHostedZoneId(route53Client: Route53, recordName: string) {
     const listHostedZoneByNameResult = await route53Client.listHostedZonesByName({
         DNSName: recordName.split(".").splice(1).join(".")
     }).promise();

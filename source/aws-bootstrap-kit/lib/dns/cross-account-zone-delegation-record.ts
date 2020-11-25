@@ -19,7 +19,9 @@ export class CrossAccountZoneDelegationRecord extends core.Construct {
         super(scope, id);
 
         const { targetAccount, targetRoleToAssume } = props;
-        const roleArnToAssume = `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`;
+        const roleArnToAssume = targetAccount && targetRoleToAssume ? 
+        `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`
+        :undefined;
 
         const stack = core.Stack.of(this);
         const crossAccountZoneDelegationRecordProvider = new CrossAccountZoneDelegationRecordProvider(
