@@ -97,6 +97,6 @@
     "@aws-cdk/core": "1.74.0",
     "@aws-cdk/custom-resources": "1.74.0",
     "@aws-cdk/pipelines": "1.74.0",
-    "constructs": "3.2.32"
+    "constructs": "3.2.40"
   }
 }

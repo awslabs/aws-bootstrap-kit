@@ -24,6 +24,7 @@ import {SecureRootUser} from './secure-root-user';
 import {OrganizationTrail} from './organization-trail';
 import {version} from '../package.json';
 import { RootDns } from './dns';
+import ValidateEmailStack from './validate-email';
 
 /**
  * AWS Account input details
@@ -86,6 +87,11 @@ export interface AwsOrganizationsStackProps extends cdk.StackProps {
    * A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party
    */
   readonly thirdPartyProviderDNSUsed?: boolean,
+
+  /**
+  * Enable Email Verification Process
+  */
+  readonly forceEmailVerification?: boolean,
 }
 
 /**
@@ -144,20 +150,25 @@ export class AwsOrganizationsStack extends cdk.Stack {
 
   constructor(scope: cdk.Construct, id: string, props: AwsOrganizationsStackProps) {
     super(scope, id, {description: `Software development Landing Zone (uksb-1r7an8o45) (version:${version})`, ...props});
+    const {email, nestedOU, forceEmailVerification = true} = props;
 
-
-    if(props.nestedOU.length > 0)
+    if(nestedOU.length > 0)
     {
       let org = new Organization(this, "Organization");
-      if(props.email)
+      if(email)
       {
-        this.emailPrefix = props.email.split('@', 2)[0];
-        this.domain = props.email.split('@', 2)[1];
+        this.emailPrefix = email.split('@', 2)[0];
+        this.domain = email.split('@', 2)[1];
+
+        if(forceEmailVerification) {
+          const validateEmail = new ValidateEmailStack(this, 'EmailValidation', { email });
+          org.node.addDependency(validateEmail);
+        }
       }
 
       let previousSequentialConstruct: cdk.IDependable = org;
 
-      props.nestedOU.forEach(nestedOU => {
+      nestedOU.forEach(nestedOU => {
         previousSequentialConstruct = this.createOrganizationTree(nestedOU, org.rootId, previousSequentialConstruct);
       });
 
@@ -166,7 +177,7 @@ export class AwsOrganizationsStack extends cdk.Stack {
     }
 
     const secureRootUserConfigTopic = new sns.Topic(this, 'SecureRootUserConfigTopic');
-    secureRootUserConfigTopic.addSubscription(new subs.EmailSubscription(props.email));
+    secureRootUserConfigTopic.addSubscription(new subs.EmailSubscription(email));
 
     if(props.rootHostedZoneDNSName){
       new RootDns(this, 'RootDNS', {

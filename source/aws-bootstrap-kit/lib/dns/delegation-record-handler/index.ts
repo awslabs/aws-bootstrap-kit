@@ -136,12 +136,13 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
         currentAccountId
     } = event.ResourceProperties;
 
-    let physicalResourceId = `cross-account-record-${targetAccount}-${recordName}`;
 
     const roleArn =
         targetAccount && targetRoleToAssume
             ? `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`
             : await resolveRoleArn(recordName, currentAccountId);
+
+    const _targetAccountId = targetAccount?targetAccount:roleArn.split(':')[4];
 
     const roleSessionName = event.LogicalResourceId.substr(0, 64);
     const route53 = await assumeRoleAndGetRoute53Client(
@@ -187,6 +188,8 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
                 changeAction: Route53ChangeAction.DELETE,
             });
     }
+
+    let physicalResourceId = `cross-account-record-${targetAccount}-${recordName}`;
 
     return {
         PhysicalResourceId: physicalResourceId,
