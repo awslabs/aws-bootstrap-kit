@@ -142,8 +142,6 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
             ? `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`
             : await resolveRoleArn(recordName, currentAccountId);
 
-    const _targetAccountId = targetAccount?targetAccount:roleArn.split(':')[4];
-
     const roleSessionName = event.LogicalResourceId.substr(0, 64);
     const route53 = await assumeRoleAndGetRoute53Client(
         roleArn,
@@ -189,7 +187,7 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
             });
     }
 
-    let physicalResourceId = `cross-account-record-${targetAccount}-${recordName}`;
+    let physicalResourceId = `cross-account-record-${targetAccount?targetAccount:roleArn.split(':')[4]}-${recordName}`;
 
     return {
         PhysicalResourceId: physicalResourceId,
