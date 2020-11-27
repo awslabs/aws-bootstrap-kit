@@ -2,14 +2,34 @@ import * as core from '@aws-cdk/core';
 import * as route53 from '@aws-cdk/aws-route53';
 import {CrossAccountZoneDelegationRecord} from "./cross-account-zone-delegation-record";
 
-export interface CrossAccountDNSDelegatorProps {
-    targetAccount: string;
-    targetRoleToAssume: string;
-    targetHostedZoneId: string;
+/**
+ * Properties to create delegated subzone of a zone hosted in a different account
+ * 
+ */
+export interface ICrossAccountDNSDelegatorProps {
+    /**
+     * The Account hosting the parent zone
+     * Optional since can be resolved if the system has been setup with aws-bootstrap-kit
+     */
+    targetAccount?: string;
+    /**
+     * The role to Assume in the parent zone's account which has permissions to update the parent zone
+     * Optional since can be resolved if the system has been setup with aws-bootstrap-kit
+     */
+    targetRoleToAssume?: string;
+    /**
+     * The parent zone Id to add the sub zone delegation NS record to
+     * Optional since can be resolved if the system has been setup with aws-bootstrap-kit
+     */
+    targetHostedZoneId?: string;
+    /**
+     * The sub zone name to be created
+     */
     zoneName: string;
 }
 
 /**
+ * TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776
  * High-level construct that creates:
  * 1. A public hosted zone in the current account
  * 2. A record name in the hosted zone id of target account
@@ -28,7 +48,7 @@ export interface CrossAccountDNSDelegatorProps {
  *
  * Then use the construct like this:
  *
- * const crossAccountDNSDelegatorProps: CrossAccountDNSDelegatorProps = {
+ * const crossAccountDNSDelegatorProps: ICrossAccountDNSDelegatorProps = {
  *      targetAccount: '1234567890',
  *      targetRoleToAssume: 'DelegateRecordUpdateRoleInThatAccount',
  *      targetHostedZoneId: 'ZXXXXXXXXX',
@@ -38,7 +58,8 @@ export interface CrossAccountDNSDelegatorProps {
  * new CrossAccountDNSDelegator(this, 'CrossAccountDNSDelegatorStack', crossAccountDNSDelegatorProps);
  */
 export class CrossAccountDNSDelegator extends core.Construct {
-    constructor(scope: core.Construct, id: string, props: CrossAccountDNSDelegatorProps) {
+    readonly hostedZone: route53.HostedZone;
+    constructor(scope: core.Construct, id: string, props: ICrossAccountDNSDelegatorProps) {
         super(scope, id);
 
         const {
@@ -48,19 +69,22 @@ export class CrossAccountDNSDelegator extends core.Construct {
             zoneName,
         } = props;
 
-        const publicHostedZone = new route53.PublicHostedZone(this, 'HostedZone', {
+        const hostedZone = new route53.HostedZone(this, 'HostedZone', {
             zoneName: zoneName
         });
+        
+        this.hostedZone = hostedZone;
 
-        const delegatedNameServers: string[] = publicHostedZone.hostedZoneNameServers!;
+        const delegatedNameServers: string[] = hostedZone.hostedZoneNameServers!;
 
+        const currentAccountId = core.Stack.of(this).account;
         new CrossAccountZoneDelegationRecord(this, 'CrossAccountZoneDelegationRecord', {
             targetAccount: targetAccount,
             targetRoleToAssume: targetRoleToAssume,
             targetHostedZoneId: targetHostedZoneId,
             recordName: zoneName,
             toDelegateNameServers: delegatedNameServers,
+            currentAccountId: currentAccountId
         });
-
     }
 }

@@ -23,7 +23,7 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
   email: "test@test.com",
   nestedOU: [
     {
-      name: "OU1",
+      name: "SDLC",
       accounts: [
         {
           name: "Account1"
@@ -34,7 +34,7 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
       ]
     },
     {
-      name: "OU2",
+      name: "Prod",
       accounts: [
         {
           name: "Account3"
@@ -47,6 +47,32 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
 test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack should have 2 OU constructs and 3 account constructs", () => {
 
     const stack = new Stack();
+    let awsOrganizationsStackProps: AwsOrganizationsStackProps;
+    awsOrganizationsStackProps = {
+        email: "test@test.com",
+        nestedOU: [
+            {
+                name: 'SDLC',
+                accounts: [
+                    {
+                        name: 'Account1'
+                    },
+                    {
+                        name: 'Account2'
+                    }
+                ]
+            },
+            {
+                name: 'Prod',
+                accounts: [
+                    {
+                        name: 'Account3'
+                    }
+                ]
+            }
+        ]
+    };
+
 
     const awsOrganizationsStack = new AwsOrganizationsStack(stack, "AWSOrganizationsStack", awsOrganizationsStackProps);
 
@@ -77,7 +103,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
             },
             "region": "us-east-1",
             "parameters": {
-              "Name": "OU1",
+              "Name": "SDLC",
               "ParentId": {
                 "Fn::GetAtt": [
                   "OrganizationRootCustomResource9416950B",
@@ -129,7 +155,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
             },
             "region": "us-east-1",
             "parameters": {
-              "Name": "OU2",
+              "Name": "Prod",
               "ParentId": {
                 "Fn::GetAtt": [
                   "OrganizationRootCustomResource9416950B",
@@ -155,6 +181,51 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           },
           "AccountName": "Account3"
     });
+
+});
+
+test("should create root domain zone and stage based domain if rootHostedZoneDNSName is specified ", () => {
+  const awsOrganizationsStack = new AwsOrganizationsStack(
+    new Stack(),
+    "AWSOrganizationsStack",
+    {
+      ...awsOrganizationsStackProps, 
+      rootHostedZoneDNSName: "yourdomain.com"
+    }
+  );
+
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
+    Name: "yourdomain.com."
+  });
+  expect(awsOrganizationsStack).toCountResources("AWS::Route53::RecordSet",3);
+  expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone",4);
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+    Name: "Account1.yourdomain.com.",
+    Type: "NS"
+  });
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+    Name: "Account2.yourdomain.com.",
+    Type: "NS"
+  });
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+    Name: "Account3.yourdomain.com.",
+    Type: "NS"
+  });
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
+    Name: "Account3.yourdomain.com."
+  });
+});
+
+test("should not create any zone if no domain is provided", () => {
+  const awsOrganizationsStack = new AwsOrganizationsStack(
+    new Stack(),
+    "AWSOrganizationsStack",
+    {
+      ...awsOrganizationsStackProps,
+    }
+  );
+
+  expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone",0);
 });
 
 test("should have have email validation stack with forceEmailVerification set to true", () => {

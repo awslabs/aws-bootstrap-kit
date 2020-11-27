@@ -2,11 +2,12 @@ import * as core from "@aws-cdk/core";
 import {CrossAccountZoneDelegationRecordProvider} from "./cross-account-zone-delegation-record-provider";
 
 export interface CrossAccountZoneDelegationRecordProps {
-    targetAccount: string;
-    targetRoleToAssume: string;
-    targetHostedZoneId: string;
+    targetAccount?: string;
+    targetRoleToAssume?: string;
+    targetHostedZoneId?: string;
     recordName: string;
     toDelegateNameServers: string[];
+    currentAccountId: string;
 }
 
 /**
@@ -18,7 +19,9 @@ export class CrossAccountZoneDelegationRecord extends core.Construct {
         super(scope, id);
 
         const { targetAccount, targetRoleToAssume } = props;
-        const roleArnToAssume = `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`;
+        const roleArnToAssume = targetAccount && targetRoleToAssume ? 
+        `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`
+        :undefined;
 
         const stack = core.Stack.of(this);
         const crossAccountZoneDelegationRecordProvider = new CrossAccountZoneDelegationRecordProvider(
