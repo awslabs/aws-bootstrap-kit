@@ -183,12 +183,10 @@ export class AwsOrganizationsStack extends cdk.Stack {
       new RootDns(this, 'RootDNS', {
         stagesAccounts: this.stageAccounts,
         rootHostedZoneDNSName: props.rootHostedZoneDNSName,
-        thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed
+        thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed?props.thirdPartyProviderDNSUsed:true
       });
     }
     
-
     new SecureRootUser(this, 'SecureRootUser', secureRootUserConfigTopic);
-
   }
 }

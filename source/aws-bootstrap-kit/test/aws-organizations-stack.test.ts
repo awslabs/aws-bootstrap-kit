@@ -190,8 +190,7 @@ test("should create root domain zone and stage based domain if rootHostedZoneDNS
     "AWSOrganizationsStack",
     {
       ...awsOrganizationsStackProps, 
-      rootHostedZoneDNSName: "yourdomain.com",
-      thirdPartyProviderDNSUsed: true
+      rootHostedZoneDNSName: "yourdomain.com"
     }
   );
 
