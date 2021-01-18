@@ -1,6 +1,6 @@
 {
   "name": "aws-bootstrap-kit",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "repository": {
     "url": "https://github.com/awslabs/aws-bootstrap-kit",
     "type": "git"
