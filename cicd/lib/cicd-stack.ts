@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import delivlib = require('aws-delivlib');
-import * as cdk from 'monocdk-experiment';
+import * as cdk from 'monocdk';
 
 export class PipelineStack extends cdk.Stack {
   constructor(parent : cdk.App, id : string, props : cdk.StackProps = { }) {

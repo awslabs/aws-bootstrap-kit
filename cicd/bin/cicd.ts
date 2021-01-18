@@ -16,7 +16,7 @@ limitations under the License.
 */
 
 import 'source-map-support/register';
-import * as cdk from 'monocdk-experiment';
+import * as cdk from 'monocdk';
 import { PipelineStack } from '../lib/cicd-stack';
 
 const app = new cdk.App();
