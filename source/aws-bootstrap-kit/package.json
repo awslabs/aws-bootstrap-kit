@@ -36,7 +36,7 @@
     "cdk": "cdk",
     "build": "tsc && jsii && jsii-docgen",
     "build:watch": "jsii -w",
-    "package": "jsii-pacmak",
+    "package": "jsii-pacmak --target js",
     "js-package": "jsii-pacmak --target js",
     "test": "tsc && jest",
     "watch": "tsc -w",
