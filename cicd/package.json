@@ -18,7 +18,8 @@
     "jest": "^25.5.0",
     "ts-jest": "^25.3.1",
     "ts-node": "^8.1.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "node-notifier": ">=8.0.1"
   },
   "dependencies": {
     "aws-delivlib": "10.3.12",
