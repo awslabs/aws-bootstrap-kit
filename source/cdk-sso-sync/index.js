@@ -6,6 +6,7 @@ const fs = require('fs');
 const ConfigParser = require('configparser');
 const { config } = require('process');
 const homedir = require('os').homedir();
+var pjson = require('./package.json');
 
 const AWS_CONFIG_PATH = path.resolve(homedir, '.aws/config');
 const AWS_CREDENTIAL_PATH = path.resolve(homedir, '.aws/credentials');
@@ -60,6 +61,9 @@ const getAwsProfile = (profileName) => {
 
 const updateAwsCredentials = (profileName, profile, credentials) => {
     region = profile.region ? profile.region : AWS_DEFAULT_REGION
+    if(!fs.existsSync(AWS_CREDENTIAL_PATH)) {
+        fs.closeSync(fs.openSync(AWS_CREDENTIAL_PATH, 'w'));
+    }
     let configContent = readConfig(AWS_CREDENTIAL_PATH)
     if (configContent.hasSection(profileName))
         configContent.removeSection(profileName)
@@ -98,6 +102,12 @@ const readConfig = (path) => {
 }
 
 const main = async () => {
+    console.log(`Running cdk-sso-sync version ${pjson.version}`);
+    if (pjson.version === '0.0.4') {
+        console.error(`Your version of the tool is outdated. Run "npm install -g cdk-sso-sync" to upgrade.`);
+        process.exit([1]);
+    }
+
     if(process.argv.slice(2).length != 1) {
         throw new Error(`Invalid number of argument, provide your profile name as a parameter (i.e. "cdk-sso-sync my-profile-name")`)
     }
@@ -106,7 +116,7 @@ const main = async () => {
         await setProfileCredentials(process.argv.slice(2)[0]);
         console.info(`You are all set! Now you can run cdk commands with "--profile ${process.argv.slice(2)[0]}" options !`);
     } catch (error) {
-        console.error(`SSO credential sync failed. \n\n Make sure you logged in with aws sso by running: 'aws sso login --profile ${process.argv.slice(2)[0]}'`);
+        console.error(`SSO credential sync failed. \n\n Make sure you logged in with aws sso by running: 'aws sso login --profile ${process.argv.slice(2)[0]}' \n\n Error: ${error}`);
         process.exit([1])
     }
 }

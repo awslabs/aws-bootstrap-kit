@@ -1,6 +1,6 @@
 {
   "name": "cdk-sso-sync",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "JS version of https://www.matscloud.com/blog/2020/06/25/how-to-use-aws-cdk-with-aws-sso-profiles/ working around https://github.com/aws/aws-cdk/issues/5455 issue",
   "main": "index.js",
   "bin": "./index.js",
