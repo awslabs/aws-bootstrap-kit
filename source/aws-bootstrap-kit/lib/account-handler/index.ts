@@ -40,28 +40,15 @@ export async function onEventHandler(
     case "Create":
       const awsOrganizationsClient = new Organizations({region: 'us-east-1'});
       try {
+        const tags: { Key: string; Value: any; }[] = [];
+        Object.keys(event.ResourceProperties).forEach( propertyKey => {
+          if( propertyKey != 'ServiceToken' ) tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey].toString()});
+        });
         const data = await awsOrganizationsClient
         .createAccount({
           Email: event.ResourceProperties.Email,
           AccountName: event.ResourceProperties.AccountName,
-          Tags: [
-            {
-              Key: 'AccountType',
-              Value: event.ResourceProperties.AccountType
-            },
-            {
-              Key: 'StageName',
-              Value: event.ResourceProperties.StageName
-            },
-            {
-              Key: 'StageOrder',
-              Value: event.ResourceProperties.StageOrder.toString()
-            },
-            {
-              Key: 'HostedServices',
-              Value: event.ResourceProperties.HostedServices
-            }
-          ]
+          Tags: tags
         })
         .promise();
         console.log("create account: %j", data);
@@ -110,7 +97,7 @@ export async function isCompleteHandler(
         console.log(`Add tags: type = ${event.ResourceProperties.AccountType}`);
         const tags: { Key: string; Value: any; }[] = [];
         Object.keys(event.ResourceProperties).forEach( propertyKey => {
-          tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey].toString()});
+          if( propertyKey != 'ServiceToken' ) tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey].toString()});
         });
         const tagsUpdateRequestData = await awsOrganizationsClient
         .tagResource({

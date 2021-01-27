@@ -91,6 +91,14 @@ test("on event creates account for Create requests", async () => {
     Email: "fakeAlias+fakeStage@amazon.com",
     AccountName: "Workload-fakeStage",
     Tags: [
+      { 
+        Key: "Email", 
+        Value: "fakeAlias+fakeStage@amazon.com" 
+      }, 
+      { 
+        Key: "AccountName", 
+        Value: "Workload-fakeStage" 
+      },
       {
         Key: 'AccountType',
         Value: createEvent.ResourceProperties.AccountType
@@ -223,10 +231,6 @@ test("is complete for update updates tags of the account", async () => {
   sinon.assert.calledWith(tagResourceMock, {
     ResourceId: "fakeAccountId",
     Tags: [
-      { 
-        Key: 'ServiceToken', 
-        Value: createEvent.ResourceProperties.ServiceToken
-      },
       {
         Key: 'AccountType',
         Value: createEvent.ResourceProperties.AccountType
