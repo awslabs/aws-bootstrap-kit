@@ -32,6 +32,22 @@ export interface IAccountProps {
    */
   name: string;
   /**
+   * The account type
+   */
+  type?: AccountType;
+  /**
+   * The (optional) Stage name to be used in CI/CD pipeline
+   */
+  stageName?: string;
+  /**
+   * The (optional) Stage deployment order
+   */
+  stageOrder?: number;
+  /**
+   *  List of your services that will be hosted in this account. Set it to [ALL] if you don't plan to have dedicated account for each service.
+   */
+  hostedServices?: string[];
+  /**
    * The potential Organizational Unit Id the account should be placed in 
    */
   parentOrganizationalUnitId?: string;
@@ -44,7 +60,13 @@ export interface IAccountProps {
    * The AWS account Id
    */
   id?: string;
+}
 
+export enum AccountType {
+  CICD = "CICD",
+  DNS = "DNS",
+  STAGE = "STAGE",
+  PLAYGROUND = "PLAYGROUND"
 }
 
 /**
@@ -75,6 +97,10 @@ export class Account extends core.Construct {
         properties: {
           Email: accountProps.email,
           AccountName: accountProps.name,
+          AccountType: accountProps.type,
+          StageName: accountProps.stageName,
+          StageOrder: accountProps.stageOrder,
+          HostedServices: accountProps.hostedServices??JSON.stringify(accountProps.hostedServices)
         },
       }
     );
@@ -153,7 +179,7 @@ export class Account extends core.Construct {
       );
 
       // Enabling Organizations listAccounts call for auto resolution of stages and DNS accounts Ids and Names
-      if (accountProps.name === 'CICD') {
+      if (accountProps.type === AccountType.CICD) {
         this.registerAsDelegatedAdministrator(accountId, 'ssm.amazonaws.com');
       } else {
        // Switching to another principal to workaround the max number of delegated administrators (which is set to 3 by default).

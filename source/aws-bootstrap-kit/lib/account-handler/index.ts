@@ -30,24 +30,51 @@ import { Organizations } from "aws-sdk";
  * @param event An event with the following ResourceProperties: Email (coresponding to the account email) and AccountName (corresponding to the account name)
  * @returns Returns a PhysicalResourceId corresponding to the CreateAccount request's id necessary to check the status of the creation
  */
+
 export async function onEventHandler(
   event: any
 ): Promise<OnEventResponse> {
   console.log("Event: %j", event);
 
-  if (event.RequestType === "Create") {
-    const awsOrganizationsClient = new Organizations({region: 'us-east-1'});
-
-    const data = await awsOrganizationsClient
-      .createAccount({
-        Email: event.ResourceProperties.Email,
-        AccountName: event.ResourceProperties.AccountName,
-      })
-      .promise();
-    console.log("creat account: %j", data);
-    return { PhysicalResourceId: data.CreateAccountStatus?.Id };
+  switch (event.RequestType) {
+    case "Create":
+      const awsOrganizationsClient = new Organizations({region: 'us-east-1'});
+      try {
+        const data = await awsOrganizationsClient
+        .createAccount({
+          Email: event.ResourceProperties.Email,
+          AccountName: event.ResourceProperties.AccountName,
+          Tags: [
+            {
+              Key: 'AccountType',
+              Value: event.ResourceProperties.AccountType
+            },
+            {
+              Key: 'StageName',
+              Value: event.ResourceProperties.StageName
+            },
+            {
+              Key: 'StageOrder',
+              Value: event.ResourceProperties.StageOrder.toString()
+            },
+            {
+              Key: 'HostedServices',
+              Value: event.ResourceProperties.HostedServices
+            }
+          ]
+        })
+        .promise();
+        console.log("create account: %j", data);
+        return { PhysicalResourceId: data.CreateAccountStatus?.Id };
+      } catch (error) {
+        throw new Error(`Failed to create account: ${error}`);
+      }
+    case "Update":
+      return { PhysicalResourceId: event.PhysicalResourceId, ResourceProperties: event.ResourceProperties };
+    default:
+      throw new Error(`${event.RequestType} is not a supported operation`);
   }
-  throw new Error("UpdateAccount is not a supported operation");
+
 }
 
 /**
@@ -77,9 +104,23 @@ export async function isCompleteHandler(
 
   switch (event.RequestType) {
     case "Create":
-    case "Update":
-      // Complete when replica is reported as ACTIVE
       return { IsComplete: CreateAccountStatus === "SUCCEEDED", Data: {AccountId: AccountId} };
+    case "Update":
+      if(AccountId) {
+        console.log(`Add tags: type = ${event.ResourceProperties.AccountType}`);
+        const tags: { Key: string; Value: any; }[] = [];
+        Object.keys(event.ResourceProperties).forEach( propertyKey => {
+          tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey].toString()});
+        });
+        const tagsUpdateRequestData = await awsOrganizationsClient
+        .tagResource({
+          ResourceId: AccountId!,
+          Tags: tags
+        })
+        .promise();
+        console.log("Updated account tags: %j", tagsUpdateRequestData);
+      }
+        return { IsComplete: CreateAccountStatus === "SUCCEEDED", Data: {AccountId: AccountId} };
     case "Delete":
       // TODO: figure out what to do here
       throw new Error("DeleteAccount is not a supported operation");

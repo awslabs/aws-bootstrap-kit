@@ -28,6 +28,13 @@ Name|Description
 [ICrossAccountDNSDelegatorProps](#aws-bootstrap-kit-icrossaccountdnsdelegatorprops)|Properties to create delegated subzone of a zone hosted in a different account.
 
 
+**Enums**
+
+Name|Description
+----|-----------
+[AccountType](#aws-bootstrap-kit-accounttype)|*No description*
+
+
 
 ## class Account  <a id="aws-bootstrap-kit-account"></a>
 
@@ -259,6 +266,10 @@ Name | Type | Description
 -----|------|-------------
 **name** | <code>string</code> | The name of the AWS account.
 **email**? | <code>string</code> | The email associated to the AWS account.<br/>__*Optional*__
+**hostedServices**? | <code>Array<string></code> | List of your services that will be hosted in this account.<br/>__*Optional*__
+**stageName**? | <code>string</code> | The (optional) Stage name to be used in CI/CD pipeline.<br/>__*Optional*__
+**stageOrder**? | <code>number</code> | The (optional) Stage deployment order.<br/>__*Optional*__
+**type**? | <code>[AccountType](#aws-bootstrap-kit-accounttype)</code> | The account type.<br/>__*Optional*__
 
 
 
@@ -298,9 +309,13 @@ Name | Type | Description
 -----|------|-------------
 **email** | <code>string</code> | The email to use to create the AWS account.
 **name** | <code>string</code> | The name of the AWS Account.
+**hostedServices**? | <code>Array<string></code> | List of your services that will be hosted in this account.<br/>__*Optional*__
 **id**? | <code>string</code> | The AWS account Id.<br/>__*Optional*__
 **parentOrganizationalUnitId**? | <code>string</code> | The potential Organizational Unit Id the account should be placed in.<br/>__*Optional*__
 **parentOrganizationalUnitName**? | <code>string</code> | The potential Organizational Unit Name the account should be placed in.<br/>__*Optional*__
+**stageName**? | <code>string</code> | The (optional) Stage name to be used in CI/CD pipeline.<br/>__*Optional*__
+**stageOrder**? | <code>number</code> | The (optional) Stage deployment order.<br/>__*Optional*__
+**type**? | <code>[AccountType](#aws-bootstrap-kit-accounttype)</code> | The account type.<br/>__*Optional*__
 
 
 
@@ -349,5 +364,17 @@ Name | Type | Description
 **stagesAccounts** | <code>Array<[Account](#aws-bootstrap-kit-account)></code> | The stages Accounts taht will need their subzone delegation.
 **thirdPartyProviderDNSUsed**? | <code>boolean</code> | A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported).<br/>__*Optional*__
 
+
+
+## enum AccountType  <a id="aws-bootstrap-kit-accounttype"></a>
+
+
+
+Name | Description
+-----|-----
+**CICD** |
+**DNS** |
+**STAGE** |
+**PLAYGROUND** |
 
 
