@@ -99,8 +99,8 @@ export class Account extends core.Construct {
           AccountName: accountProps.name,
           AccountType: accountProps.type,
           StageName: accountProps.stageName,
-          StageOrder: accountProps.stageOrder,
-          HostedServices: accountProps.hostedServices??JSON.stringify(accountProps.hostedServices)
+          StageOrder: accountProps.stageOrder?.toString(),
+          HostedServices: accountProps.hostedServices?JSON.stringify(accountProps.hostedServices):undefined
         },
       }
     );

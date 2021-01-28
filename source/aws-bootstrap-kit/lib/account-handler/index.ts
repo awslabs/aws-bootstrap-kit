@@ -42,7 +42,7 @@ export async function onEventHandler(
       try {
         const tags: { Key: string; Value: any; }[] = [];
         Object.keys(event.ResourceProperties).forEach( propertyKey => {
-          if( propertyKey != 'ServiceToken' ) tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey].toString()});
+          if( propertyKey != 'ServiceToken' ) tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey]});
         });
         const data = await awsOrganizationsClient
         .createAccount({
@@ -97,7 +97,7 @@ export async function isCompleteHandler(
         console.log(`Add tags: type = ${event.ResourceProperties.AccountType}`);
         const tags: { Key: string; Value: any; }[] = [];
         Object.keys(event.ResourceProperties).forEach( propertyKey => {
-          if( propertyKey != 'ServiceToken' ) tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey].toString()});
+          if( propertyKey != 'ServiceToken' ) tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey]});
         });
         const tagsUpdateRequestData = await awsOrganizationsClient
         .tagResource({

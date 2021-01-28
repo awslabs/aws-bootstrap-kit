@@ -36,7 +36,7 @@ const createEvent: OnEventRequest = {
     AccountName: "Workload-fakeStage",
     AccountType: AccountType.STAGE,
     StageName: "stage1",
-    StageOrder: 1,
+    StageOrder: "1",
     HostedServices: '["ALL"]'
   },
 };

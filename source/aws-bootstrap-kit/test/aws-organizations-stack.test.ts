@@ -57,14 +57,14 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
                     {
                         name: 'Account1',
                         type: AccountType.PLAYGROUND,
-                        hostedServices: ['ALL']
+                        hostedServices: ['app1', 'app2']
                     },
                     {
                         name: 'Account2',
                         type: AccountType.STAGE,
                         stageOrder: 1,
                         stageName: 'stage1',
-                        hostedServices: ['ALL']
+                        hostedServices: ['app1', 'app2']
                     }
                 ]
             },
@@ -76,7 +76,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
                         type: AccountType.STAGE,
                         stageOrder: 2,
                         stageName: 'stage2',
-                        hostedServices: ['ALL']
+                        hostedServices: ['app1', 'app2']
                     }
                 ]
             }
@@ -138,7 +138,8 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           ]
         },
         "AccountName": "Account1",
-        "AccountType": AccountType.PLAYGROUND
+        "AccountType": AccountType.PLAYGROUND,
+        "HostedServices": JSON.stringify(['app1', 'app2'])
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
@@ -157,7 +158,8 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           "AccountName": "Account2",
           "AccountType": AccountType.STAGE,
           "StageName": "stage1",
-          "StageOrder": 1
+          "StageOrder": "1",
+          "HostedServices": JSON.stringify(['app1', 'app2'])
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
@@ -196,7 +198,8 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           "AccountName": "Account3",
           "AccountType": AccountType.STAGE,
           "StageName": "stage2",
-          "StageOrder": 2
+          "StageOrder": "2",
+          "HostedServices": JSON.stringify(['app1', 'app2'])
     });
 
 });
