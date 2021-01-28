@@ -19,7 +19,7 @@ import * as sns from '@aws-cdk/aws-sns';
 import * as subs from '@aws-cdk/aws-sns-subscriptions';
 import {Organization} from './organization';
 import {OrganizationalUnit} from './organizational-unit';
-import {Account} from './account';
+import {Account, AccountType} from './account';
 import {SecureRootUser} from './secure-root-user';
 import {OrganizationTrail} from './organization-trail';
 import {version} from '../package.json';
@@ -40,6 +40,22 @@ export interface AccountSpec {
    * The email associated to the AWS account
    */
   readonly email?: string
+  /**
+   * The account type
+   */
+  readonly type?: AccountType;
+  /**
+   * The (optional) Stage name to be used in CI/CD pipeline
+   */
+  readonly stageName?: string;
+  /**
+   * The (optional) Stage deployment order
+   */
+  readonly stageOrder?: number;
+  /**
+   *  List of your services that will be hosted in this account. Set it to [ALL] if you don't plan to have dedicated account for each service.
+   */
+  readonly hostedServices?: string[];
 }
 
 /**
@@ -129,7 +145,11 @@ export class AwsOrganizationsStack extends cdk.Stack {
       let account = new Account(this, accountSpec.name, {
         email: accountEmail,
         name: accountSpec.name,
-        parentOrganizationalUnitId: organizationalUnit.id
+        parentOrganizationalUnitId: organizationalUnit.id,
+        type: accountSpec.type,
+        stageName: accountSpec.stageName,
+        stageOrder: accountSpec.stageOrder,
+        hostedServices: accountSpec.hostedServices
       });
       // Adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
       account.node.addDependency(previousSequentialConstruct);

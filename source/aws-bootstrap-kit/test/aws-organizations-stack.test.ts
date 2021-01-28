@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import "@aws-cdk/assert/jest";
-import { AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib";
+import { AccountType, AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib";
 import { Stack } from "@aws-cdk/core";
 import {version} from '../package.json';
 
@@ -26,7 +26,7 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
       name: "SDLC",
       accounts: [
         {
-          name: "Account1"
+          name: "Account1",
         },
         {
           name: "Account2"
@@ -55,10 +55,16 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
                 name: 'SDLC',
                 accounts: [
                     {
-                        name: 'Account1'
+                        name: 'Account1',
+                        type: AccountType.PLAYGROUND,
+                        hostedServices: ['app1', 'app2']
                     },
                     {
-                        name: 'Account2'
+                        name: 'Account2',
+                        type: AccountType.STAGE,
+                        stageOrder: 1,
+                        stageName: 'stage1',
+                        hostedServices: ['app1', 'app2']
                     }
                 ]
             },
@@ -66,7 +72,11 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
                 name: 'Prod',
                 accounts: [
                     {
-                        name: 'Account3'
+                        name: 'Account3',
+                        type: AccountType.STAGE,
+                        stageOrder: 2,
+                        stageName: 'stage2',
+                        hostedServices: ['app1', 'app2']
                     }
                 ]
             }
@@ -116,18 +126,20 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
         "Email": {
-            "Fn::Join": [
-              "",
-              [
-                "test+Account1-",
-                {
-                  "Ref": "AWS::AccountId"
-                },
-                "@test.com"
-              ]
+          "Fn::Join": [
+            "",
+            [
+              "test+Account1-",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              "@test.com"
             ]
-          },
-          "AccountName": "Account1"
+          ]
+        },
+        "AccountName": "Account1",
+        "AccountType": AccountType.PLAYGROUND,
+        "HostedServices": JSON.stringify(['app1', 'app2'])
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
@@ -143,7 +155,11 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
               ]
             ]
           },
-          "AccountName": "Account2"
+          "AccountName": "Account2",
+          "AccountType": AccountType.STAGE,
+          "StageName": "stage1",
+          "StageOrder": "1",
+          "HostedServices": JSON.stringify(['app1', 'app2'])
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
@@ -179,7 +195,11 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
               ]
             ]
           },
-          "AccountName": "Account3"
+          "AccountName": "Account3",
+          "AccountType": AccountType.STAGE,
+          "StageName": "stage2",
+          "StageOrder": "2",
+          "HostedServices": JSON.stringify(['app1', 'app2'])
     });
 
 });

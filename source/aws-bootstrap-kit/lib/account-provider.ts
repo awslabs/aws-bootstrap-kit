@@ -64,7 +64,9 @@ export class AccountProvider extends NestedStack {
 
     this.onEventHandler.addToRolePolicy(
         new iam.PolicyStatement({
-          actions: ['organizations:CreateAccount'],
+          actions: [
+            'organizations:CreateAccount'
+          ],
           resources: ['*'],
         }),
       );
@@ -81,7 +83,8 @@ export class AccountProvider extends NestedStack {
         new iam.PolicyStatement({
           actions: [
               'organizations:CreateAccount',
-              'organizations:DescribeCreateAccountStatus'
+              'organizations:DescribeCreateAccountStatus',
+              'organizations:TagResource'
             ],
           resources: ['*'],
         }),

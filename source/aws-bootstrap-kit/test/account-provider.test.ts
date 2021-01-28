@@ -17,6 +17,7 @@ limitations under the License.
 import { OnEventRequest, IsCompleteRequest } from "@aws-cdk/custom-resources/lib/provider-framework/types";
 import * as AWS from "aws-sdk-mock";
 import * as sinon from "sinon";
+import { AccountType } from "../lib";
 import { isCompleteHandler, onEventHandler } from "../lib/account-handler";
 
 AWS.setSDK(require.resolve("aws-sdk"));
@@ -33,11 +34,15 @@ const createEvent: OnEventRequest = {
     ServiceToken: "fakeToken",
     Email: "fakeAlias+fakeStage@amazon.com",
     AccountName: "Workload-fakeStage",
+    AccountType: AccountType.STAGE,
+    StageName: "stage1",
+    StageOrder: "1",
+    HostedServices: '["ALL"]'
   },
 };
 
 
-const isCompleteEvent: IsCompleteRequest = {
+const isCompleteCreateEvent: IsCompleteRequest = {
   RequestType: "Create",
   ServiceToken: "fakeToken",
   ResponseURL: "fakeUrl",
@@ -50,6 +55,24 @@ const isCompleteEvent: IsCompleteRequest = {
   },
   PhysicalResourceId: "fakeRequestCreateAccountStatusId"
 }
+
+const updateEvent: OnEventRequest = { 
+  ... createEvent, 
+  RequestType: "Update",   
+  PhysicalResourceId: "fakeRequestCreateAccountStatusId" 
+}
+const isCompleteUpdateEvent: IsCompleteRequest = { 
+  ... isCompleteCreateEvent, 
+  RequestType: "Update", 
+  ResourceProperties: {
+    ServiceToken:  updateEvent.ResourceProperties.ServiceToken, 
+    AccountType: updateEvent.ResourceProperties.AccountType,
+    StageName: updateEvent.ResourceProperties.StageName,
+    StageOrder: updateEvent.ResourceProperties.StageOrder,
+    HostedServices: updateEvent.ResourceProperties.HostedServices
+  } 
+}
+
 afterEach(() => {
   AWS.restore();
 });
@@ -67,6 +90,32 @@ test("on event creates account for Create requests", async () => {
   sinon.assert.calledWith(createAccountMock, {
     Email: "fakeAlias+fakeStage@amazon.com",
     AccountName: "Workload-fakeStage",
+    Tags: [
+      { 
+        Key: "Email", 
+        Value: "fakeAlias+fakeStage@amazon.com" 
+      }, 
+      { 
+        Key: "AccountName", 
+        Value: "Workload-fakeStage" 
+      },
+      {
+        Key: 'AccountType',
+        Value: createEvent.ResourceProperties.AccountType
+      },
+      {
+        Key: 'StageName',
+        Value: createEvent.ResourceProperties.StageName
+      },
+      {
+        Key: 'StageOrder',
+        Value: createEvent.ResourceProperties.StageOrder.toString()
+      },
+      {
+        Key: 'HostedServices',
+        Value: createEvent.ResourceProperties.HostedServices
+      }
+    ],
   });
 
   expect(data).toEqual({
@@ -74,20 +123,17 @@ test("on event creates account for Create requests", async () => {
   });
 });
 
-test("on event does not call createAccount for Update requests", async () => {
+test("on update event does not call createAccount for Update requests but forward properties to isCompleteHandler for tag updates", async () => {
   const createAccountMock = sinon.fake.resolves({});
 
   AWS.mock("Organizations", "createAccount", createAccountMock);
 
-  try {
-    await onEventHandler({
-      ...createEvent,
-      RequestType: "Update",
-    });
-  } catch (error) {
+  const data = await onEventHandler(updateEvent);
     sinon.assert.notCalled(createAccountMock);
-    expect(error.message).toEqual("UpdateAccount is not a supported operation");
-  }
+    expect(data).toEqual({
+      PhysicalResourceId: updateEvent.PhysicalResourceId,
+      ResourceProperties: updateEvent.ResourceProperties
+    });
 });
 
 test("is complete for create throw without requestId", async () => {
@@ -131,12 +177,12 @@ test("is complete for create returns false when account creation is in progress"
     describeCreateAccountStatusMock
   );
 
-  const data = await isCompleteHandler(isCompleteEvent);
+  const data = await isCompleteHandler(isCompleteCreateEvent);
 
   expect(data.IsComplete).toBeFalsy;
 });
 
-test("is complete for create returns false when account creation is complete", async () => {
+test("is complete for create returns true when account creation is complete", async () => {
   const describeCreateAccountStatusMock = sinon.fake.resolves({
     CreateAccountStatus: {
         State: "SUCCEEDED",
@@ -150,10 +196,59 @@ test("is complete for create returns false when account creation is complete", a
     describeCreateAccountStatusMock
   );
 
-  const data = await isCompleteHandler(isCompleteEvent);
+  const data = await isCompleteHandler(isCompleteCreateEvent);
 
   expect(data.IsComplete).toBeTruthy;
   expect(data.Data?.AccountId).toEqual("fakeAccountId");
+});
+
+test("is complete for update updates tags of the account", async () => {
+  const describeCreateAccountStatusMock = sinon.fake.resolves({
+    CreateAccountStatus: {
+        State: "SUCCEEDED",
+        AccountId: "fakeAccountId"
+    }
+  });
+  const tagResourceMock = sinon.fake.resolves({});
+
+  AWS.mock(
+    "Organizations",
+    "describeCreateAccountStatus",
+    describeCreateAccountStatusMock
+  );
+
+  AWS.mock(
+    "Organizations",
+    "tagResource",
+    tagResourceMock
+  );
+
+  const data = await isCompleteHandler(isCompleteUpdateEvent);
+
+  expect(data.IsComplete).toBeTruthy;
+  expect(data.Data?.AccountId).toEqual("fakeAccountId");
+
+  sinon.assert.calledWith(tagResourceMock, {
+    ResourceId: "fakeAccountId",
+    Tags: [
+      {
+        Key: 'AccountType',
+        Value: createEvent.ResourceProperties.AccountType
+      },
+      {
+        Key: 'StageName',
+        Value: createEvent.ResourceProperties.StageName
+      },
+      {
+        Key: 'StageOrder',
+        Value: createEvent.ResourceProperties.StageOrder.toString()
+      },
+      {
+        Key: 'HostedServices',
+        Value: createEvent.ResourceProperties.HostedServices
+      }
+    ],
+  });
 });
 
 test("is complete for delete  throws", async () => {
@@ -167,7 +262,7 @@ test("is complete for delete  throws", async () => {
 
   try {
     await isCompleteHandler({
-      ...isCompleteEvent,
+      ...isCompleteCreateEvent,
       RequestType: "Delete",
     });
   } catch (error) {

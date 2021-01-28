@@ -1,6 +1,6 @@
 {
   "name": "aws-bootstrap-kit",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "repository": {
     "url": "https://github.com/awslabs/aws-bootstrap-kit",
     "type": "git"
@@ -50,7 +50,7 @@
     "@types/node": "10.17.27",
     "@types/sinon": "^9.0.5",
     "aws-cdk": "1.85.0",
-    "aws-sdk": "2.741.0",
+    "aws-sdk": "^2.771.0",
     "aws-sdk-mock": "5.1.0",
     "codecov": "^3.7.2",
     "detect-indent": "^6.0.0",
