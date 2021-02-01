@@ -1,6 +1,6 @@
 {
   "name": "aws-bootstrap-kit",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "repository": {
     "url": "https://github.com/awslabs/aws-bootstrap-kit",
     "type": "git"
@@ -42,6 +42,9 @@
     "watch": "tsc -w",
     "release": "standard-version",
     "docgen": "jsii-docgen"
+  },
+  "engines": {
+    "node": ">= 10.13.0 <13 || >=13.7.0 <15.6.0 || >=15.7.0"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.85.0",
