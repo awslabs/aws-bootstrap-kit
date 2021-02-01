@@ -43,6 +43,9 @@
     "release": "standard-version",
     "docgen": "jsii-docgen"
   },
+  "engines": {
+    "node": ">= 10.13.0 <13 || >=13.7.0 <15.6.0 || >=15.7.0"
+  },
   "devDependencies": {
     "@aws-cdk/assert": "1.85.0",
     "@types/aws-lambda": "8.10.61",
