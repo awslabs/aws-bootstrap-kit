@@ -100,7 +100,7 @@ export class Account extends core.Construct {
           AccountType: accountProps.type,
           StageName: accountProps.stageName,
           StageOrder: accountProps.stageOrder?.toString(),
-          HostedServices: accountProps.hostedServices?JSON.stringify(accountProps.hostedServices):undefined
+          HostedServices: accountProps.hostedServices?accountProps.hostedServices.join(':'):undefined
         },
       }
     );

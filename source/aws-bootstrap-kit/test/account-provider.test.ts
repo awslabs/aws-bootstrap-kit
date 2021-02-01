@@ -37,7 +37,7 @@ const createEvent: OnEventRequest = {
     AccountType: AccountType.STAGE,
     StageName: "stage1",
     StageOrder: "1",
-    HostedServices: '["ALL"]'
+    HostedServices: "app1:app2:app3"
   },
 };
 

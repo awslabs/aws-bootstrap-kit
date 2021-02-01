@@ -139,7 +139,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
         },
         "AccountName": "Account1",
         "AccountType": AccountType.PLAYGROUND,
-        "HostedServices": JSON.stringify(['app1', 'app2'])
+        "HostedServices": "app1:app2"
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
@@ -159,7 +159,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           "AccountType": AccountType.STAGE,
           "StageName": "stage1",
           "StageOrder": "1",
-          "HostedServices": JSON.stringify(['app1', 'app2'])
+          "HostedServices": "app1:app2"
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
@@ -199,7 +199,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           "AccountType": AccountType.STAGE,
           "StageName": "stage2",
           "StageOrder": "2",
-          "HostedServices": JSON.stringify(['app1', 'app2'])
+          "HostedServices": "app1:app2"
     });
 
 });
