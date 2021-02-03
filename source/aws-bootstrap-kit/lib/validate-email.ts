@@ -14,23 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Construct, CustomResource } from "@aws-cdk/core";
+import { Construct, CustomResource, Duration } from "@aws-cdk/core";
 import ValidateEmailProvider from "./validate-email-provider";
 
 /**
  * Properties of ValidateEmail
  */
-interface ValidateEmailProps {
+export interface ValidateEmailProps {
   /**
    * Email address of the Root account
    */
   readonly email: string;
+  readonly timeout?: Duration;
 }
 
 /**
  * Email Validation
  */
-export default class ValidateEmail extends Construct {
+export class ValidateEmail extends Construct {
   /**
    * Constructor
    *
@@ -49,7 +50,7 @@ export default class ValidateEmail extends Construct {
 
     const subAddressedEmail = prefix + "+aws@" + domain;
 
-    const { provider } = ValidateEmailProvider.getOrCreate(this);
+    const { provider } = ValidateEmailProvider.getOrCreate(this, {timeout: props.timeout});
 
     new CustomResource(this, "EmailValidateResource", {
       serviceToken: provider.serviceToken,
