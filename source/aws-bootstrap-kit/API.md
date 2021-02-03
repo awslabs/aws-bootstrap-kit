@@ -8,6 +8,7 @@ Name|Description
 [AwsOrganizationsStack](#aws-bootstrap-kit-awsorganizationsstack)|A Stack creating the Software Development Life Cycle (SDLC) Organization.
 [CrossAccountDNSDelegator](#aws-bootstrap-kit-crossaccountdnsdelegator)|TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776 High-level construct that creates: 1. A public hosted zone in the current account 2. A record name in the hosted zone id of target account.
 [RootDns](#aws-bootstrap-kit-rootdns)|A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation.
+[ValidateEmail](#aws-bootstrap-kit-validateemail)|Email Validation.
 
 
 **Structs**
@@ -18,6 +19,7 @@ Name|Description
 [AwsOrganizationsStackProps](#aws-bootstrap-kit-awsorganizationsstackprops)|Properties for AWS SDLC Organizations Stack.
 [OUSpec](#aws-bootstrap-kit-ouspec)|Organizational Unit Input details.
 [RootDnsProps](#aws-bootstrap-kit-rootdnsprops)|Properties for RootDns.
+[ValidateEmailProps](#aws-bootstrap-kit-validateemailprops)|Properties of ValidateEmail.
 
 
 **Interfaces**
@@ -255,6 +257,31 @@ __Returns__:
 
 
 
+## class ValidateEmail  <a id="aws-bootstrap-kit-validateemail"></a>
+
+Email Validation.
+
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
+__Extends__: [Construct](#aws-cdk-core-construct)
+
+### Initializer
+
+
+Constructor.
+
+```ts
+new ValidateEmail(scope: Construct, id: string, props: ValidateEmailProps)
+```
+
+* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  The parent Construct instantiating this construct.
+* **id** (<code>string</code>)  This instance name.
+* **props** (<code>[ValidateEmailProps](#aws-bootstrap-kit-validateemailprops)</code>)  *No description*
+  * **email** (<code>string</code>)  Email address of the Root account. 
+  * **timeout** (<code>[Duration](#aws-cdk-core-duration)</code>)  *No description* __*Optional*__
+
+
+
+
 ## struct AccountSpec  <a id="aws-bootstrap-kit-accountspec"></a>
 
 
@@ -363,6 +390,20 @@ Name | Type | Description
 **rootHostedZoneDNSName** | <code>string</code> | The top level domain name.
 **stagesAccounts** | <code>Array<[Account](#aws-bootstrap-kit-account)></code> | The stages Accounts taht will need their subzone delegation.
 **thirdPartyProviderDNSUsed**? | <code>boolean</code> | A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported).<br/>__*Optional*__
+
+
+
+## struct ValidateEmailProps  <a id="aws-bootstrap-kit-validateemailprops"></a>
+
+
+Properties of ValidateEmail.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**email** | <code>string</code> | Email address of the Root account.
+**timeout**? | <code>[Duration](#aws-cdk-core-duration)</code> | __*Optional*__
 
 
 

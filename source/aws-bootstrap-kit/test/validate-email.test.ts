@@ -26,7 +26,7 @@ import {
   onEventHandler
 } from "../lib/validate-email-handler";
 import { Stack } from "@aws-cdk/core";
-import ValidateEmail from "../lib/validate-email";
+import { ValidateEmail } from "../lib/validate-email";
 
 test("Should throw Error if Email Prefix contains + ", () => {
   const validateEmailStack = () =>
@@ -55,7 +55,7 @@ const createEvent: OnEventRequest = {
   }
 };
 
-const isCompleteEvent: IsCompleteRequest = {
+const isCompleteCreateEvent: IsCompleteRequest = {
   RequestType: "Create",
   ServiceToken: "fakeToken",
   ResponseURL: "fakeUrl",
@@ -69,6 +69,9 @@ const isCompleteEvent: IsCompleteRequest = {
   },
   PhysicalResourceId: "fakeRequestCreateAccountStatusId"
 };
+
+const deleteEvent = { ...createEvent, RequestType: 'Delete' }
+const isCompleteDeleteEvent: IsCompleteRequest = { ...isCompleteCreateEvent, RequestType: 'Delete' }
 
 afterEach(() => {
   AWS.restore();
@@ -127,7 +130,7 @@ test("is complete will throw error without requestId", async () => {
 
   try {
     await isCompleteHandler({
-      ...isCompleteEvent,
+      ...isCompleteCreateEvent,
       PhysicalResourceId: undefined
     });
     sinon.assert.fail();
@@ -150,7 +153,7 @@ test("is complete for create returns false when email is not verified yet", asyn
     getIdentityVerificationMock
   );
 
-  const data: any = await isCompleteHandler(isCompleteEvent);
+  const data: any = await isCompleteHandler(isCompleteCreateEvent);
 
   expect(data.IsComplete).toBeFalsy;
 });
@@ -168,7 +171,29 @@ test("is complete for create returns true when email is verified", async () => {
     getIdentityVerificationMock
   );
 
-  const data: any = await isCompleteHandler(isCompleteEvent);
+  const data: any = await isCompleteHandler(isCompleteCreateEvent);
+
+  expect(data.IsComplete).toBeTruthy;
+});
+
+
+test("on event delete no calls ses verifyEmailIdentity", async () => {
+  const verifyEmailIdentityMock = sinon.fake.resolves(true);
+
+  AWS.mock("SES", "verifyEmailIdentity", verifyEmailIdentityMock);
+
+  const data = await onEventHandler(deleteEvent);
+
+  sinon.assert.notCalled(verifyEmailIdentityMock);
+
+  expect(data).toEqual({
+    PhysicalResourceId: "validateEmail"
+  });
+});
+
+test("is complete for delete returns true when email is verified", async () => {
+
+  const data: any = await isCompleteHandler(isCompleteDeleteEvent);
 
   expect(data.IsComplete).toBeTruthy;
 });

@@ -24,7 +24,7 @@ import {SecureRootUser} from './secure-root-user';
 import {OrganizationTrail} from './organization-trail';
 import {version} from '../package.json';
 import { RootDns } from './dns';
-import ValidateEmailStack from './validate-email';
+import { ValidateEmail } from './validate-email';
 
 /**
  * AWS Account input details
@@ -181,7 +181,7 @@ export class AwsOrganizationsStack extends cdk.Stack {
         this.domain = email.split('@', 2)[1];
 
         if(forceEmailVerification) {
-          const validateEmail = new ValidateEmailStack(this, 'EmailValidation', { email });
+          const validateEmail = new ValidateEmail(this, 'EmailValidation', { email });
           org.node.addDependency(validateEmail);
         }
       }

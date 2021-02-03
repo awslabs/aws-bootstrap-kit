@@ -39,7 +39,11 @@ export async function onEventHandler(
       .verifyEmailIdentity({ EmailAddress: event.ResourceProperties.email })
       .promise();
 
-    return { PhysicalResourceId: "validateEmail" };
+    return { PhysicalResourceId: 'validateEmail' };
+  }
+
+  if (event.RequestType === "Delete") {
+    return { PhysicalResourceId: event.PhysicalResourceId };
   }
 }
 
@@ -70,5 +74,8 @@ export async function isCompleteHandler(
       IsComplete:
         response.VerificationAttributes[email]?.VerificationStatus === "Success"
     };
+  }
+  if (event.RequestType === "Delete") {
+    return { IsComplete: true };
   }
 }

@@ -13,13 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 import * as path from "path";
 import * as iam from "@aws-cdk/aws-iam";
 import * as lambda from "@aws-cdk/aws-lambda";
-import { Construct, Duration, Stack, NestedStack } from "@aws-cdk/core";
+import { Construct, Duration, Stack, NestedStack, StackProps } from "@aws-cdk/core";
 import { Provider } from "@aws-cdk/custom-resources";
 
+
+export interface ValidateEmailProviderProps extends StackProps {
+  timeout?: Duration;
+}
 /**
  * A Custom Resource provider capable of validating emails
  */
@@ -32,12 +35,12 @@ export default class ValidateEmailProvider extends NestedStack {
   /**
    * Creates a stack-singleton resource provider nested stack.
    */
-  public static getOrCreate(scope: Construct) {
+  public static getOrCreate(scope: Construct, props: ValidateEmailProviderProps) {
     const stack = Stack.of(scope);
     const uid = "@aws-cdk/aws-bootstrap-kit.ValidateEmailProvider";
     return (
       (stack.node.tryFindChild(uid) as ValidateEmailProvider) ||
-      new ValidateEmailProvider(stack, uid)
+      new ValidateEmailProvider(stack, uid, props)
     );
   }
 
@@ -47,7 +50,7 @@ export default class ValidateEmailProvider extends NestedStack {
    * @param scope The parent Construct instantiating this construct
    * @param id This instance name
    */
-  constructor(scope: Construct, id: string) {
+  constructor(scope: Construct, id: string, props: ValidateEmailProviderProps) {
     super(scope, id);
 
     const code = lambda.Code.fromAsset(
@@ -72,7 +75,7 @@ export default class ValidateEmailProvider extends NestedStack {
       code,
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: "index.isCompleteHandler",
-      timeout: Duration.minutes(10)
+      timeout: props.timeout ? props.timeout : Duration.minutes(10)
     });
 
     isCompleteHandler.addToRolePolicy(
