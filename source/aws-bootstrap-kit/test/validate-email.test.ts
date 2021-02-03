@@ -70,7 +70,7 @@ const isCompleteCreateEvent: IsCompleteRequest = {
   PhysicalResourceId: "fakeRequestCreateAccountStatusId"
 };
 
-const deleteEvent = { ...createEvent, RequestType: 'Delete' }
+const deleteEvent = { ...createEvent, RequestType: 'Delete', PhysicalResourceId: 'validateEmail' }
 const isCompleteDeleteEvent: IsCompleteRequest = { ...isCompleteCreateEvent, RequestType: 'Delete' }
 
 afterEach(() => {
