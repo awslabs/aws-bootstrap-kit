@@ -186,14 +186,16 @@ export class AwsOrganizationsStack extends cdk.Stack {
         }
       }
 
-      let previousSequentialConstruct: cdk.IDependable = org;
+      let orgTrail = new OrganizationTrail(this, 'OrganizationTrail', {OrganizationId: org.id});
+      orgTrail.node.addDependency(org);
+
+      let previousSequentialConstruct: cdk.IDependable = orgTrail;
 
       nestedOU.forEach(nestedOU => {
         previousSequentialConstruct = this.createOrganizationTree(nestedOU, org.rootId, previousSequentialConstruct);
       });
 
-      let orgTrail = new OrganizationTrail(this, 'OrganizationTrail', {OrganizationId: org.id});
-      orgTrail.node.addDependency(org);
+
     }
 
     const secureRootUserConfigTopic = new sns.Topic(this, 'SecureRootUserConfigTopic');
