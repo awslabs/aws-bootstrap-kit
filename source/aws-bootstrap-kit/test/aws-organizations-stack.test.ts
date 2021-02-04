@@ -27,6 +27,7 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
       accounts: [
         {
           name: "Account1",
+          stageName: 'theStage',
         },
         {
           name: "Account2"
@@ -220,19 +221,19 @@ test("should create root domain zone and stage based domain if rootHostedZoneDNS
   expect(awsOrganizationsStack).toCountResources("AWS::Route53::RecordSet",3);
   expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone",4);
   expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
-    Name: "Account1.yourdomain.com.",
+    Name: "thestage.yourdomain.com.",
     Type: "NS"
   });
   expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
-    Name: "Account2.yourdomain.com.",
+    Name: "account2.yourdomain.com.",
     Type: "NS"
   });
   expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
-    Name: "Account3.yourdomain.com.",
+    Name: "account3.yourdomain.com.",
     Type: "NS"
   });
   expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
-    Name: "Account3.yourdomain.com."
+    Name: "account3.yourdomain.com."
   });
 });
 

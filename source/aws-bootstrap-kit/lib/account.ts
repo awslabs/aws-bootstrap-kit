@@ -82,6 +82,7 @@ export class Account extends core.Construct {
    */
   readonly accountName: string;
   readonly accountId: string;
+  readonly accountStageName?: string;
 
   constructor(scope: core.Construct, id: string, accountProps: IAccountProps) {
     super(scope, id);
@@ -110,6 +111,7 @@ export class Account extends core.Construct {
     accountProps.id = accountId;
     this.accountName = accountProps.name;
     this.accountId = accountId;
+    this.accountStageName = accountProps.stageName;
 
     new ssm.StringParameter(this, `${accountProps.name}-AccountDetails`, {
       description: `Details of ${accountProps.name}`,

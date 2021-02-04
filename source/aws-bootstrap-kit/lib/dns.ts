@@ -67,12 +67,20 @@ export class RootDns extends cdk.Construct {
     }
   }
 
+  getSubdomainPrefix(account: Account){
+    let prefix: string = account.accountStageName ? account.accountStageName : account.accountName;
+    prefix = prefix.toLowerCase();
+    prefix = prefix.replace(' ', '-');
+    return prefix;
+  }
+
   createStageSubZone(
     account: Account,
     rootHostedZoneDNSName: string
   ): route53.HostedZone {
-    return new route53.HostedZone(this, `${account.accountName}StageSubZone`, {
-      zoneName: `${account.accountName}.${rootHostedZoneDNSName}`,
+    const subDomainPrefix = this.getSubdomainPrefix(account);
+    return new route53.HostedZone(this, `${subDomainPrefix}StageSubZone`, {
+      zoneName: `${subDomainPrefix}.${rootHostedZoneDNSName}`,
     });
   }
 
