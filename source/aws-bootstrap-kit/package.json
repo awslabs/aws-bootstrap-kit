@@ -5,7 +5,7 @@
     "url": "https://github.com/awslabs/aws-bootstrap-kit",
     "type": "git"
   },
-  "main": "lib/index.ts",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "jsii": {
