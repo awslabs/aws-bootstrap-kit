@@ -59,8 +59,6 @@ export class SecureRootUser extends core.Construct {
       )
     });
 
-    autoRemediationRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonSSMAutomationRole'));
-
     enforceMFARule.node.addDependency(configRecorder);
     enforceNoAccessKeyRule.node.addDependency(configRecorder);
 
@@ -68,7 +66,16 @@ export class SecureRootUser extends core.Construct {
 
     // Create remediations by notifying owner
 
-    new config.CfnRemediationConfiguration(this, "enforceMfaNotification", {
+    const mfaRemediationInstructionMessage = `Your main account (${core.Stack.of(this).account}) root user still not have MFA activated.\n\t1. Go to https://signin.aws.amazon.com/console and sign in using your root account\n\t2. Go to https://console.aws.amazon.com/iam/home#/security_credentials\n\t3. Activate MFA`;
+    this.addNotCompliancyNotificationMechanism(enforceMFARule, autoRemediationRole, secureRootUserConfigTopic, mfaRemediationInstructionMessage);
+    
+    const accessKeyRemediationInstructionMessage = `Your main account (${core.Stack.of(this).account}) root user have static access keys.\n\t1. Go to https://signin.aws.amazon.com/console and sign in using your root account\n\t2. Go to https://console.aws.amazon.com/iam/home#/security_credentials\n\t3. Delete your Access keys`;
+    this.addNotCompliancyNotificationMechanism(enforceNoAccessKeyRule, autoRemediationRole, secureRootUserConfigTopic, accessKeyRemediationInstructionMessage);
+  }
+
+
+  private addNotCompliancyNotificationMechanism(enforceMFARule: config.ManagedRule, autoRemediationRole: iam.Role, secureRootUserConfigTopic: sns.Topic, message: string) {
+    new config.CfnRemediationConfiguration(this, `Notification-${enforceMFARule.node.id}`, {
       configRuleName: enforceMFARule.configRuleName,
       targetId: "AWS-PublishSNSNotification",
       targetType: "SSM_DOCUMENT",
@@ -95,45 +102,11 @@ export class SecureRootUser extends core.Construct {
           StaticValue: {
             Values: [
               // WARNING: Limited to 256 char
-              "Your main account root user seems to still not have MFA activated.\n\t1. Go to https://signin.aws.amazon.com/console and sign in using your root account \n\t2. Go to https://console.aws.amazon.com/iam/home#/security_credentials\n\t3. Activate MFA"
+              message
             ]
           }
         }
       }
     });
-
-    new config.CfnRemediationConfiguration(this, "enforceNoAccessKeyNotification", {
-      configRuleName: enforceNoAccessKeyRule.configRuleName,
-      targetId: "AWS-PublishSNSNotification",
-      targetType: "SSM_DOCUMENT",
-      targetVersion: "1",
-      automatic: true,
-      maximumAutomaticAttempts: 1,
-      retryAttemptSeconds: 60,
-      parameters: {
-        AutomationAssumeRole: {
-          StaticValue: {
-            Values: [
-              autoRemediationRole.roleArn
-            ]
-          }
-        },
-        TopicArn: {
-          StaticValue: {
-            Values: [
-              secureRootUserConfigTopic.topicArn
-            ]
-          }
-        },
-        Message: {
-          StaticValue: {
-            Values: [
-              // WARNING: Limited to 256 char
-              "Your main account root user seems to have static access keys.\n\t1. Go to https://signin.aws.amazon.com/console and sign in using your root account \n\t2. Go to https://console.aws.amazon.com/iam/home#/security_credentials\n\t3. Delete your Access keys"
-            ]
-          }
-        }
-      }
-    })
   }
 }
