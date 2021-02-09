@@ -8,6 +8,7 @@ Name|Description
 [AwsOrganizationsStack](#aws-bootstrap-kit-awsorganizationsstack)|A Stack creating the Software Development Life Cycle (SDLC) Organization.
 [CrossAccountDNSDelegator](#aws-bootstrap-kit-crossaccountdnsdelegator)|TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776 High-level construct that creates: 1. A public hosted zone in the current account 2. A record name in the hosted zone id of target account.
 [RootDns](#aws-bootstrap-kit-rootdns)|A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation.
+[SecureRootUser](#aws-bootstrap-kit-securerootuser)|*No description*
 [ValidateEmail](#aws-bootstrap-kit-validateemail)|Email Validation.
 
 
@@ -268,6 +269,29 @@ getSubdomainPrefix(account: Account): string
 
 __Returns__:
 * <code>string</code>
+
+
+
+## class SecureRootUser  <a id="aws-bootstrap-kit-securerootuser"></a>
+
+
+
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
+__Extends__: [Construct](#aws-cdk-core-construct)
+
+### Initializer
+
+
+
+
+```ts
+new SecureRootUser(scope: Construct, id: string, notificationEmail: string)
+```
+
+* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **id** (<code>string</code>)  *No description*
+* **notificationEmail** (<code>string</code>)  *No description*
+
 
 
 

@@ -16,14 +16,19 @@ limitations under the License.
 
 import * as core from "@aws-cdk/core";
 import * as config from "@aws-cdk/aws-config";
-import * as sns from '@aws-cdk/aws-sns'
-import * as targets from '@aws-cdk/aws-events-targets';
+import * as sns from '@aws-cdk/aws-sns';
+import * as subs from '@aws-cdk/aws-sns-subscriptions';
 import {ConfigRecorder} from "./aws-config-recorder";
+import * as iam from '@aws-cdk/aws-iam';
 
 
 export class SecureRootUser extends core.Construct {
-  constructor(scope: core.Construct, id: string, snsTopic: sns.Topic) {
+  constructor(scope: core.Construct, id: string, notificationEmail: string) {
     super(scope, id);
+
+    // Build notification topic
+    const secureRootUserConfigTopic = new sns.Topic(this, 'SecureRootUserConfigTopic');
+    secureRootUserConfigTopic.addSubscription(new subs.EmailSubscription(notificationEmail));
 
 
     // Enforce MFA
@@ -46,14 +51,89 @@ export class SecureRootUser extends core.Construct {
       }
     );
 
+    // Create role used for auto remediation
+    const autoRemediationRole = new iam.Role(this, 'AutoRemediationRole', {
+      assumedBy: new iam.CompositePrincipal(
+          new iam.ServicePrincipal("events.amazonaws.com"),
+          new iam.ServicePrincipal("ssm.amazonaws.com"),
+      )
+    });
+
+    autoRemediationRole.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonSSMAutomationRole'));
+
     enforceMFARule.node.addDependency(configRecorder);
     enforceNoAccessKeyRule.node.addDependency(configRecorder);
 
-    enforceMFARule.onComplianceChange('ComplianceChange', {
-      target: new targets.SnsTopic(snsTopic)
+    secureRootUserConfigTopic.grantPublish(autoRemediationRole);
+
+    // Create remediations by notifying owner
+
+    new config.CfnRemediationConfiguration(this, "enforceMfaNotification", {
+      configRuleName: enforceMFARule.configRuleName,
+      targetId: "AWS-PublishSNSNotification",
+      targetType: "SSM_DOCUMENT",
+      targetVersion: "1",
+      automatic: true,
+      maximumAutomaticAttempts: 1,
+      retryAttemptSeconds: 60,
+      parameters: {
+        AutomationAssumeRole: {
+          StaticValue: {
+            Values: [
+              autoRemediationRole.roleArn
+            ]
+          }
+        },
+        TopicArn: {
+          StaticValue: {
+            Values: [
+              secureRootUserConfigTopic.topicArn
+            ]
+          }
+        },
+        Message: {
+          StaticValue: {
+            Values: [
+              // WARNING: Limited to 256 char
+              "Your main account root user seems to still not have MFA activated.\n\t1. Go to https://signin.aws.amazon.com/console and sign in using your root account \n\t2. Go to https://console.aws.amazon.com/iam/home#/security_credentials\n\t3. Activate MFA"
+            ]
+          }
+        }
+      }
     });
-    enforceNoAccessKeyRule.onComplianceChange('ComplianceChange', {
-      target: new targets.SnsTopic(snsTopic)
-    });
+
+    new config.CfnRemediationConfiguration(this, "enforceNoAccessKeyNotification", {
+      configRuleName: enforceNoAccessKeyRule.configRuleName,
+      targetId: "AWS-PublishSNSNotification",
+      targetType: "SSM_DOCUMENT",
+      targetVersion: "1",
+      automatic: true,
+      maximumAutomaticAttempts: 1,
+      retryAttemptSeconds: 60,
+      parameters: {
+        AutomationAssumeRole: {
+          StaticValue: {
+            Values: [
+              autoRemediationRole.roleArn
+            ]
+          }
+        },
+        TopicArn: {
+          StaticValue: {
+            Values: [
+              secureRootUserConfigTopic.topicArn
+            ]
+          }
+        },
+        Message: {
+          StaticValue: {
+            Values: [
+              // WARNING: Limited to 256 char
+              "Your main account root user seems to have static access keys.\n\t1. Go to https://signin.aws.amazon.com/console and sign in using your root account \n\t2. Go to https://console.aws.amazon.com/iam/home#/security_credentials\n\t3. Delete your Access keys"
+            ]
+          }
+        }
+      }
+    })
   }
 }

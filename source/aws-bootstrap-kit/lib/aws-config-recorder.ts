@@ -70,7 +70,7 @@ export class ConfigRecorder extends cdk.Construct {
 
     new cfg.CfnDeliveryChannel(this, 'ConfigDeliveryChannel', {
       s3BucketName: configBucket.bucketName,
-      name: "ConfigDeliveryChannel"
+      name: `ConfigDeliveryChannel-${this.node.addr}`
     });
 
 
@@ -81,7 +81,7 @@ export class ConfigRecorder extends cdk.Construct {
     });    
 
     new cfg.CfnConfigurationRecorder(this, 'ConfigRecorder', {
-      name: "BlueprintConfigRecorder",
+      name: `BlueprintConfigRecorder-${this.node.addr}`,
       roleArn: configRole.roleArn
     });
   }

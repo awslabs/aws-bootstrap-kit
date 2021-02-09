@@ -15,8 +15,6 @@ limitations under the License.
 */
 
 import * as cdk from '@aws-cdk/core';
-import * as sns from '@aws-cdk/aws-sns';
-import * as subs from '@aws-cdk/aws-sns-subscriptions';
 import {Organization} from './organization';
 import {OrganizationalUnit} from './organizational-unit';
 import {Account, AccountType} from './account';
@@ -198,9 +196,6 @@ export class AwsOrganizationsStack extends cdk.Stack {
 
     }
 
-    const secureRootUserConfigTopic = new sns.Topic(this, 'SecureRootUserConfigTopic');
-    secureRootUserConfigTopic.addSubscription(new subs.EmailSubscription(email));
-
     if(props.rootHostedZoneDNSName){
       new RootDns(this, 'RootDNS', {
         stagesAccounts: this.stageAccounts,
@@ -209,6 +204,6 @@ export class AwsOrganizationsStack extends cdk.Stack {
       });
     }
     
-    new SecureRootUser(this, 'SecureRootUser', secureRootUserConfigTopic);
+    new SecureRootUser(this, 'SecureRootUser', email);
   }
 }
