@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as sns from "@aws-cdk/aws-sns";
 import {expect as expectCDK, haveResource} from "@aws-cdk/assert";
 import {Stack} from "@aws-cdk/core";
 import {SecureRootUser} from "../lib/secure-root-user";
@@ -22,8 +21,7 @@ import {SecureRootUser} from "../lib/secure-root-user";
 test("Get 2FA and Access key rules", () => {
   const stack = new Stack();
 
-  const secureRootUserConfigTopic = new sns.Topic(stack, "SecureRootUserConfigTopic");
-  new SecureRootUser(stack, "secureRootUser", secureRootUserConfigTopic);
+  new SecureRootUser(stack, "secureRootUser", 'test@amazon.com');
 
   expectCDK(stack).to(
     haveResource("AWS::Config::ConfigRule", {

@@ -70,7 +70,6 @@ export class ConfigRecorder extends cdk.Construct {
 
     new cfg.CfnDeliveryChannel(this, 'ConfigDeliveryChannel', {
       s3BucketName: configBucket.bucketName,
-      name: "ConfigDeliveryChannel"
     });
 
 
@@ -81,8 +80,12 @@ export class ConfigRecorder extends cdk.Construct {
     });    
 
     new cfg.CfnConfigurationRecorder(this, 'ConfigRecorder', {
-      name: "BlueprintConfigRecorder",
-      roleArn: configRole.roleArn
+      roleArn: configRole.roleArn,
+      recordingGroup: {
+        resourceTypes: [
+          "AWS::IAM::User"
+        ]
+      }
     });
   }
 }
