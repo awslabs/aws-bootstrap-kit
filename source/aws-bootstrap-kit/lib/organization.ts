@@ -114,7 +114,7 @@ export class Organization extends core.Construct {
           const enableMultiAccountsSetupAWSServiceAccess = this.enableAWSServiceAccess('config-multiaccountsetup.amazonaws.com');
 
           enableMultiAccountsSetupAWSServiceAccess.node.addDependency(org);
-          enableSSMAWSServiceAccess.node.addDependency(org);
+          enableSSMAWSServiceAccess.node.addDependency(enableMultiAccountsSetupAWSServiceAccess);
 
           //adding an explicit dependency as CloudFormation won't infer that calling listRoots must be done only when Organization creation is finished as there is no implicit dependency between the 
           //2 custom resources 
