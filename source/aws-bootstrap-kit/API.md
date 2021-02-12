@@ -6,7 +6,8 @@ Name|Description
 ----|-----------
 [Account](#aws-bootstrap-kit-account)|An AWS Account.
 [AwsOrganizationsStack](#aws-bootstrap-kit-awsorganizationsstack)|A Stack creating the Software Development Life Cycle (SDLC) Organization.
-[CrossAccountDNSDelegator](#aws-bootstrap-kit-crossaccountdnsdelegator)|TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776 High-level construct that creates: 1. A public hosted zone in the current account 2. A record name in the hosted zone id of target account.
+[CrossAccountDNSDelegator](#aws-bootstrap-kit-crossaccountdnsdelegator)|TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776 High-level construct that creates: 1. A public hosted zone in the current account 2. A record name in the hosted zone id of target account  Usage: Create a role with the following permission: {       "Sid": "VisualEditor0",       "Effect": "Allow",       "Action": [           "route53:GetHostedZone",           "route53:ChangeResourceRecordSets"       ],       "Resource": "arn:aws:route53:::hostedzone/ZXXXXXXXXX" }  Then use the construct like this:  const crossAccountDNSDelegatorProps: ICrossAccountDNSDelegatorProps = {       targetAccount: '1234567890',       targetRoleToAssume: 'DelegateRecordUpdateRoleInThatAccount',       targetHostedZoneId: 'ZXXXXXXXXX',       zoneName: 'subdomain.mydomain.com', };  new CrossAccountDNSDelegator(this, 'CrossAccountDNSDelegatorStack', crossAccountDNSDelegatorProps);
+[Organization](#aws-bootstrap-kit-organization)|This represents an Organization.
 [RootDns](#aws-bootstrap-kit-rootdns)|A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation.
 [SecureRootUser](#aws-bootstrap-kit-securerootuser)|*No description*
 [ValidateEmail](#aws-bootstrap-kit-validateemail)|Email Validation.
@@ -126,30 +127,7 @@ new AwsOrganizationsStack(scope: Construct, id: string, props: AwsOrganizationsS
 
 ## class CrossAccountDNSDelegator  <a id="aws-bootstrap-kit-crossaccountdnsdelegator"></a>
 
-TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776 High-level construct that creates: 1. A public hosted zone in the current account 2. A record name in the hosted zone id of target account.
-
-Usage:
-Create a role with the following permission:
-{
-      "Sid": "VisualEditor0",
-      "Effect": "Allow",
-      "Action": [
-          "route53:GetHostedZone",
-          "route53:ChangeResourceRecordSets"
-      ],
-      "Resource": "arn:aws:route53:::hostedzone/ZXXXXXXXXX"
-}
-
-Then use the construct like this:
-
-const crossAccountDNSDelegatorProps: ICrossAccountDNSDelegatorProps = {
-      targetAccount: '1234567890',
-      targetRoleToAssume: 'DelegateRecordUpdateRoleInThatAccount',
-      targetHostedZoneId: 'ZXXXXXXXXX',
-      zoneName: 'subdomain.mydomain.com',
-};
-
-new CrossAccountDNSDelegator(this, 'CrossAccountDNSDelegatorStack', crossAccountDNSDelegatorProps);
+TODO: propose this to fix https://github.com/aws/aws-cdk/issues/8776 High-level construct that creates: 1. A public hosted zone in the current account 2. A record name in the hosted zone id of target account  Usage: Create a role with the following permission: {       "Sid": "VisualEditor0",       "Effect": "Allow",       "Action": [           "route53:GetHostedZone",           "route53:ChangeResourceRecordSets"       ],       "Resource": "arn:aws:route53:::hostedzone/ZXXXXXXXXX" }  Then use the construct like this:  const crossAccountDNSDelegatorProps: ICrossAccountDNSDelegatorProps = {       targetAccount: '1234567890',       targetRoleToAssume: 'DelegateRecordUpdateRoleInThatAccount',       targetHostedZoneId: 'ZXXXXXXXXX',       zoneName: 'subdomain.mydomain.com', };  new CrossAccountDNSDelegator(this, 'CrossAccountDNSDelegatorStack', crossAccountDNSDelegatorProps);
 
 __Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
 __Extends__: [Construct](#aws-cdk-core-construct)
@@ -175,6 +153,37 @@ new CrossAccountDNSDelegator(scope: Construct, id: string, props: ICrossAccountD
 Name | Type | Description 
 -----|------|-------------
 **hostedZone** | <code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code> | <span></span>
+
+
+
+## class Organization  <a id="aws-bootstrap-kit-organization"></a>
+
+This represents an Organization.
+
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
+__Extends__: [Construct](#aws-cdk-core-construct)
+
+### Initializer
+
+
+
+
+```ts
+new Organization(scope: Construct, id: string)
+```
+
+* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **id** (<code>string</code>)  *No description*
+
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**id** | <code>string</code> | The Id of the Organization.
+**rootId** | <code>string</code> | The Id of the root Organizational Unit of the Organization.
 
 
 
@@ -395,9 +404,9 @@ Properties to create delegated subzone of a zone hosted in a different account.
 Name | Type | Description 
 -----|------|-------------
 **zoneName** | <code>string</code> | The sub zone name to be created.
-**targetAccount**? | <code>string</code> | The Account hosting the parent zone Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
-**targetHostedZoneId**? | <code>string</code> | The parent zone Id to add the sub zone delegation NS record to Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
-**targetRoleToAssume**? | <code>string</code> | The role to Assume in the parent zone's account which has permissions to update the parent zone Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
+**targetAccount**? | <code>string</code> | The Account hosting the parent zone Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
+**targetHostedZoneId**? | <code>string</code> | The parent zone Id to add the sub zone delegation NS record to Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
+**targetRoleToAssume**? | <code>string</code> | The role to Assume in the parent zone's account which has permissions to update the parent zone Optional since can be resolved if the system has been setup with aws-bootstrap-kit.<br/>__*Optional*__
 
 
 
