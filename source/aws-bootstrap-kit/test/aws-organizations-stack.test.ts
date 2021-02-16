@@ -17,7 +17,7 @@ limitations under the License.
 import "@aws-cdk/assert/jest";
 import { AccountType, AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib";
 import { Stack } from "@aws-cdk/core";
-import {version} from '../package.json';
+import { version } from '../package.json';
 
 const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
   email: "test@test.com",
@@ -47,161 +47,154 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
 
 test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack should have 2 OU constructs and 3 account constructs", () => {
 
-    const stack = new Stack();
-    let awsOrganizationsStackProps: AwsOrganizationsStackProps;
-    awsOrganizationsStackProps = {
-        email: "test@test.com",
-        nestedOU: [
-            {
-                name: 'SDLC',
-                accounts: [
-                    {
-                        name: 'Account1',
-                        type: AccountType.PLAYGROUND,
-                        hostedServices: ['app1', 'app2']
-                    },
-                    {
-                        name: 'Account2',
-                        type: AccountType.STAGE,
-                        stageOrder: 1,
-                        stageName: 'stage1',
-                        hostedServices: ['app1', 'app2']
-                    }
-                ]
-            },
-            {
-                name: 'Prod',
-                accounts: [
-                    {
-                        name: 'Account3',
-                        type: AccountType.STAGE,
-                        stageOrder: 2,
-                        stageName: 'stage2',
-                        hostedServices: ['app1', 'app2']
-                    }
-                ]
-            }
+  const stack = new Stack();
+  let awsOrganizationsStackProps: AwsOrganizationsStackProps;
+  awsOrganizationsStackProps = {
+    email: "test@test.com",
+    nestedOU: [
+      {
+        name: 'SDLC',
+        accounts: [
+          {
+            name: 'Account1',
+            type: AccountType.PLAYGROUND,
+            hostedServices: ['app1', 'app2']
+          },
+          {
+            name: 'Account2',
+            type: AccountType.STAGE,
+            stageOrder: 1,
+            stageName: 'stage1',
+            hostedServices: ['app1', 'app2']
+          }
         ]
-    };
-
-
-    const awsOrganizationsStack = new AwsOrganizationsStack(stack, "AWSOrganizationsStack", awsOrganizationsStackProps);
-
-    expect(awsOrganizationsStack.templateOptions.description).toMatch(`(version:${version})`);
-
-    expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
-        "Create": {
-            "service": "Organizations",
-            "action": "createOrganization",
-            "physicalResourceId": {
-              "responsePath": "Organization.Id"
-            },
-            "region": "us-east-1"
-          },
-          "Delete": {
-            "service": "Organizations",
-            "action": "deleteOrganization",
-            "region": "us-east-1"
+      },
+      {
+        name: 'Prod',
+        accounts: [
+          {
+            name: 'Account3',
+            type: AccountType.STAGE,
+            stageOrder: 2,
+            stageName: 'stage2',
+            hostedServices: ['app1', 'app2']
           }
-    });
+        ]
+      }
+    ]
+  };
 
-    expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
-        "Create": {
-            "service": "Organizations",
-            "action": "createOrganizationalUnit",
-            "physicalResourceId": {
-              "responsePath": "OrganizationalUnit.Id"
-            },
-            "region": "us-east-1",
-            "parameters": {
-              "Name": "SDLC",
-              "ParentId": {
-                "Fn::GetAtt": [
-                  "OrganizationRootCustomResource9416950B",
-                  "Roots.0.Id"
-                ]
-              }
-            }
-          }
-    });
 
-    expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
-        "Email": {
-          "Fn::Join": [
-            "",
-            [
-              "test+Account1-",
-              {
-                "Ref": "AWS::AccountId"
-              },
-              "@test.com"
-            ]
+  const awsOrganizationsStack = new AwsOrganizationsStack(stack, "AWSOrganizationsStack", awsOrganizationsStackProps);
+
+  expect(awsOrganizationsStack.templateOptions.description).toMatch(`(version:${version})`);
+
+  expect(awsOrganizationsStack).toHaveResource("Custom::Organization", {
+    "ServiceToken": {
+      "Fn::GetAtt": [
+        "awscdkawsbootstrapkitOrganizationProviderNestedStackawscdkawsbootstrapkitOrganizationProviderNestedStackResource7E0152A4",
+        "Outputs.AWSOrganizationsStackawscdkawsbootstrapkitOrganizationProviderframeworkonEventE285387DArn",
+      ]
+    }
+  });
+
+  expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
+    "Create": {
+      "service": "Organizations",
+      "action": "createOrganizationalUnit",
+      "physicalResourceId": {
+        "responsePath": "OrganizationalUnit.Id"
+      },
+      "region": "us-east-1",
+      "parameters": {
+        "Name": "SDLC",
+        "ParentId": {
+          "Fn::GetAtt": [
+            "OrganizationRootCustomResource9416950B",
+            "Roots.0.Id"
           ]
-        },
-        "AccountName": "Account1",
-        "AccountType": AccountType.PLAYGROUND,
-        "HostedServices": "app1:app2"
-    });
+        }
+      }
+    }
+  });
 
-    expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
-        "Email": {
-            "Fn::Join": [
-              "",
-              [
-                "test+Account2-",
-                {
-                  "Ref": "AWS::AccountId"
-                },
-                "@test.com"
-              ]
-            ]
+  expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
+    "Email": {
+      "Fn::Join": [
+        "",
+        [
+          "test+Account1-",
+          {
+            "Ref": "AWS::AccountId"
           },
-          "AccountName": "Account2",
-          "AccountType": AccountType.STAGE,
-          "StageName": "stage1",
-          "StageOrder": "1",
-          "HostedServices": "app1:app2"
-    });
+          "@test.com"
+        ]
+      ]
+    },
+    "AccountName": "Account1",
+    "AccountType": AccountType.PLAYGROUND,
+    "HostedServices": "app1:app2"
+  });
 
-    expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
-        "Create": {
-            "service": "Organizations",
-            "action": "createOrganizationalUnit",
-            "physicalResourceId": {
-              "responsePath": "OrganizationalUnit.Id"
-            },
-            "region": "us-east-1",
-            "parameters": {
-              "Name": "Prod",
-              "ParentId": {
-                "Fn::GetAtt": [
-                  "OrganizationRootCustomResource9416950B",
-                  "Roots.0.Id"
-                ]
-              }
-            }
-          }
-    });
-
-    expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
-        "Email": {
-            "Fn::Join": [
-              "",
-              [
-                "test+Account3-",
-                {
-                  "Ref": "AWS::AccountId"
-                },
-                "@test.com"
-              ]
-            ]
+  expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
+    "Email": {
+      "Fn::Join": [
+        "",
+        [
+          "test+Account2-",
+          {
+            "Ref": "AWS::AccountId"
           },
-          "AccountName": "Account3",
-          "AccountType": AccountType.STAGE,
-          "StageName": "stage2",
-          "StageOrder": "2",
-          "HostedServices": "app1:app2"
-    });
+          "@test.com"
+        ]
+      ]
+    },
+    "AccountName": "Account2",
+    "AccountType": AccountType.STAGE,
+    "StageName": "stage1",
+    "StageOrder": "1",
+    "HostedServices": "app1:app2"
+  });
+
+  expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
+    "Create": {
+      "service": "Organizations",
+      "action": "createOrganizationalUnit",
+      "physicalResourceId": {
+        "responsePath": "OrganizationalUnit.Id"
+      },
+      "region": "us-east-1",
+      "parameters": {
+        "Name": "Prod",
+        "ParentId": {
+          "Fn::GetAtt": [
+            "OrganizationRootCustomResource9416950B",
+            "Roots.0.Id"
+          ]
+        }
+      }
+    }
+  });
+
+  expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
+    "Email": {
+      "Fn::Join": [
+        "",
+        [
+          "test+Account3-",
+          {
+            "Ref": "AWS::AccountId"
+          },
+          "@test.com"
+        ]
+      ]
+    },
+    "AccountName": "Account3",
+    "AccountType": AccountType.STAGE,
+    "StageName": "stage2",
+    "StageOrder": "2",
+    "HostedServices": "app1:app2"
+  });
 
 });
 
@@ -210,29 +203,29 @@ test("should create root domain zone and stage based domain if rootHostedZoneDNS
     new Stack(),
     "AWSOrganizationsStack",
     {
-      ...awsOrganizationsStackProps, 
+      ...awsOrganizationsStackProps,
       rootHostedZoneDNSName: "yourdomain.com"
     }
   );
 
-  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone", {
     Name: "yourdomain.com."
   });
-  expect(awsOrganizationsStack).toCountResources("AWS::Route53::RecordSet",3);
-  expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone",4);
-  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+  expect(awsOrganizationsStack).toCountResources("AWS::Route53::RecordSet", 3);
+  expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone", 4);
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet", {
     Name: "thestage.yourdomain.com.",
     Type: "NS"
   });
-  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet", {
     Name: "account2.yourdomain.com.",
     Type: "NS"
   });
-  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet",{
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::RecordSet", {
     Name: "account3.yourdomain.com.",
     Type: "NS"
   });
-  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
+  expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone", {
     Name: "account3.yourdomain.com."
   });
 });
@@ -246,7 +239,7 @@ test("should not create any zone if no domain is provided", () => {
     }
   );
 
-  expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone",0);
+  expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone", 0);
 });
 
 test("should have have email validation stack with forceEmailVerification set to true", () => {
@@ -254,7 +247,7 @@ test("should have have email validation stack with forceEmailVerification set to
   const awsOrganizationsStack = new AwsOrganizationsStack(
     new Stack(),
     "AWSOrganizationsStack",
-    {...awsOrganizationsStackProps, forceEmailVerification: true}
+    { ...awsOrganizationsStackProps, forceEmailVerification: true }
   );
 
   expect(awsOrganizationsStack).toHaveResource("Custom::EmailValidation");
@@ -265,7 +258,7 @@ test("should not have have email validation stack with forceEmailVerification se
   const awsOrganizationsStack = new AwsOrganizationsStack(
     new Stack(),
     "AWSOrganizationsStack",
-    {...awsOrganizationsStackProps, forceEmailVerification: false}
+    { ...awsOrganizationsStackProps, forceEmailVerification: false }
   );
 
   expect(awsOrganizationsStack).not.toHaveResource("Custom::EmailValidation");

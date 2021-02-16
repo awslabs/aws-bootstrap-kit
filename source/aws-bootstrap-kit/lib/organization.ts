@@ -14,9 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 import * as core from '@aws-cdk/core';
 import * as cr from '@aws-cdk/custom-resources';
-import { OrganizationProvider } from './organization-provider';
+import { AWSOrganizationsCustomResource } from './aws-organizations-custom-resource';
 
 /**
  * This represents an Organization
@@ -36,20 +37,9 @@ export class Organization extends core.Construct {
   constructor(scope: core.Construct, id: string) {
     super(scope, id)
 
-    const organizationProvider = OrganizationProvider.getOrCreate(this);
+    let org = new AWSOrganizationsCustomResource(this, "orgCustomResource");
 
-    let org = new core.CustomResource(
-      this,
-      `orgCustomResource`,
-      {
-        serviceToken: organizationProvider.provider.serviceToken,
-        resourceType: "Custom::OrganizationCreation",
-        properties: {
-        },
-      }
-    );
-
-    this.id = org.getAtt('OrganizationId').toString();
+    this.id = org.OrganizationID;
 
     let root = new cr.AwsCustomResource(this,
       "RootCustomResource",

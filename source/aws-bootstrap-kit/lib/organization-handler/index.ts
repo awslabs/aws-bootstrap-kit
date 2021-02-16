@@ -57,7 +57,7 @@ export async function onEventHandler(
     case "Update":
       return { PhysicalResourceId: event.PhysicalResourceId, ResourceProperties: event.ResourceProperties };
     case "Delete":
-      const listAccountsResponse = await awsOrganizationsClient.listAccounts({ MaxResults: 1 }).promise();
+      const listAccountsResponse = await awsOrganizationsClient.listAccounts({ MaxResults: 2 }).promise();
       if (listAccountsResponse.Accounts?.length === 1) {
         await awsOrganizationsClient.deleteOrganization().promise();
       }

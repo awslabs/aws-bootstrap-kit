@@ -23,17 +23,17 @@ import * as cr from '@aws-cdk/custom-resources';
 
 
 /**
-* A Custom Resource provider capable of importing and creating AWS Organization
+* A Custom Resource provider capable of importing and creating AWS Organizations
 */
-export class OrganizationProvider extends NestedStack {
+export class AWSOrganizationProvider extends NestedStack {
 
   /**
   * Creates a stack-singleton resource provider nested stack.
   */
   public static getOrCreate(scope: Construct) {
     const stack = Stack.of(scope);
-    const uid = '@aws-cdk/aws-bootstrap-kit.OrganizationProvider';
-    return stack.node.tryFindChild(uid) as OrganizationProvider || new OrganizationProvider(stack, uid);
+    const uid = '@aws-cdk/aws-bootstrap-kit.AWSOrganizationProvider';
+    return stack.node.tryFindChild(uid) as AWSOrganizationProvider || new AWSOrganizationProvider(stack, uid);
   }
 
   /**
