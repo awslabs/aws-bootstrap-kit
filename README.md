@@ -1,4 +1,4 @@
-# AWS Bootstrap Kit Overview
+# AWS Bootstrap Kit Overview  [![Mentioned in Awesome CDK](https://awesome.re/mentioned-badge.svg)](https://github.com/kolomied/awesome-cdk)
 
 This is a strongly opinionated CDK set of constructs built for companies looking to follow AWS best practices on Day 1 while setting their development and deployment environment on AWS.
 
