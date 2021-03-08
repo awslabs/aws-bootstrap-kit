@@ -3,7 +3,7 @@ import * as iam from "@aws-cdk/aws-iam";
 import * as route53 from "@aws-cdk/aws-route53";
 import { RecordTarget } from "@aws-cdk/aws-route53";
 import {Account} from './account';
-import * as utils from './dns/utils';
+import * as utils from './dns/delegation-record-handler/utils';
 
 /**
  * Properties for RootDns

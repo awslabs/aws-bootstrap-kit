@@ -22,7 +22,7 @@ import { APIVersions } from "aws-sdk/lib/config";
 import { ServiceConfigurationOptions } from "aws-sdk/lib/service";
 import { ResourceRecords } from "aws-sdk/clients/route53";
 import Route53 = require("aws-sdk/clients/route53");
-import {getDNSUpdateRoleNameFromServiceRecordName} from '../utils';
+import {getDNSUpdateRoleNameFromServiceRecordName} from './utils';
 
 const AWS_API_VERSION = "2013-04-01";
 

@@ -257,19 +257,6 @@ createStageSubZone(account: Account, rootHostedZoneDNSName: string): HostedZone
 __Returns__:
 * <code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code>
 
-#### getSubdomainPrefix(account) <a id="aws-bootstrap-kit-rootdns-getsubdomainprefix"></a>
-
-
-
-```ts
-getSubdomainPrefix(account: Account): string
-```
-
-* **account** (<code>[Account](#aws-bootstrap-kit-account)</code>)  *No description*
-
-__Returns__:
-* <code>string</code>
-
 
 
 ## class SecureRootUser  <a id="aws-bootstrap-kit-securerootuser"></a>
