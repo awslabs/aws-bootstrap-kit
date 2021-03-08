@@ -3,6 +3,7 @@ import * as iam from "@aws-cdk/aws-iam";
 import * as route53 from "@aws-cdk/aws-route53";
 import { RecordTarget } from "@aws-cdk/aws-route53";
 import {Account} from './account';
+import * as utils from './dns/delegation-record-handler/utils';
 
 /**
  * Properties for RootDns
@@ -67,18 +68,11 @@ export class RootDns extends cdk.Construct {
     }
   }
 
-  getSubdomainPrefix(account: Account){
-    let prefix: string = account.accountStageName ? account.accountStageName : account.accountName;
-    prefix = prefix.toLowerCase();
-    prefix = prefix.replace(' ', '-');
-    return prefix;
-  }
-
   createStageSubZone(
     account: Account,
     rootHostedZoneDNSName: string
   ): route53.HostedZone {
-    const subDomainPrefix = this.getSubdomainPrefix(account);
+    const subDomainPrefix = utils.getSubdomainPrefix(account.accountName, account.accountStageName);
     return new route53.HostedZone(this, `${subDomainPrefix}StageSubZone`, {
       zoneName: `${subDomainPrefix}.${rootHostedZoneDNSName}`,
     });
@@ -90,7 +84,7 @@ export class RootDns extends cdk.Construct {
   ) {
     const dnsAutoUpdateRole = new iam.Role(this, stageSubZone.zoneName, {
       assumedBy: new iam.AccountPrincipal(account.accountId),
-      roleName: `${stageSubZone.zoneName}-dns-update`
+      roleName: utils.getDNSUpdateRoleNameFromSubZoneName(stageSubZone.zoneName)
     });
 
     dnsAutoUpdateRole.addToPolicy(
