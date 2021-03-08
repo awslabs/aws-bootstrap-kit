@@ -235,6 +235,10 @@ test("should create root domain zone and stage based domain if rootHostedZoneDNS
   expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
     Name: "account3.yourdomain.com."
   });
+
+  expect(awsOrganizationsStack).toHaveResource("AWS::IAM::Role",{
+    RoleName: "account2.yourdomain.com-dns-update"
+  });
 });
 
 test("should not create any zone if no domain is provided", () => {

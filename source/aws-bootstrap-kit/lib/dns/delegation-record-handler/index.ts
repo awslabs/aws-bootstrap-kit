@@ -22,6 +22,7 @@ import { APIVersions } from "aws-sdk/lib/config";
 import { ServiceConfigurationOptions } from "aws-sdk/lib/service";
 import { ResourceRecords } from "aws-sdk/clients/route53";
 import Route53 = require("aws-sdk/clients/route53");
+import {getDNSUpdateRoleNameFromServiceRecordName} from '../utils';
 
 const AWS_API_VERSION = "2013-04-01";
 
@@ -219,32 +220,17 @@ async function resolveRoleArn(recordName: string, currentAccountId: string) {
         let targetRoleToAssume;
         for (const account of listAccountsResults.Accounts
             ? listAccountsResults.Accounts
-            : []) {
-            // TODO: Wuld be great to go by tagging to find the DNS account but not sure yet how to tag master account so skipping for now. For the future here is the code
-            //
-            // const listTagsResults = await orgClient
-            //   .listTagsForResource({
-            //     ResourceId: account.Id ? account.Id : "UNKNOWN",
-            //   })
-            //   .promise();
-            // for (const tag of listTagsResults.Tags ? listTagsResults.Tags : []) {
-            //   if (tag.Key === "DNSRootAccount" && tag.Value === "true") {
-            //     targetAccountId = account.Id;
-            //   }
-            // }
+            : []) {              
 
             // Indentify main account which is the one hosting DNS root domain
             if (account.JoinedMethod === "INVITED") {
                 targetAccountId = account.Id;
             } else if (account.Id == currentAccountId) {
-                // Keep only the root domain as it is used for the role name "landingpage.dev.ilovemylocalfarmer.dev".split('.').splice(2).join('.') => 'ilovemylocalfarmer.dev'
-                targetRoleToAssume = `${account.Name}.${recordName
-                    .split(".")
-                    .splice(2)
-                    .join(".")}`;
+
+              targetRoleToAssume = getDNSUpdateRoleNameFromServiceRecordName(recordName);
             }
         }
-        const roleArn = `arn:aws:iam::${targetAccountId}:role/${targetRoleToAssume}-dns-update`;
+        const roleArn = `arn:aws:iam::${targetAccountId}:role/${targetRoleToAssume}`;
         return roleArn;
     } catch (error) {
         console.error(`Failed to resolveRoleArn due to ${error}`);

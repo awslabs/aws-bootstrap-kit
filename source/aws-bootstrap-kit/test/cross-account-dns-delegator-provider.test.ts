@@ -28,7 +28,7 @@ const changeResourceRecordSets = route53Examples.ChangeResourceRecordSets[0].out
 const fakeRecordName = 'app.stage.domain.com';
 const fakeCurrentAccountId = '987654321987';
 const fakeNameServer = ['ns1.test.com', 'ns2.test.com'];
-const roleNameToAssume = 'Stage.domain.com-dns-update';
+const roleNameToAssume = 'stage.domain.com-dns-update';
 const dnsAccountId = '123456789123';
 const targetHostedZoneId = 'ABCDEFGHYZ';
 
@@ -165,11 +165,6 @@ test("when nothing is provided the right role is assumed and the right resource 
 
   sinon.assert.calledWith(listHostedZonesByNameMock, {
     DNSName: 'stage.domain.com'
-  });
-
-  sinon.assert.calledWith(assumedRoleMock, {
-    RoleArn: `arn:aws:iam::${dnsAccountId}:role/${roleNameToAssume}`,
-    RoleSessionName: "fakeLogicalId"
   });
 
   sinon.assert.calledWith(assumedRoleMock, {
