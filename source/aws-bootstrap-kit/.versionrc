@@ -7,14 +7,6 @@
     {
       "filename": "package-lock.json",
       "type": "json"
-    },
-    {
-      "filename": "../../integTests/1_SDLC_Organization/package.json",
-      "updater": "standard-version-updater.js"
-    },
-    {
-      "filename": "../../integTests/2_baseInfrastructure/package.json",
-      "updater": "standard-version-updater.js"
     }
   ]
 }
