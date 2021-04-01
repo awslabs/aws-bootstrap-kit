@@ -90,39 +90,38 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
     expect(awsOrganizationsStack.templateOptions.description).toMatch(`(version:${version})`);
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
-        "Create": {
+        "Create": JSON.stringify({
             "service": "Organizations",
             "action": "createOrganization",
             "physicalResourceId": {
               "responsePath": "Organization.Id"
             },
             "region": "us-east-1"
-          },
-          "Delete": {
+          }),
+          "Delete": JSON.stringify({
             "service": "Organizations",
             "action": "deleteOrganization",
             "region": "us-east-1"
-          }
+          })
     });
+    
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
         "Create": {
-            "service": "Organizations",
-            "action": "createOrganizationalUnit",
-            "physicalResourceId": {
-              "responsePath": "OrganizationalUnit.Id"
+          "Fn::Join": [
+          "",
+          [
+            "{\"service\":\"Organizations\",\"action\":\"createOrganizationalUnit\",\"physicalResourceId\":{\"responsePath\":\"OrganizationalUnit.Id\"},\"region\":\"us-east-1\",\"parameters\":{\"Name\":\"Prod\",\"ParentId\":\"",
+            {
+              "Fn::GetAtt": [
+                "OrganizationRootCustomResource9416950B",
+                "Roots.0.Id"
+              ]
             },
-            "region": "us-east-1",
-            "parameters": {
-              "Name": "SDLC",
-              "ParentId": {
-                "Fn::GetAtt": [
-                  "OrganizationRootCustomResource9416950B",
-                  "Roots.0.Id"
-                ]
-              }
-            }
-          }
+            "\"}}"
+          ]
+        ]
+      },
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
@@ -165,22 +164,20 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
         "Create": {
-            "service": "Organizations",
-            "action": "createOrganizationalUnit",
-            "physicalResourceId": {
-              "responsePath": "OrganizationalUnit.Id"
-            },
-            "region": "us-east-1",
-            "parameters": {
-              "Name": "Prod",
-              "ParentId": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"service\":\"Organizations\",\"action\":\"createOrganizationalUnit\",\"physicalResourceId\":{\"responsePath\":\"OrganizationalUnit.Id\"},\"region\":\"us-east-1\",\"parameters\":{\"Name\":\"Prod\",\"ParentId\":\"",
+              {
                 "Fn::GetAtt": [
                   "OrganizationRootCustomResource9416950B",
                   "Roots.0.Id"
                 ]
-              }
-            }
-          }
+              },
+              "\"}}"
+            ]
+          ]
+        }
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {

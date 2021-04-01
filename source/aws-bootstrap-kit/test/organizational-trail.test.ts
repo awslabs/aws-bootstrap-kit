@@ -119,7 +119,7 @@ test("OrganizationTrail creation", () => {
 
   expectCDK(stack).to(
     haveResource("Custom::AWS", {
-        Create: {
+        Create: JSON.stringify({
             "service": "Organizations",
             "action": "enableAWSServiceAccess",
             "physicalResourceId": {
@@ -129,76 +129,73 @@ test("OrganizationTrail creation", () => {
             "parameters": {
               "ServicePrincipal": "cloudtrail.amazonaws.com"
             }
-          },
-          Delete: {
+          }),
+          Delete: JSON.stringify({
             "service": "Organizations",
             "action": "disableAWSServiceAccess",
             "region": "us-east-1",
             "parameters": {
               "ServicePrincipal": "cloudtrail.amazonaws.com"
             }
-          }
+          })
     })
   );
 
   expectCDK(stack).to(
     haveResource("Custom::AWS", {
-        Create: {
-            "service": "CloudTrail",
-            "action": "createTrail",
-            "physicalResourceId": {
-              "id": "OrganizationTrailCreate"
-            },
-            "parameters": {
-              "IsMultiRegionTrail": "TRUE:BOOLEAN",
-              "IsOrganizationTrail": "TRUE:BOOLEAN",
-              "Name": "OrganizationTrail",
-              "S3BucketName": {
+        Create:  {
+          "Fn::Join": [
+            "",
+            [
+              "{\"service\":\"CloudTrail\",\"action\":\"createTrail\",\"physicalResourceId\":{\"id\":\"OrganizationTrailCreate\"},\"parameters\":{\"IsMultiRegionTrail\":true,\"IsOrganizationTrail\":true,\"Name\":\"OrganizationTrail\",\"S3BucketName\":\"",
+              {
                 "Ref": "OrganizationTrailOrganizationTrailBucket31446F20"
-              }
-            }
-          },
-          Delete: {
+              },
+              "\"}}"
+            ]
+          ]
+        },
+          Delete: JSON.stringify({
             "service": "CloudTrail",
             "action": "deleteTrail",
             "parameters": {
               "Name": "OrganizationTrail"
             }
-          }
+          })
     })
   );  
 
   expectCDK(stack).to(
     haveResource("Custom::AWS", {
         Create: {
-            "service": "CloudTrail",
-            "action": "startLogging",
-            "physicalResourceId": {
-              "id": "OrganizationTrailStartLogging"
-            },
-            "parameters": {
-              "Name": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"service\":\"CloudTrail\",\"action\":\"startLogging\",\"physicalResourceId\":{\"id\":\"OrganizationTrailStartLogging\"},\"parameters\":{\"Name\":\"",
+              {
                 "Fn::GetAtt": [
                   "OrganizationTrailOrganizationTrailCreate61482CB5",
                   "Name"
                 ]
-              }
-            }
-          },
+              },
+              "\"}}"
+            ]
+          ]
+        },
           Delete: {
-            "service": "CloudTrail",
-            "action": "stopLogging",
-            "physicalResourceId": {
-              "id": "OrganizationTrailStartLogging"
-            },
-            "parameters": {
-              "Name": {
-                "Fn::GetAtt": [
-                  "OrganizationTrailOrganizationTrailCreate61482CB5",
-                  "Name"
-                ]
-              }
-            }
+            "Fn::Join": [
+              "",
+              [
+                "{\"service\":\"CloudTrail\",\"action\":\"stopLogging\",\"physicalResourceId\":{\"id\":\"OrganizationTrailStartLogging\"},\"parameters\":{\"Name\":\"",
+                {
+                  "Fn::GetAtt": [
+                    "OrganizationTrailOrganizationTrailCreate61482CB5",
+                    "Name"
+                  ]
+                },
+                "\"}}"
+              ]
+            ]
           }
     })
   );
