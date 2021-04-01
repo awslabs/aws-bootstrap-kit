@@ -47,7 +47,7 @@ export class PipelineStack extends cdk.Stack {
             commands: [
               'lerna run test',
               'lerna run build',
-              'lerna run package'            
+              'lerna run package'
             ],
           },
         },
