@@ -47,7 +47,7 @@ export class CrossAccountZoneDelegationRecordProvider extends Construct {
         // Handle CREATE/UPDATE/DELETE cross account
         this.onEventHandler = new lambda.Function(this, 'OnEventHandler', {
             code,
-            runtime: lambda.Runtime.NODEJS_12_X,
+            runtime: lambda.Runtime.NODEJS_14_X,
             handler: 'index.onEventHandler',
             timeout: Duration.minutes(5),
             description: 'Cross-account zone delegation record OnEventHandler'

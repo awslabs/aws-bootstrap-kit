@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.10](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.10) (2021-06-04)
+
+
+### Bug Fixes
+
+* bump nodejs version for lambda to 14 and cdk version to 1.107.0 to fix deprecation approaching ([338f317](https://github.com/awslabs/aws-bootstrap-kit/commit/338f317d2ace8a11626b574519ef40e5c34615b0))
+
+### [0.3.11](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.11) (2021-06-04)
+
+### [0.3.10](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.10) (2021-06-04)
+
 ### [0.3.9](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.6...v0.3.9) (2021-04-01)
 
 
