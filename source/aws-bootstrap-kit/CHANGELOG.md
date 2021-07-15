@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.11](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.10...v0.3.11) (2021-07-15)
+
+
+### Bug Fixes
+
+* onUpdate and onDelete logic of custom resources ([6692f90](https://github.com/awslabs/aws-bootstrap-kit/commit/6692f905f3c9e9843a493b13a3a2f3e6063d945e))
+
 ### [0.3.10](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.10) (2021-06-04)
 
 
