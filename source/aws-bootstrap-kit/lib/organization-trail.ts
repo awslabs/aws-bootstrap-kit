@@ -108,6 +108,8 @@ export class OrganizationTrail extends core.Construct {
             }
         );
 
+        const organizationTrailName = 'OrganizationTrail';
+
         let organizationTrailCreate = new AwsCustomResource(this,
             "OrganizationTrailCreate",
             {
@@ -119,7 +121,7 @@ export class OrganizationTrail extends core.Construct {
                     {
                         IsMultiRegionTrail: true,
                         IsOrganizationTrail: true,
-                        Name: 'OrganizationTrail',
+                        Name: organizationTrailName,
                         S3BucketName: orgTrailBucket.bucketName
                     }
                 },
@@ -128,7 +130,7 @@ export class OrganizationTrail extends core.Construct {
                     action: 'deleteTrail', //call deleteTrail of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#createTrail-property
                     parameters: 
                     {
-                        Name: 'OrganizationTrail'
+                        Name: organizationTrailName
                     }
 
                 },
@@ -172,7 +174,7 @@ export class OrganizationTrail extends core.Construct {
                     physicalResourceId: PhysicalResourceId.of('OrganizationTrailStartLogging'),
                     parameters:
                     {
-                        Name: organizationTrailCreate.getResponseField('Name')
+                        Name: 'organizationTrailName'
                     }
                 },
                 onDelete: {
@@ -181,7 +183,7 @@ export class OrganizationTrail extends core.Construct {
                     physicalResourceId: PhysicalResourceId.of('OrganizationTrailStartLogging'),
                     parameters:
                     {
-                        Name: organizationTrailCreate.getResponseField('Name')
+                        Name: 'organizationTrailName'
                     }
                 },
                 installLatestAwsSdk: false,

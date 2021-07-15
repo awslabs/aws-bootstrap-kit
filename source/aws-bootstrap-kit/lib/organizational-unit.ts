@@ -44,13 +44,34 @@ export class OrganizationalUnit extends core.Construct {
                     ParentId: props.ParentId
                   }
               },
+              onUpdate: {
+                service: 'Organizations',
+                action: 'updateOrganizationalUnit',
+                physicalResourceId: cr.PhysicalResourceId.fromResponse('OrganizationalUnit.Id'),
+                region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
+                parameters:
+                  {
+                    Name: props.Name,
+                    OrganizationalUnitId: new cr.PhysicalResourceIdReference()
+                  }
+              },
+              onDelete: {
+                service: 'Organizations',
+                action: 'deleteOrganizationalUnit',
+                region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
+                parameters:
+                  {
+                    Name: props.Name,
+                    OrganizationalUnitId: new cr.PhysicalResourceIdReference()
+                  }
+              },
               installLatestAwsSdk: false,
               policy: cr.AwsCustomResourcePolicy.fromSdkCalls(
                 {
                   resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE
                 }
               )
-            }
+            },
           );
 
         this.id = ou.getResponseField("OrganizationalUnit.Id");
