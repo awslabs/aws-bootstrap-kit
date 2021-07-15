@@ -4,15 +4,17 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.3.12](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.11...v0.3.12) (2021-07-15)
 
+  * bump cdk to 1.114.0
+
 ### [0.3.11](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.10...v0.3.11) (2021-07-15)
 
+  * bump cdk to 1.113.0
 
 ### Bug Fixes
 
 * onUpdate and onDelete logic of custom resources ([6692f90](https://github.com/awslabs/aws-bootstrap-kit/commit/6692f905f3c9e9843a493b13a3a2f3e6063d945e))
 
 ### [0.3.10](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.10) (2021-06-04)
-
 
 ### Bug Fixes
 
