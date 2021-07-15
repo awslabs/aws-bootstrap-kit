@@ -127,7 +127,7 @@ export class OrganizationTrail extends core.Construct {
                 },
                 onDelete: {
                     service: 'CloudTrail',
-                    action: 'deleteTrail', //call deleteTrail of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#createTrail-property
+                    action: 'deleteTrail', //call deleteTrail of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#deleteTrail-property
                     parameters: 
                     {
                         Name: organizationTrailName
@@ -174,7 +174,7 @@ export class OrganizationTrail extends core.Construct {
                     physicalResourceId: PhysicalResourceId.of('OrganizationTrailStartLogging'),
                     parameters:
                     {
-                        Name: 'organizationTrailName'
+                        Name: organizationTrailName
                     }
                 },
                 onDelete: {
@@ -183,7 +183,7 @@ export class OrganizationTrail extends core.Construct {
                     physicalResourceId: PhysicalResourceId.of('OrganizationTrailStartLogging'),
                     parameters:
                     {
-                        Name: 'organizationTrailName'
+                        Name: organizationTrailName
                     }
                 },
                 installLatestAwsSdk: false,

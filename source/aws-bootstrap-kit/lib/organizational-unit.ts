@@ -35,7 +35,7 @@ export class OrganizationalUnit extends core.Construct {
             {
               onCreate: {
                 service: 'Organizations',
-                action: 'createOrganizationalUnit',
+                action: 'createOrganizationalUnit', //@see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#createOrganizationalUnit-property
                 physicalResourceId: cr.PhysicalResourceId.fromResponse('OrganizationalUnit.Id'),
                 region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
                 parameters:
@@ -46,7 +46,7 @@ export class OrganizationalUnit extends core.Construct {
               },
               onUpdate: {
                 service: 'Organizations',
-                action: 'updateOrganizationalUnit',
+                action: 'updateOrganizationalUnit', //@see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#updateOrganizationalUnit-property
                 physicalResourceId: cr.PhysicalResourceId.fromResponse('OrganizationalUnit.Id'),
                 region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
                 parameters:
@@ -57,11 +57,10 @@ export class OrganizationalUnit extends core.Construct {
               },
               onDelete: {
                 service: 'Organizations',
-                action: 'deleteOrganizationalUnit',
+                action: 'deleteOrganizationalUnit', //@see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#deleteOrganizationalUnit-property
                 region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
                 parameters:
                   {
-                    Name: props.Name,
                     OrganizationalUnitId: new cr.PhysicalResourceIdReference()
                   }
               },
