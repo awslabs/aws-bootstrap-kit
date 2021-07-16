@@ -11,10 +11,10 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.95.2",
+    "@aws-cdk/assert": "1.113.0",
     "@types/jest": "^26.0.22",
     "@types/node": "14.14.37",
-    "aws-cdk": "1.95.2",
+    "aws-cdk": "1.113.0",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
@@ -22,8 +22,8 @@
     "node-notifier": ">=9.0.1"
   },
   "dependencies": {
-    "aws-delivlib": "12.3.2",
-    "monocdk": "1.95.2",
-    "source-map-support": "0.5.16"
+    "aws-delivlib": "13.0.5",
+    "monocdk": "1.113.0",
+    "source-map-support": "0.5.19"
   }
 }
