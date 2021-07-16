@@ -167,36 +167,8 @@ test("OrganizationTrail creation", () => {
 
   expectCDK(stack).to(
     haveResource("Custom::AWS", {
-        Create: {
-          "Fn::Join": [
-            "",
-            [
-              "{\"service\":\"CloudTrail\",\"action\":\"startLogging\",\"physicalResourceId\":{\"id\":\"OrganizationTrailStartLogging\"},\"parameters\":{\"Name\":\"",
-              {
-                "Fn::GetAtt": [
-                  "OrganizationTrailOrganizationTrailCreate61482CB5",
-                  "Name"
-                ]
-              },
-              "\"}}"
-            ]
-          ]
-        },
-          Delete: {
-            "Fn::Join": [
-              "",
-              [
-                "{\"service\":\"CloudTrail\",\"action\":\"stopLogging\",\"physicalResourceId\":{\"id\":\"OrganizationTrailStartLogging\"},\"parameters\":{\"Name\":\"",
-                {
-                  "Fn::GetAtt": [
-                    "OrganizationTrailOrganizationTrailCreate61482CB5",
-                    "Name"
-                  ]
-                },
-                "\"}}"
-              ]
-            ]
-          }
+        Create: "{\"service\":\"CloudTrail\",\"action\":\"startLogging\",\"physicalResourceId\":{\"id\":\"OrganizationTrailStartLogging\"},\"parameters\":{\"Name\":\"OrganizationTrail\"}}",
+        Delete: "{\"service\":\"CloudTrail\",\"action\":\"stopLogging\",\"physicalResourceId\":{\"id\":\"OrganizationTrailStartLogging\"},\"parameters\":{\"Name\":\"OrganizationTrail\"}}"
     })
   );
 });
