@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.14](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.14) (2021-08-03)
+
+
+### Bug Fixes
+
+* Creation dependencies for Cloudtrail ([0971961](https://github.com/awslabs/aws-bootstrap-kit/commit/097196174a516b3faa0a65cdf55f27df6f9b76ee))
+
 ### [0.3.13](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.12...v0.3.13) (2021-07-15)
 
 ### [0.3.12](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.11...v0.3.12) (2021-07-15)
