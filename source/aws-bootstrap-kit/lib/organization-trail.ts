@@ -165,7 +165,7 @@ export class OrganizationTrail extends core.Construct {
             }
         ));
 
-        new AwsCustomResource(this,
+        const startLogging =  new AwsCustomResource(this,
             "OrganizationTrailStartLogging",
             {
                 onCreate: {
@@ -194,5 +194,6 @@ export class OrganizationTrail extends core.Construct {
                 )
             }
         );
+        startLogging.node.addDependency(organizationTrailCreate);
     }
 }
