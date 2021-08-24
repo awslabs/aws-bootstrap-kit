@@ -23,6 +23,6 @@
   "dependencies": {
     "@aws-cdk/core": "1.85.0",
     "source-map-support": "^0.5.16",
-    "aws-bootstrap-kit": "file:../../source/aws-bootstrap-kit/dist/js/aws-bootstrap-kit@0.3.3.jsii.tgz"
+    "aws-bootstrap-kit": "file:../../source/aws-bootstrap-kit/dist/js/aws-bootstrap-kit@0.3.14.jsii.tgz"
   }
 }
