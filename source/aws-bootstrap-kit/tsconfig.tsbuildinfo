@@ -1338,7 +1338,7 @@
         "affectsGlobalScope": false
       },
       "./package.json": {
-        "version": "11cea4df46fde34f096863a940e22a5e1bd77862788407196a310051c8e1e42b",
+        "version": "7b5c4fb334aba7e0f324cc66a5e94d4d873dd0645b6620a534dc37c5ac3fc70a",
         "affectsGlobalScope": true
       },
       "./node_modules/@aws-cdk/aws-route53/lib/hosted-zone-ref.d.ts": {
