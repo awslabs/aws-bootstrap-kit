@@ -1,15 +1,17 @@
-# AWS Bootstrap Kit Overview  [![Mentioned in Awesome CDK](https://awesome.re/mentioned-badge.svg)](https://github.com/kolomied/awesome-cdk)
+# AWS Bootstrap Kit main package
 
-This is a strongly opinionated CDK set of constructs built for companies looking to follow AWS best practices on Day 1 while setting their development and deployment environment on AWS.
+Expose a set of stacks and constructs to help you get started properly on AWS.
 
-Let's start small but with potential for future growth without adding tech debt.
+## Usage
 
-## Getting started
+1. install 
 
-Check our [examples repo](https://github.com/aws-samples/aws-bootstrap-kit-examples)
+    ```
+    npm install aws-bootstrap-kit
+    ```
+1. Check the [Examples](https://github.com/aws-samples/aws-bootstrap-kit-examples) and [API Doc](./API.md) for more details
 
-## Constructs
 
-As of today we expose only one global construct :
+## Contributing
 
-* [AWS BootstrapKit](./source/aws-bootstrap-kit/README.md)
+Check [CONTRIBUTING.md](/source/aws-bootstrap-kit/CONTRIBUTING.md)

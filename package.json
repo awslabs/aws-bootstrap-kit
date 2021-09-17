@@ -1,7 +1,102 @@
 {
-  "name": "root",
-  "private": true,
+  "name": "aws-bootstrap-kit",
+  "version": "0.3.14",
+  "repository": {
+    "url": "https://github.com/awslabs/aws-bootstrap-kit",
+    "type": "git"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "jsii": {
+    "outdir": "dist",
+    "targets": {
+      "python": {
+        "distName": "aws-ssabuilders.aws-bootstrap-kit",
+        "module": "aws-ssabuilders.aws-bootstrap-kit"
+      },
+      "java": {
+        "package": "software.amazon.awsssabuilders.services.bootstrapKit",
+        "maven": {
+          "groupId": "software.amazon.awsssabuilders",
+          "artifactId": "bootstrap-kit"
+        }
+      },
+      "dotnet": {
+        "namespace": "Amazon.SSABUILDERS.AWS.BootstrapKit",
+        "packageId": "Amazon.SSABUILDERS.AWS.BootstrapKit"
+      }
+    }
+  },
+  "author": {
+    "name": "AWS EMEA SA Specialist Builders"
+  },
+  "scripts": {
+    "deploy": "tsc && cdk deploy",
+    "cdk": "cdk",
+    "build": "tsc && jsii && jsii-docgen",
+    "build:watch": "jsii -w",
+    "package": "jsii-pacmak --target js",
+    "js-package": "jsii-pacmak --target js",
+    "test": "tsc && jest",
+    "watch": "tsc -w",
+    "release": "standard-version",
+    "docgen": "jsii-docgen"
+  },
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "@aws-cdk/assert": "1.114.0",
+    "@types/aws-lambda": "8.10.77",
+    "@types/jest": "26.0.23",
+    "@types/node": "15.12.0",
+    "@types/sinon": "^10.0.2",
+    "aws-cdk": "1.114.0",
+    "aws-sdk": "^2.921.0",
+    "aws-sdk-mock": "5.1.0",
+    "codecov": "^3.8.2",
+    "detect-indent": "^6.1.0",
+    "detect-newline": "^3.1.0",
+    "jest": "^27.0.4",
+    "jsii": "^1.30.0",
+    "jsii-docgen": "^1.8.86",
+    "jsii-pacmak": "^1.33.0",
+    "sinon": "^11.1.1",
+    "standard-version": "^9.3.0",
+    "stringify-package": "^1.0.1",
+    "ts-jest": "27.0.2",
+    "ts-node": "10.0.0",
+    "typescript": "~4.3.2"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-codepipeline": "1.114.0",
+    "@aws-cdk/aws-codepipeline-actions": "1.114.0",
+    "@aws-cdk/aws-config": "1.114.0",
+    "@aws-cdk/aws-events-targets": "1.114.0",
+    "@aws-cdk/aws-iam": "1.114.0",
+    "@aws-cdk/aws-lambda": "1.114.0",
+    "@aws-cdk/aws-logs": "1.114.0",
+    "@aws-cdk/aws-route53": "1.114.0",
+    "@aws-cdk/aws-secretsmanager": "1.114.0",
+    "@aws-cdk/aws-sns": "1.114.0",
+    "@aws-cdk/aws-sns-subscriptions": "1.114.0",
+    "@aws-cdk/core": "1.114.0",
+    "@aws-cdk/custom-resources": "1.114.0",
+    "@aws-cdk/pipelines": "1.114.0"
+  },
+  "peerDependencies": {
+    "@aws-cdk/aws-codepipeline": "1.114.0",
+    "@aws-cdk/aws-codepipeline-actions": "1.114.0",
+    "@aws-cdk/aws-config": "1.114.0",
+    "@aws-cdk/aws-events-targets": "1.114.0",
+    "@aws-cdk/aws-iam": "1.114.0",
+    "@aws-cdk/aws-lambda": "1.114.0",
+    "@aws-cdk/aws-logs": "1.114.0",
+    "@aws-cdk/aws-route53": "1.114.0",
+    "@aws-cdk/aws-secretsmanager": "1.114.0",
+    "@aws-cdk/aws-sns": "1.114.0",
+    "@aws-cdk/aws-sns-subscriptions": "1.114.0",
+    "@aws-cdk/core": "1.114.0",
+    "@aws-cdk/custom-resources": "1.114.0",
+    "@aws-cdk/pipelines": "1.114.0",
+    "constructs": "3.3.97"
   }
 }
