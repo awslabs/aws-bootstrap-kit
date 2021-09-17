@@ -1,12 +1,12 @@
 {
   "name": "my-aws-bootstrap-kit",
   "version": "0.3.8",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "index.ts",
   "description": "",
   "directories": {
-    "lib": "lib",
-    "test": "test"
+    "account-handler": "account-handler",
+    "validate-email-handler": "validate-email-handler",
+    "dns": "dns"
   },
   "repository": {
     "type": "git",
