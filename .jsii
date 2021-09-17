@@ -6,21 +6,21 @@
     ]
   },
   "dependencies": {
-    "@aws-cdk/aws-codepipeline": "1.91.0",
-    "@aws-cdk/aws-codepipeline-actions": "1.91.0",
-    "@aws-cdk/aws-config": "1.91.0",
-    "@aws-cdk/aws-events-targets": "1.91.0",
-    "@aws-cdk/aws-iam": "1.91.0",
-    "@aws-cdk/aws-lambda": "1.91.0",
-    "@aws-cdk/aws-logs": "1.91.0",
-    "@aws-cdk/aws-route53": "1.91.0",
-    "@aws-cdk/aws-secretsmanager": "1.91.0",
-    "@aws-cdk/aws-sns": "1.91.0",
-    "@aws-cdk/aws-sns-subscriptions": "1.91.0",
-    "@aws-cdk/core": "1.91.0",
-    "@aws-cdk/custom-resources": "1.91.0",
-    "@aws-cdk/pipelines": "1.91.0",
-    "constructs": "3.3.55"
+    "@aws-cdk/aws-codepipeline": "1.95.2",
+    "@aws-cdk/aws-codepipeline-actions": "1.95.2",
+    "@aws-cdk/aws-config": "1.95.2",
+    "@aws-cdk/aws-events-targets": "1.95.2",
+    "@aws-cdk/aws-iam": "1.95.2",
+    "@aws-cdk/aws-lambda": "1.95.2",
+    "@aws-cdk/aws-logs": "1.95.2",
+    "@aws-cdk/aws-route53": "1.95.2",
+    "@aws-cdk/aws-secretsmanager": "1.95.2",
+    "@aws-cdk/aws-sns": "1.95.2",
+    "@aws-cdk/aws-sns-subscriptions": "1.95.2",
+    "@aws-cdk/core": "1.95.2",
+    "@aws-cdk/custom-resources": "1.95.2",
+    "@aws-cdk/pipelines": "1.95.2",
+    "constructs": "3.3.71"
   },
   "dependencyClosure": {
     "@aws-cdk/assets": {
@@ -814,6 +814,33 @@
         }
       }
     },
+    "@aws-cdk/aws-globalaccelerator": {
+      "targets": {
+        "dotnet": {
+          "iconUrl": "https://raw.githubusercontent.com/aws/aws-cdk/master/logo/default-256-dark.png",
+          "namespace": "Amazon.CDK.AWS.GlobalAccelerator",
+          "packageId": "Amazon.CDK.AWS.GlobalAccelerator"
+        },
+        "java": {
+          "maven": {
+            "artifactId": "globalaccelerator",
+            "groupId": "software.amazon.awscdk"
+          },
+          "package": "software.amazon.awscdk.services.globalaccelerator"
+        },
+        "js": {
+          "npm": "@aws-cdk/aws-globalaccelerator"
+        },
+        "python": {
+          "classifiers": [
+            "Framework :: AWS CDK",
+            "Framework :: AWS CDK :: 1"
+          ],
+          "distName": "aws-cdk.aws-globalaccelerator",
+          "module": "aws_cdk.aws_globalaccelerator"
+        }
+      }
+    },
     "@aws-cdk/aws-iam": {
       "targets": {
         "dotnet": {
@@ -1192,6 +1219,33 @@
         }
       }
     },
+    "@aws-cdk/aws-signer": {
+      "targets": {
+        "dotnet": {
+          "iconUrl": "https://raw.githubusercontent.com/aws/aws-cdk/master/logo/default-256-dark.png",
+          "namespace": "Amazon.CDK.AWS.Signer",
+          "packageId": "Amazon.CDK.AWS.Signer"
+        },
+        "java": {
+          "maven": {
+            "artifactId": "signer",
+            "groupId": "software.amazon.awscdk"
+          },
+          "package": "software.amazon.awscdk.services.signer"
+        },
+        "js": {
+          "npm": "@aws-cdk/aws-signer"
+        },
+        "python": {
+          "classifiers": [
+            "Framework :: AWS CDK",
+            "Framework :: AWS CDK :: 1"
+          ],
+          "distName": "aws-cdk.aws-signer",
+          "module": "aws_cdk.aws_signer"
+        }
+      }
+    },
     "@aws-cdk/aws-sns": {
       "targets": {
         "dotnet": {
@@ -1489,6 +1543,33 @@
         }
       }
     },
+    "@aws-cdk/yaml-cfn": {
+      "targets": {
+        "dotnet": {
+          "iconUrl": "https://raw.githubusercontent.com/aws/aws-cdk/master/logo/default-256-dark.png",
+          "namespace": "Amazon.CDK.Yaml.Cfn",
+          "packageId": "Amazon.CDK.Yaml.Cfn"
+        },
+        "java": {
+          "maven": {
+            "artifactId": "cdk-yaml-cfn",
+            "groupId": "software.amazon.awscdk"
+          },
+          "package": "software.amazon.awscdk.yaml.cfn"
+        },
+        "js": {
+          "npm": "@aws-cdk/yaml-cfn"
+        },
+        "python": {
+          "classifiers": [
+            "Framework :: AWS CDK",
+            "Framework :: AWS CDK :: 1"
+          ],
+          "distName": "aws-cdk.yaml-cfn",
+          "module": "aws_cdk.yaml_cfn"
+        }
+      }
+    },
     "constructs": {
       "targets": {
         "dotnet": {
@@ -1517,7 +1598,7 @@
   },
   "description": "aws-bootstrap-kit",
   "homepage": "https://github.com/awslabs/aws-bootstrap-kit",
-  "jsiiVersion": "1.14.1 (build 828de8a)",
+  "jsiiVersion": "1.26.0 (build 7d76e02)",
   "license": "Apache-2.0",
   "metadata": {
     "jsii": {
@@ -2625,6 +2706,6 @@
       ]
     }
   },
-  "version": "0.3.8",
-  "fingerprint": "nXCXwDV+AkV3PBjYScysxTP+w1aMok+rG6j75AG41M0="
+  "version": "0.3.9",
+  "fingerprint": "SUB786XuWrli6kYJZAAGW7BGeg3TM5SJ3RYar1exn+M="
 }

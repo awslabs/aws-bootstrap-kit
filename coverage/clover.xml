@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1615218898535" clover="3.2.0">
-  <project timestamp="1615218898536" name="All files">
+<coverage generated="1617286479419" clover="3.2.0">
+  <project timestamp="1617286479420" name="All files">
     <metrics statements="373" coveredstatements="358" conditionals="128" coveredconditionals="100" methods="44" coveredmethods="43" elements="545" coveredelements="501" complexity="0" loc="373" ncloc="373" packages="5" files="19" classes="19"/>
     <package name="lib">
       <metrics statements="219" coveredstatements="214" conditionals="59" coveredconditionals="44" methods="24" coveredmethods="23"/>
-      <file name="account-provider.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/account-provider.ts">
+      <file name="account-provider.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/account-provider.ts">
         <metrics statements="16" coveredstatements="16" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
         <line num="17" count="3" type="stmt"/>
         <line num="18" count="3" type="stmt"/>
@@ -23,7 +23,7 @@
         <line num="83" count="7" type="stmt"/>
         <line num="94" count="7" type="stmt"/>
       </file>
-      <file name="account.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/account.ts">
+      <file name="account.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/account.ts">
         <metrics statements="26" coveredstatements="25" conditionals="12" coveredconditionals="10" methods="3" coveredmethods="3"/>
         <line num="17" count="3" type="stmt"/>
         <line num="18" count="3" type="stmt"/>
@@ -52,7 +52,7 @@
         <line num="188" count="19" type="stmt"/>
         <line num="195" count="19" type="stmt"/>
       </file>
-      <file name="aws-config-recorder.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/aws-config-recorder.ts">
+      <file name="aws-config-recorder.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/aws-config-recorder.ts">
         <metrics statements="13" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="17" count="3" type="stmt"/>
         <line num="18" count="3" type="stmt"/>
@@ -68,7 +68,7 @@
         <line num="78" count="7" type="stmt"/>
         <line num="83" count="7" type="stmt"/>
       </file>
-      <file name="aws-organizations-stack.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/aws-organizations-stack.ts">
+      <file name="aws-organizations-stack.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/aws-organizations-stack.ts">
         <metrics statements="46" coveredstatements="43" conditionals="23" coveredconditionals="16" methods="5" coveredmethods="4"/>
         <line num="17" count="2" type="stmt"/>
         <line num="18" count="2" type="stmt"/>
@@ -117,7 +117,7 @@
         <line num="200" count="1" type="stmt"/>
         <line num="207" count="6" type="stmt"/>
       </file>
-      <file name="dns.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/dns.ts">
+      <file name="dns.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/dns.ts">
         <metrics statements="24" coveredstatements="23" conditionals="8" coveredconditionals="5" methods="4" coveredmethods="4"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -144,7 +144,7 @@
         <line num="108" count="3" type="stmt"/>
         <line num="112" count="1" type="stmt"/>
       </file>
-      <file name="index.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/index.ts">
+      <file name="index.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/index.ts">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
@@ -153,7 +153,7 @@
         <line num="5" count="2" type="stmt"/>
         <line num="6" count="2" type="stmt"/>
       </file>
-      <file name="organization-trail.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/organization-trail.ts">
+      <file name="organization-trail.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/organization-trail.ts">
         <metrics statements="17" coveredstatements="17" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
         <line num="17" count="3" type="stmt"/>
         <line num="18" count="3" type="stmt"/>
@@ -173,7 +173,7 @@
         <line num="150" count="7" type="stmt"/>
         <line num="166" count="7" type="stmt"/>
       </file>
-      <file name="organization.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/organization.ts">
+      <file name="organization.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/organization.ts">
         <metrics statements="17" coveredstatements="17" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
         <line num="17" count="2" type="stmt"/>
         <line num="18" count="2" type="stmt"/>
@@ -193,7 +193,7 @@
         <line num="127" count="12" type="cond" truecount="2" falsecount="0"/>
         <line num="129" count="12" type="stmt"/>
       </file>
-      <file name="organizational-unit.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/organizational-unit.ts">
+      <file name="organizational-unit.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/organizational-unit.ts">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="17" count="2" type="stmt"/>
         <line num="18" count="2" type="stmt"/>
@@ -202,7 +202,7 @@
         <line num="33" count="12" type="stmt"/>
         <line num="56" count="12" type="stmt"/>
       </file>
-      <file name="secure-root-user.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/secure-root-user.ts">
+      <file name="secure-root-user.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/secure-root-user.ts">
         <metrics statements="22" coveredstatements="22" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="17" count="3" type="stmt"/>
         <line num="18" count="3" type="stmt"/>
@@ -227,7 +227,7 @@
         <line num="73" count="7" type="stmt"/>
         <line num="78" count="14" type="stmt"/>
       </file>
-      <file name="validate-email-provider.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/validate-email-provider.ts">
+      <file name="validate-email-provider.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/validate-email-provider.ts">
         <metrics statements="16" coveredstatements="16" conditionals="4" coveredconditionals="3" methods="2" coveredmethods="2"/>
         <line num="16" count="3" type="stmt"/>
         <line num="17" count="3" type="stmt"/>
@@ -246,7 +246,7 @@
         <line num="81" count="5" type="stmt"/>
         <line num="88" count="5" type="stmt"/>
       </file>
-      <file name="validate-email.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/validate-email.ts">
+      <file name="validate-email.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/validate-email.ts">
         <metrics statements="10" coveredstatements="10" conditionals="6" coveredconditionals="5" methods="1" coveredmethods="1"/>
         <line num="17" count="3" type="stmt"/>
         <line num="18" count="3" type="stmt"/>
@@ -262,7 +262,7 @@
     </package>
     <package name="lib.account-handler">
       <metrics statements="36" coveredstatements="34" conditionals="26" coveredconditionals="23" methods="4" coveredmethods="4"/>
-      <file name="index.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/account-handler/index.ts">
+      <file name="index.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/account-handler/index.ts">
         <metrics statements="36" coveredstatements="34" conditionals="26" coveredconditionals="23" methods="4" coveredmethods="4"/>
         <line num="25" count="1" type="stmt"/>
         <line num="34" count="1" type="stmt"/>
@@ -304,7 +304,7 @@
     </package>
     <package name="lib.dns">
       <metrics statements="32" coveredstatements="32" conditionals="6" coveredconditionals="3" methods="3" coveredmethods="3"/>
-      <file name="cross-account-dns-delegator.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/dns/cross-account-dns-delegator.ts">
+      <file name="cross-account-dns-delegator.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/dns/cross-account-dns-delegator.ts">
         <metrics statements="11" coveredstatements="11" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="3" type="stmt"/>
         <line num="2" count="3" type="stmt"/>
@@ -318,7 +318,7 @@
         <line num="80" count="1" type="stmt"/>
         <line num="81" count="1" type="stmt"/>
       </file>
-      <file name="cross-account-zone-delegation-record-provider.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/dns/cross-account-zone-delegation-record-provider.ts">
+      <file name="cross-account-zone-delegation-record-provider.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/dns/cross-account-zone-delegation-record-provider.ts">
         <metrics statements="12" coveredstatements="12" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
         <line num="17" count="3" type="stmt"/>
         <line num="18" count="3" type="stmt"/>
@@ -333,7 +333,7 @@
         <line num="66" count="1" type="stmt"/>
         <line num="73" count="1" type="stmt"/>
       </file>
-      <file name="cross-account-zone-delegation-record.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/dns/cross-account-zone-delegation-record.ts">
+      <file name="cross-account-zone-delegation-record.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/dns/cross-account-zone-delegation-record.ts">
         <metrics statements="9" coveredstatements="9" conditionals="4" coveredconditionals="2" methods="1" coveredmethods="1"/>
         <line num="1" count="3" type="stmt"/>
         <line num="2" count="3" type="stmt"/>
@@ -348,7 +348,7 @@
     </package>
     <package name="lib.dns.delegation-record-handler">
       <metrics statements="65" coveredstatements="57" conditionals="23" coveredconditionals="18" methods="11" coveredmethods="11"/>
-      <file name="index.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/dns/delegation-record-handler/index.ts">
+      <file name="index.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/dns/delegation-record-handler/index.ts">
         <metrics statements="53" coveredstatements="46" conditionals="19" coveredconditionals="15" methods="8" coveredmethods="8"/>
         <line num="20" count="1" type="stmt"/>
         <line num="25" count="1" type="stmt"/>
@@ -404,7 +404,7 @@
         <line num="236" count="0" type="stmt"/>
         <line num="237" count="0" type="stmt"/>
       </file>
-      <file name="utils.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/dns/delegation-record-handler/utils.ts">
+      <file name="utils.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/dns/delegation-record-handler/utils.ts">
         <metrics statements="12" coveredstatements="11" conditionals="4" coveredconditionals="3" methods="3" coveredmethods="3"/>
         <line num="1" count="3" type="stmt"/>
         <line num="2" count="3" type="stmt"/>
@@ -422,7 +422,7 @@
     </package>
     <package name="lib.validate-email-handler">
       <metrics statements="21" coveredstatements="21" conditionals="14" coveredconditionals="12" methods="2" coveredmethods="2"/>
-      <file name="index.ts" path="/codebuild/output/src285785657/src/source/aws-bootstrap-kit/lib/validate-email-handler/index.ts">
+      <file name="index.ts" path="/codebuild/output/src969830610/src/source/aws-bootstrap-kit/lib/validate-email-handler/index.ts">
         <metrics statements="21" coveredstatements="21" conditionals="14" coveredconditionals="12" methods="2" coveredmethods="2"/>
         <line num="17" count="1" type="stmt"/>
         <line num="24" count="1" type="stmt"/>
