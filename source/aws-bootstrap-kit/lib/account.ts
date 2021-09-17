@@ -183,10 +183,11 @@ export class Account extends core.Construct {
       // Enabling Organizations listAccounts call for auto resolution of stages and DNS accounts Ids and Names
       if (accountProps.type === AccountType.CICD) {
         this.registerAsDelegatedAdministrator(accountId, 'ssm.amazonaws.com');
-      } else {
-       // Switching to another principal to workaround the max number of delegated administrators (which is set to 3 by default).
-        this.registerAsDelegatedAdministrator(accountId, 'config-multiaccountsetup.amazonaws.com');
       }
+      // else {
+      //  // Switching to another principal to workaround the max number of delegated administrators (which is set to 3 by default).
+      //   this.registerAsDelegatedAdministrator(accountId, 'config-multiaccountsetup.amazonaws.com');
+      // }
 
     }
   }
