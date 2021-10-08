@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.15](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.15) (2021-10-08)
+
+
+### Features
+
+* disable registerDelegatedAdministrator if not using DNS setup to unlock accounts creation ([0a7213e](https://github.com/awslabs/aws-bootstrap-kit/commit/0a7213e1380a03a225e898cc2fe4c9154ce6317c))
+
 ### [0.3.14](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.14) (2021-08-03)
 
 
