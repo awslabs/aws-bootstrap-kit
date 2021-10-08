@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { expect as expectCDK, haveResource } from "@aws-cdk/assert";
+import { expect as expectCDK, haveResource, countResourcesLike } from "@aws-cdk/assert";
 import { Account } from "../lib/account";
 import { Stack } from "@aws-cdk/core";
 
-test("HappyCase", () => {
-  const stack = new Stack();
+test("HappyCase no DNS don't set delegation", () => {
+  const stack = new Stack()
   new Account(stack, "myAccount", {
     email: "fakeEmail",
     name: "fakeAccountName",
@@ -32,4 +32,60 @@ test("HappyCase", () => {
       AccountName: "fakeAccountName",
     })
   );
+
+  expectCDK(stack).to(countResourcesLike("Custom::AWS", 0, {
+    "Create": {
+      "Fn::Join": [
+        "",
+        [
+          "{\"service\":\"Organizations\",\"action\":\"registerDelegatedAdministrator\",\"physicalResourceId\":{\"id\":\"registerDelegatedAdministrator\"},\"region\":\"us-east-1\",\"parameters\":{\"AccountId\":\"",
+          {
+            "Fn::GetAtt": [
+              "myAccountAccountfakeAccountNameA6CEFA53",
+              "AccountId"
+            ]
+          },
+          "\",\"ServicePrincipal\":\"config-multiaccountsetup.amazonaws.com\"}}"
+        ]
+      ]
+    }
+    
+  }));
+});
+
+
+test("HappyCase with DNS create admin delegation", () => {
+  const stack = new Stack();
+  stack.node.setContext("domain_name", "example.com");
+  new Account(stack, "myAccount", {
+    email: "fakeEmail",
+    name: "fakeAccountName",
+    parentOrganizationalUnitId: "fakeOUId",
+  });
+
+  expectCDK(stack).to(
+    haveResource("Custom::AccountCreation", {
+      Email: "fakeEmail",
+      AccountName: "fakeAccountName",
+    })
+  );
+
+  expectCDK(stack).to(countResourcesLike("Custom::AWS", 1, {
+    "Create": {
+      "Fn::Join": [
+        "",
+        [
+          "{\"service\":\"Organizations\",\"action\":\"registerDelegatedAdministrator\",\"physicalResourceId\":{\"id\":\"registerDelegatedAdministrator\"},\"region\":\"us-east-1\",\"parameters\":{\"AccountId\":\"",
+          {
+            "Fn::GetAtt": [
+              "myAccountAccountfakeAccountNameA6CEFA53",
+              "AccountId"
+            ]
+          },
+          "\",\"ServicePrincipal\":\"config-multiaccountsetup.amazonaws.com\"}}"
+        ]
+      ]
+    }
+    
+  }));
 });

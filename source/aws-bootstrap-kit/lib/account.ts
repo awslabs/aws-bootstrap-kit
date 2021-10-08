@@ -185,6 +185,8 @@ export class Account extends core.Construct {
         this.registerAsDelegatedAdministrator(accountId, 'ssm.amazonaws.com');
       } else {
        // Switching to another principal to workaround the max number of delegated administrators (which is set to 3 by default).
+       const needsToBeDelegatedForDNSZOneNameResolution = this.node.tryGetContext('domain_name') ?? false;
+       if(needsToBeDelegatedForDNSZOneNameResolution)
         this.registerAsDelegatedAdministrator(accountId, 'config-multiaccountsetup.amazonaws.com');
       }
 
