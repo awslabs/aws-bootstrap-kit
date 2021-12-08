@@ -1,4 +1,6 @@
-import * as core from "@aws-cdk/core";
+
+import {Construct} from 'constructs';
+import * as core from "aws-cdk-lib/core";
 import {CrossAccountZoneDelegationRecordProvider} from "./cross-account-zone-delegation-record-provider";
 
 export interface CrossAccountZoneDelegationRecordProps {
@@ -13,13 +15,13 @@ export interface CrossAccountZoneDelegationRecordProps {
 /**
  * Create a NS zone delegation record in the target account
  */
-export class CrossAccountZoneDelegationRecord extends core.Construct {
+export class CrossAccountZoneDelegationRecord extends Construct {
 
-    constructor(scope: core. Construct, id: string, props: CrossAccountZoneDelegationRecordProps) {
+    constructor(scope: Construct, id: string, props: CrossAccountZoneDelegationRecordProps) {
         super(scope, id);
 
         const { targetAccount, targetRoleToAssume } = props;
-        const roleArnToAssume = targetAccount && targetRoleToAssume ? 
+        const roleArnToAssume = targetAccount && targetRoleToAssume ?
         `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`
         :undefined;
 

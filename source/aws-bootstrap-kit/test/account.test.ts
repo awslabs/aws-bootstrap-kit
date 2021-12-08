@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ limitations under the License.
 
 import { expect as expectCDK, haveResource, countResourcesLike } from "@aws-cdk/assert";
 import { Account } from "../lib/account";
-import { Stack } from "@aws-cdk/core";
+import { Stack } from "aws-cdk-lib/core";
 
 test("HappyCase no DNS don't set delegation", () => {
   const stack = new Stack()
@@ -49,7 +49,7 @@ test("HappyCase no DNS don't set delegation", () => {
         ]
       ]
     }
-    
+
   }));
 });
 
@@ -86,6 +86,6 @@ test("HappyCase with DNS create admin delegation", () => {
         ]
       ]
     }
-    
+
   }));
 });

@@ -14,16 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as core from "@aws-cdk/core";
-import * as config from "@aws-cdk/aws-config";
-import * as sns from '@aws-cdk/aws-sns';
-import * as subs from '@aws-cdk/aws-sns-subscriptions';
+import {Construct} from 'constructs';
+import * as core from "aws-cdk-lib/core";
+import * as config from "aws-cdk-lib/aws-config";
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as subs from 'aws-cdk-lib/aws-sns-subscriptions';
 import {ConfigRecorder} from "./aws-config-recorder";
-import * as iam from '@aws-cdk/aws-iam';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 
-export class SecureRootUser extends core.Construct {
-  constructor(scope: core.Construct, id: string, notificationEmail: string) {
+export class SecureRootUser extends Construct {
+  constructor(scope: Construct, id: string, notificationEmail: string) {
     super(scope, id);
 
     // Build notification topic
@@ -68,7 +69,7 @@ export class SecureRootUser extends core.Construct {
 
     const mfaRemediationInstructionMessage = `Your main account (${core.Stack.of(this).account}) root user still not have MFA activated.\n\t1. Go to https://signin.aws.amazon.com/console and sign in using your root account\n\t2. Go to https://console.aws.amazon.com/iam/home#/security_credentials\n\t3. Activate MFA`;
     this.addNotCompliancyNotificationMechanism(enforceMFARule, autoRemediationRole, secureRootUserConfigTopic, mfaRemediationInstructionMessage);
-    
+
     const accessKeyRemediationInstructionMessage = `Your main account (${core.Stack.of(this).account}) root user have static access keys.\n\t1. Go to https://signin.aws.amazon.com/console and sign in using your root account\n\t2. Go to https://console.aws.amazon.com/iam/home#/security_credentials\n\t3. Delete your Access keys`;
     this.addNotCompliancyNotificationMechanism(enforceNoAccessKeyRule, autoRemediationRole, secureRootUserConfigTopic, accessKeyRemediationInstructionMessage);
   }

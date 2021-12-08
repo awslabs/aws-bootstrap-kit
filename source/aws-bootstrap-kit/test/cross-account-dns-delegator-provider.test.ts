@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { OnEventRequest } from "@aws-cdk/custom-resources/lib/provider-framework/types";
+import { OnEventRequest } from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 import * as AWS from "aws-sdk-mock";
 import { examples as stsExamples } from 'aws-sdk/apis/sts-2011-06-15.examples.json';
 import { examples as route53Examples } from 'aws-sdk/apis/route53-2013-04-01.examples.json';
@@ -111,7 +111,7 @@ test("when everything provided the right role is assumed and the right resource 
 
   AWS.mock("STS", "assumeRole", assumedRoleMock);
 
-  AWS.mock("Route53", "changeResourceRecordSets", changeResourceRecordSetsMock); 
+  AWS.mock("Route53", "changeResourceRecordSets", changeResourceRecordSetsMock);
   await onEventHandler(createEvent);
 
   sinon.assert.calledWith(assumedRoleMock, {
@@ -124,7 +124,7 @@ test("when everything provided the right role is assumed and the right resource 
     RoleSessionName: "fakeLogicalId"
   });
 
-  sinon.assert.calledWith(changeResourceRecordSetsMock, 
+  sinon.assert.calledWith(changeResourceRecordSetsMock,
     {ChangeBatch: {
       Changes: [{
     Action: "UPSERT",
@@ -172,7 +172,7 @@ test("when nothing is provided the right role is assumed and the right resource 
     RoleSessionName: "fakeLogicalId"
   });
 
-  sinon.assert.calledWith(changeResourceRecordSetsMock, 
+  sinon.assert.calledWith(changeResourceRecordSetsMock,
     {ChangeBatch: {
       Changes: [{
     Action: "UPSERT",

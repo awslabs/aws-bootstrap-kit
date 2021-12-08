@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ limitations under the License.
 
 import "@aws-cdk/assert/jest";
 import { CrossAccountDNSDelegator } from "../lib/dns/cross-account-dns-delegator";
-import { Stack } from "@aws-cdk/core";
+import { Stack } from "aws-cdk-lib/core";
 
 test("subdomain created", () => {
   const stack = new Stack();
@@ -31,5 +31,5 @@ test("subdomain created", () => {
   expect(stack).toHaveResource("Custom::CrossAccountZoneDelegationRecord",{
     recordName: "appsubdomain.stagesubdomain.mydomain.com"
   });
-  
+
 });

@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,24 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as core from '@aws-cdk/core';
-import * as cr from '@aws-cdk/custom-resources';
+import {Construct} from 'constructs';
+import * as cr from 'aws-cdk-lib/custom-resources';
 
 export interface OrganizationalUnitProps {
     Name: string,
     ParentId: string
 }
 
-export class OrganizationalUnit extends core.Construct {
+export class OrganizationalUnit extends Construct {
 
     readonly id: string;
 
-    constructor(scope: core.Construct, id: string, props: OrganizationalUnitProps) {
+    constructor(scope: Construct, id: string, props: OrganizationalUnitProps) {
         super(scope, id);
 
-        
-          let ou = new cr.AwsCustomResource(this, 
-            "OUCustomResource", 
+
+          let ou = new cr.AwsCustomResource(this,
+            "OUCustomResource",
             {
               onCreate: {
                 service: 'Organizations',

@@ -1,7 +1,9 @@
-import * as cdk from "@aws-cdk/core";
-import * as iam from "@aws-cdk/aws-iam";
-import * as route53 from "@aws-cdk/aws-route53";
-import { RecordTarget } from "@aws-cdk/aws-route53";
+
+import {Construct} from 'constructs';
+import * as cdk from "aws-cdk-lib/core";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import { RecordTarget } from "aws-cdk-lib/aws-route53";
 import {Account} from './account';
 import * as utils from './dns/delegation-record-handler/utils';
 
@@ -27,10 +29,10 @@ export interface RootDnsProps {
 /**
  * A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation
  */
-export class RootDns extends cdk.Construct {
+export class RootDns extends Construct {
   rootHostedZone: route53.IHostedZone;
 
-  constructor(scope: cdk.Construct, id: string, props: RootDnsProps) {
+  constructor(scope: Construct, id: string, props: RootDnsProps) {
     super(scope, id);
     this.rootHostedZone = this.createRootHostedZone(props);
 

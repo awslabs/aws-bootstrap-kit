@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -19,7 +19,7 @@ import type {
   IsCompleteRequest,
   IsCompleteResponse,
   OnEventResponse
-} from "@aws-cdk/custom-resources/lib/provider-framework/types";
+} from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 
 config.update({ region: "us-east-1" });
 
