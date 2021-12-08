@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as core from "@aws-cdk/core";
+import {Construct} from 'constructs';
+import * as core from "aws-cdk-lib/core";
 import { AccountProvider } from "./account-provider";
-import * as cr from "@aws-cdk/custom-resources";
-import * as ssm from "@aws-cdk/aws-ssm"; 
+import * as cr from "aws-cdk-lib/custom-resources";
+import * as ssm from "aws-cdk-lib/aws-ssm";
 
 /**
  * Properties of an AWS account
@@ -48,11 +49,11 @@ export interface IAccountProps {
    */
   hostedServices?: string[];
   /**
-   * The potential Organizational Unit Id the account should be placed in 
+   * The potential Organizational Unit Id the account should be placed in
    */
   parentOrganizationalUnitId?: string;
     /**
-   * The potential Organizational Unit Name the account should be placed in 
+   * The potential Organizational Unit Name the account should be placed in
    */
   parentOrganizationalUnitName?: string;
 
@@ -72,10 +73,10 @@ export enum AccountType {
 /**
  * An AWS Account
  */
-export class Account extends core.Construct {
+export class Account extends Construct {
   /**
    * Constructor
-   * 
+   *
    * @param scope The parent Construct instantiating this account
    * @param id This instance name
    * @param accountProps Account properties
@@ -84,7 +85,7 @@ export class Account extends core.Construct {
   readonly accountId: string;
   readonly accountStageName?: string;
 
-  constructor(scope: core.Construct, id: string, accountProps: IAccountProps) {
+  constructor(scope: Construct, id: string, accountProps: IAccountProps) {
     super(scope, id);
 
     const accountProvider = AccountProvider.getOrCreate(this);
@@ -107,7 +108,7 @@ export class Account extends core.Construct {
     );
 
     let accountId = account.getAtt("AccountId").toString();
-    
+
     accountProps.id = accountId;
     this.accountName = accountProps.name;
     this.accountId = accountId;
@@ -118,7 +119,7 @@ export class Account extends core.Construct {
       parameterName: `/accounts/${accountProps.name}`,
       stringValue: JSON.stringify(accountProps),
     });
-    
+
     if (accountProps.parentOrganizationalUnitId) {
       let parent = new cr.AwsCustomResource(this, "ListParentsCustomResource", {
         onCreate: {
@@ -194,8 +195,8 @@ export class Account extends core.Construct {
   }
 
   registerAsDelegatedAdministrator(accountId: string, servicePrincipal: string) {
-    new cr.AwsCustomResource(this, 
-      "registerDelegatedAdministrator", 
+    new cr.AwsCustomResource(this,
+      "registerDelegatedAdministrator",
       {
         onCreate: {
           service: 'Organizations',

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 /* eslint-disable no-console */
-import type { OnEventResponse } from "@aws-cdk/custom-resources/lib/provider-framework/types";
+import type { OnEventResponse } from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 
 import * as AWS from "aws-sdk";
 import { APIVersions } from "aws-sdk/lib/config";
@@ -148,7 +148,7 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
         roleArn,
         roleSessionName
     );
-    
+
     const _targetHostedZoneId = targetHostedZoneId?targetHostedZoneId:await resolveParentHostedZoneId(route53, recordName);
 
     console.log("roleArn = ", roleArn);
@@ -220,7 +220,7 @@ async function resolveRoleArn(recordName: string, currentAccountId: string) {
         let targetRoleToAssume;
         for (const account of listAccountsResults.Accounts
             ? listAccountsResults.Accounts
-            : []) {              
+            : []) {
 
             // Indentify main account which is the one hosting DNS root domain
             if (account.JoinedMethod === "INVITED") {
@@ -235,5 +235,5 @@ async function resolveRoleArn(recordName: string, currentAccountId: string) {
     } catch (error) {
         console.error(`Failed to resolveRoleArn due to ${error}`);
         throw error;
-    }  
+    }
 }

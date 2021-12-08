@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { OnEventRequest, IsCompleteRequest } from "@aws-cdk/custom-resources/lib/provider-framework/types";
+import { OnEventRequest, IsCompleteRequest } from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 import * as AWS from "aws-sdk-mock";
 import * as sinon from "sinon";
 import { AccountType } from "../lib";
@@ -56,21 +56,21 @@ const isCompleteCreateEvent: IsCompleteRequest = {
   PhysicalResourceId: "fakeRequestCreateAccountStatusId"
 }
 
-const updateEvent: OnEventRequest = { 
-  ... createEvent, 
-  RequestType: "Update",   
-  PhysicalResourceId: "fakeRequestCreateAccountStatusId" 
+const updateEvent: OnEventRequest = {
+  ... createEvent,
+  RequestType: "Update",
+  PhysicalResourceId: "fakeRequestCreateAccountStatusId"
 }
-const isCompleteUpdateEvent: IsCompleteRequest = { 
-  ... isCompleteCreateEvent, 
-  RequestType: "Update", 
+const isCompleteUpdateEvent: IsCompleteRequest = {
+  ... isCompleteCreateEvent,
+  RequestType: "Update",
   ResourceProperties: {
-    ServiceToken:  updateEvent.ResourceProperties.ServiceToken, 
+    ServiceToken:  updateEvent.ResourceProperties.ServiceToken,
     AccountType: updateEvent.ResourceProperties.AccountType,
     StageName: updateEvent.ResourceProperties.StageName,
     StageOrder: updateEvent.ResourceProperties.StageOrder,
     HostedServices: updateEvent.ResourceProperties.HostedServices
-  } 
+  }
 }
 
 afterEach(() => {
@@ -91,13 +91,13 @@ test("on event creates account for Create requests", async () => {
     Email: "fakeAlias+fakeStage@amazon.com",
     AccountName: "Workload-fakeStage",
     Tags: [
-      { 
-        Key: "Email", 
-        Value: "fakeAlias+fakeStage@amazon.com" 
-      }, 
-      { 
-        Key: "AccountName", 
-        Value: "Workload-fakeStage" 
+      {
+        Key: "Email",
+        Value: "fakeAlias+fakeStage@amazon.com"
+      },
+      {
+        Key: "AccountName",
+        Value: "Workload-fakeStage"
       },
       {
         Key: 'AccountType',

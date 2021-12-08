@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as core from '@aws-cdk/core';
-import { AwsCustomResource, PhysicalResourceId, AwsCustomResourcePolicy } from "@aws-cdk/custom-resources";
-import { Bucket, BlockPublicAccess } from '@aws-cdk/aws-s3';
-import { Effect, PolicyStatement, ServicePrincipal } from '@aws-cdk/aws-iam';
+import {Construct} from 'constructs';
+import * as core from 'aws-cdk-lib/core';
+import { AwsCustomResource, PhysicalResourceId, AwsCustomResourcePolicy } from "aws-cdk-lib/custom-resources";
+import { Bucket, BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
+import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 /**
  * The properties of an OrganizationTrail
@@ -30,16 +31,16 @@ export interface IOrganizationTrailProps {
 }
 
 /**
- * This represents an organization trail. An organization trail logs all events for all AWS accounts in that organization 
+ * This represents an organization trail. An organization trail logs all events for all AWS accounts in that organization
  * and write them in a dedicated S3 bucket in the master account of the organization. To deploy this construct you should
  * the credential of the master account of your organization. It deploys a S3 bucket, enables cloudtrail.amazonaws.com to
  * access the organization API, creates an organization trail and
- * start logging. To learn about AWS Cloud Trail and organization trail, 
+ * start logging. To learn about AWS Cloud Trail and organization trail,
  * check https://docs.aws.amazon.com/awscloudtrail/latest/userguide/creating-trail-organization.html
  */
-export class OrganizationTrail extends core.Construct {
+export class OrganizationTrail extends Construct {
 
-    constructor(scope: core.Construct, id: string, props: IOrganizationTrailProps) {
+    constructor(scope: Construct, id: string, props: IOrganizationTrailProps) {
         super(scope, id);
 
         const orgTrailBucket = new Bucket(this, 'OrganizationTrailBucket', {blockPublicAccess: BlockPublicAccess.BLOCK_ALL});
@@ -50,12 +51,12 @@ export class OrganizationTrail extends core.Construct {
             principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
             resources: [orgTrailBucket.bucketArn]
         }));
-        
+
         orgTrailBucket.addToResourcePolicy(new PolicyStatement({
             actions: ['s3:PutObject'],
             effect: Effect.ALLOW,
             principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
-            resources: [orgTrailBucket.bucketArn + '/AWSLogs/' + props.OrganizationId + '/*'], 
+            resources: [orgTrailBucket.bucketArn + '/AWSLogs/' + props.OrganizationId + '/*'],
             conditions: {
                 StringEquals:
                 {
@@ -68,7 +69,7 @@ export class OrganizationTrail extends core.Construct {
             actions: ['s3:PutObject'],
             effect: Effect.ALLOW,
             principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
-            resources: [orgTrailBucket.bucketArn + '/AWSLogs/' + core.Stack.of(this).account + '/*'], 
+            resources: [orgTrailBucket.bucketArn + '/AWSLogs/' + core.Stack.of(this).account + '/*'],
             conditions: {
                 StringEquals:
                 {
@@ -128,7 +129,7 @@ export class OrganizationTrail extends core.Construct {
                 onDelete: {
                     service: 'CloudTrail',
                     action: 'deleteTrail', //call deleteTrail of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#deleteTrail-property
-                    parameters: 
+                    parameters:
                     {
                         Name: organizationTrailName
                     }
@@ -148,7 +149,7 @@ export class OrganizationTrail extends core.Construct {
         {
             organizationTrailCreate.node.addDependency(orgTrailBucket.policy);
         }
-                        
+
         organizationTrailCreate.grantPrincipal.addToPrincipalPolicy(PolicyStatement.fromJson(
             {
                 "Effect": "Allow",

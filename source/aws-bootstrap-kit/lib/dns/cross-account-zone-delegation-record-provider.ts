@@ -14,11 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import {Construct} from 'constructs';
 import * as path from 'path';
-import * as iam from '@aws-cdk/aws-iam';
-import * as lambda from '@aws-cdk/aws-lambda';
-import { Construct, Duration } from '@aws-cdk/core';
-import * as cr from '@aws-cdk/custom-resources';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { Duration } from 'aws-cdk-lib/core';
+import * as cr from 'aws-cdk-lib/custom-resources';
 
 /**
  * A Custom Resource provider capable of creating a NS record with zone delegation

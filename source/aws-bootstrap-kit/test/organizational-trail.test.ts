@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -16,7 +16,7 @@ limitations under the License.
 
 import { expect as expectCDK, haveResource } from "@aws-cdk/assert";
 import { OrganizationTrail } from "../lib/organization-trail";
-import { Stack } from "@aws-cdk/core";
+import { Stack } from "aws-cdk-lib/core";
 
 test("OrganizationTrail creation", () => {
   const stack = new Stack();
@@ -30,7 +30,7 @@ test("OrganizationTrail creation", () => {
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true
         }
-        
+
     })
   );
 
@@ -113,7 +113,7 @@ test("OrganizationTrail creation", () => {
             ],
             "Version": "2012-10-17"
           }
-        
+
     })
   );
 
@@ -163,7 +163,7 @@ test("OrganizationTrail creation", () => {
             }
           })
     })
-  );  
+  );
 
   expectCDK(stack).to(
     haveResource("Custom::AWS", {

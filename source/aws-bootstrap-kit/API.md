@@ -43,8 +43,8 @@ Name|Description
 
 An AWS Account.
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
-__Extends__: [Construct](#aws-cdk-core-construct)
+__Implements__: [IConstruct](#constructs-iconstruct), [IDependable](#constructs-idependable)
+__Extends__: [Construct](#constructs-construct)
 
 ### Initializer
 
@@ -55,7 +55,7 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 new Account(scope: Construct, id: string, accountProps: IAccountProps)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **scope** (<code>[Construct](#constructs-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **accountProps** (<code>[IAccountProps](#aws-bootstrap-kit-iaccountprops)</code>)  *No description*
 
@@ -93,8 +93,8 @@ registerAsDelegatedAdministrator(accountId: string, servicePrincipal: string): v
 
 A Stack creating the Software Development Life Cycle (SDLC) Organization.
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [ITaggable](#aws-cdk-core-itaggable)
-__Extends__: [Stack](#aws-cdk-core-stack)
+__Implements__: [IConstruct](#constructs-iconstruct), [IDependable](#constructs-idependable), [ITaggable](#aws-cdk-lib-itaggable)
+__Extends__: [Stack](#aws-cdk-lib-stack)
 
 ### Initializer
 
@@ -105,14 +105,14 @@ __Extends__: [Stack](#aws-cdk-core-stack)
 new AwsOrganizationsStack(scope: Construct, id: string, props: AwsOrganizationsStackProps)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **scope** (<code>[Construct](#constructs-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[AwsOrganizationsStackProps](#aws-bootstrap-kit-awsorganizationsstackprops)</code>)  *No description*
   * **analyticsReporting** (<code>boolean</code>)  Include runtime versioning information in this Stack. __*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
   * **description** (<code>string</code>)  A description of the stack. __*Default*__: No description.
-  * **env** (<code>[Environment](#aws-cdk-core-environment)</code>)  The AWS environment (account/region) where this stack will be deployed. __*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
+  * **env** (<code>[Environment](#aws-cdk-lib-environment)</code>)  The AWS environment (account/region) where this stack will be deployed. __*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
   * **stackName** (<code>string</code>)  Name to deploy the stack with. __*Default*__: Derived from construct path.
-  * **synthesizer** (<code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code>)  Synthesis method to use while deploying this stack. __*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
+  * **synthesizer** (<code>[IStackSynthesizer](#aws-cdk-lib-istacksynthesizer)</code>)  Synthesis method to use while deploying this stack. __*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
   * **tags** (<code>Map<string, string></code>)  Stack tags that will be applied to all the taggable resources and the stack itself. __*Default*__: {}
   * **terminationProtection** (<code>boolean</code>)  Whether to enable termination protection for this stack. __*Default*__: false
   * **email** (<code>string</code>)  Email address of the Root account. 
@@ -151,8 +151,8 @@ const crossAccountDNSDelegatorProps: ICrossAccountDNSDelegatorProps = {
 
 new CrossAccountDNSDelegator(this, 'CrossAccountDNSDelegatorStack', crossAccountDNSDelegatorProps);
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
-__Extends__: [Construct](#aws-cdk-core-construct)
+__Implements__: [IConstruct](#constructs-iconstruct), [IDependable](#constructs-idependable)
+__Extends__: [Construct](#constructs-construct)
 
 ### Initializer
 
@@ -163,7 +163,7 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 new CrossAccountDNSDelegator(scope: Construct, id: string, props: ICrossAccountDNSDelegatorProps)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **scope** (<code>[Construct](#constructs-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[ICrossAccountDNSDelegatorProps](#aws-bootstrap-kit-icrossaccountdnsdelegatorprops)</code>)  *No description*
 
@@ -174,7 +174,7 @@ new CrossAccountDNSDelegator(scope: Construct, id: string, props: ICrossAccountD
 
 Name | Type | Description 
 -----|------|-------------
-**hostedZone** | <code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code> | <span></span>
+**hostedZone** | <code>[aws_route53.HostedZone](#aws-cdk-lib-aws-route53-hostedzone)</code> | <span></span>
 
 
 
@@ -182,8 +182,8 @@ Name | Type | Description
 
 A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation.
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
-__Extends__: [Construct](#aws-cdk-core-construct)
+__Implements__: [IConstruct](#constructs-iconstruct), [IDependable](#constructs-idependable)
+__Extends__: [Construct](#constructs-construct)
 
 ### Initializer
 
@@ -194,7 +194,7 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 new RootDns(scope: Construct, id: string, props: RootDnsProps)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **scope** (<code>[Construct](#constructs-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[RootDnsProps](#aws-bootstrap-kit-rootdnsprops)</code>)  *No description*
   * **rootHostedZoneDNSName** (<code>string</code>)  The top level domain name. 
@@ -208,7 +208,7 @@ new RootDns(scope: Construct, id: string, props: RootDnsProps)
 
 Name | Type | Description 
 -----|------|-------------
-**rootHostedZone** | <code>[IHostedZone](#aws-cdk-aws-route53-ihostedzone)</code> | <span></span>
+**rootHostedZone** | <code>[aws_route53.IHostedZone](#aws-cdk-lib-aws-route53-ihostedzone)</code> | <span></span>
 
 ### Methods
 
@@ -222,10 +222,10 @@ createDNSAutoUpdateRole(account: Account, stageSubZone: HostedZone): Role
 ```
 
 * **account** (<code>[Account](#aws-bootstrap-kit-account)</code>)  *No description*
-* **stageSubZone** (<code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code>)  *No description*
+* **stageSubZone** (<code>[aws_route53.HostedZone](#aws-cdk-lib-aws-route53-hostedzone)</code>)  *No description*
 
 __Returns__:
-* <code>[Role](#aws-cdk-aws-iam-role)</code>
+* <code>[aws_iam.Role](#aws-cdk-lib-aws-iam-role)</code>
 
 #### createRootHostedZone(props) <a id="aws-bootstrap-kit-rootdns-createroothostedzone"></a>
 
@@ -241,7 +241,7 @@ createRootHostedZone(props: RootDnsProps): HostedZone
   * **thirdPartyProviderDNSUsed** (<code>boolean</code>)  A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported). __*Optional*__
 
 __Returns__:
-* <code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code>
+* <code>[aws_route53.HostedZone](#aws-cdk-lib-aws-route53-hostedzone)</code>
 
 #### createStageSubZone(account, rootHostedZoneDNSName) <a id="aws-bootstrap-kit-rootdns-createstagesubzone"></a>
 
@@ -255,7 +255,7 @@ createStageSubZone(account: Account, rootHostedZoneDNSName: string): HostedZone
 * **rootHostedZoneDNSName** (<code>string</code>)  *No description*
 
 __Returns__:
-* <code>[HostedZone](#aws-cdk-aws-route53-hostedzone)</code>
+* <code>[aws_route53.HostedZone](#aws-cdk-lib-aws-route53-hostedzone)</code>
 
 
 
@@ -263,8 +263,8 @@ __Returns__:
 
 
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
-__Extends__: [Construct](#aws-cdk-core-construct)
+__Implements__: [IConstruct](#constructs-iconstruct), [IDependable](#constructs-idependable)
+__Extends__: [Construct](#constructs-construct)
 
 ### Initializer
 
@@ -275,7 +275,7 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 new SecureRootUser(scope: Construct, id: string, notificationEmail: string)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **scope** (<code>[Construct](#constructs-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **notificationEmail** (<code>string</code>)  *No description*
 
@@ -286,8 +286,8 @@ new SecureRootUser(scope: Construct, id: string, notificationEmail: string)
 
 Email Validation.
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
-__Extends__: [Construct](#aws-cdk-core-construct)
+__Implements__: [IConstruct](#constructs-iconstruct), [IDependable](#constructs-idependable)
+__Extends__: [Construct](#constructs-construct)
 
 ### Initializer
 
@@ -298,11 +298,11 @@ Constructor.
 new ValidateEmail(scope: Construct, id: string, props: ValidateEmailProps)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  The parent Construct instantiating this construct.
+* **scope** (<code>[Construct](#constructs-construct)</code>)  The parent Construct instantiating this construct.
 * **id** (<code>string</code>)  This instance name.
 * **props** (<code>[ValidateEmailProps](#aws-bootstrap-kit-validateemailprops)</code>)  *No description*
   * **email** (<code>string</code>)  Email address of the Root account. 
-  * **timeout** (<code>[Duration](#aws-cdk-core-duration)</code>)  *No description* __*Optional*__
+  * **timeout** (<code>[Duration](#aws-cdk-lib-duration)</code>)  *No description* __*Optional*__
 
 
 
@@ -338,11 +338,11 @@ Name | Type | Description
 **nestedOU**🔹 | <code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code> | Specification of the sub Organizational Unit.
 **analyticsReporting**?🔹 | <code>boolean</code> | Include runtime versioning information in this Stack.<br/>__*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 **description**?🔹 | <code>string</code> | A description of the stack.<br/>__*Default*__: No description.
-**env**?🔹 | <code>[Environment](#aws-cdk-core-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
+**env**?🔹 | <code>[Environment](#aws-cdk-lib-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
 **forceEmailVerification**?🔹 | <code>boolean</code> | Enable Email Verification Process.<br/>__*Optional*__
 **rootHostedZoneDNSName**?🔹 | <code>string</code> | The main DNS domain name to manage.<br/>__*Optional*__
 **stackName**?🔹 | <code>string</code> | Name to deploy the stack with.<br/>__*Default*__: Derived from construct path.
-**synthesizer**?🔹 | <code>[IStackSynthesizer](#aws-cdk-core-istacksynthesizer)</code> | Synthesis method to use while deploying this stack.<br/>__*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
+**synthesizer**?🔹 | <code>[IStackSynthesizer](#aws-cdk-lib-istacksynthesizer)</code> | Synthesis method to use while deploying this stack.<br/>__*Default*__: `DefaultStackSynthesizer` if the `@aws-cdk/core:newStyleStackSynthesis` feature flag is set, `LegacyStackSynthesizer` otherwise.
 **tags**?🔹 | <code>Map<string, string></code> | Stack tags that will be applied to all the taggable resources and the stack itself.<br/>__*Default*__: {}
 **terminationProtection**?🔹 | <code>boolean</code> | Whether to enable termination protection for this stack.<br/>__*Default*__: false
 **thirdPartyProviderDNSUsed**?🔹 | <code>boolean</code> | A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party.<br/>__*Optional*__
@@ -428,7 +428,7 @@ Properties of ValidateEmail.
 Name | Type | Description 
 -----|------|-------------
 **email** | <code>string</code> | Email address of the Root account.
-**timeout**? | <code>[Duration](#aws-cdk-core-duration)</code> | __*Optional*__
+**timeout**? | <code>[Duration](#aws-cdk-lib-duration)</code> | __*Optional*__
 
 
 

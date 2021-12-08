@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -18,14 +18,14 @@ import "@aws-cdk/assert/jest";
 import {
   OnEventRequest,
   IsCompleteRequest
-} from "@aws-cdk/custom-resources/lib/provider-framework/types";
+} from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 import * as AWS from "aws-sdk-mock";
 import * as sinon from "sinon";
 import {
   isCompleteHandler,
   onEventHandler
 } from "../lib/validate-email-handler";
-import { Stack } from "@aws-cdk/core";
+import { Stack } from "aws-cdk-lib/core";
 import { ValidateEmail } from "../lib/validate-email";
 
 test("Should throw Error if Email Prefix contains + ", () => {

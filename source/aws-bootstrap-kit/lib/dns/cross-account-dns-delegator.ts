@@ -1,10 +1,12 @@
-import * as core from '@aws-cdk/core';
-import * as route53 from '@aws-cdk/aws-route53';
+
+import {Construct} from 'constructs';
+import * as core from 'aws-cdk-lib/core';
+import * as route53 from 'aws-cdk-lib/aws-route53';
 import {CrossAccountZoneDelegationRecord} from "./cross-account-zone-delegation-record";
 
 /**
  * Properties to create delegated subzone of a zone hosted in a different account
- * 
+ *
  */
 export interface ICrossAccountDNSDelegatorProps {
     /**
@@ -57,9 +59,9 @@ export interface ICrossAccountDNSDelegatorProps {
  *
  * new CrossAccountDNSDelegator(this, 'CrossAccountDNSDelegatorStack', crossAccountDNSDelegatorProps);
  */
-export class CrossAccountDNSDelegator extends core.Construct {
+export class CrossAccountDNSDelegator extends Construct {
     readonly hostedZone: route53.HostedZone;
-    constructor(scope: core.Construct, id: string, props: ICrossAccountDNSDelegatorProps) {
+    constructor(scope: Construct, id: string, props: ICrossAccountDNSDelegatorProps) {
         super(scope, id);
 
         const {
@@ -72,7 +74,7 @@ export class CrossAccountDNSDelegator extends core.Construct {
         const hostedZone = new route53.HostedZone(this, 'HostedZone', {
             zoneName: zoneName
         });
-        
+
         this.hostedZone = hostedZone;
 
         const delegatedNameServers: string[] = hostedZone.hostedZoneNameServers!;

@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as core from '@aws-cdk/core';
-import * as cr from '@aws-cdk/custom-resources';
-import {PolicyStatement}  from '@aws-cdk/aws-iam';
+import {Construct} from 'constructs';
+import * as cr from 'aws-cdk-lib/custom-resources';
+import {PolicyStatement}  from 'aws-cdk-lib/aws-iam';
 
 /**
  * This represents an Organization
  */
-export class Organization extends core.Construct {
+export class Organization extends Construct {
 
     /**
      * The Id of the Organization
@@ -33,11 +33,11 @@ export class Organization extends core.Construct {
      */
     readonly rootId: string;
 
-    constructor(scope: core.Construct, id: string) {
+    constructor(scope: Construct, id: string) {
         super(scope, id)
 
-        let org = new cr.AwsCustomResource(this, 
-            "orgCustomResource", 
+        let org = new cr.AwsCustomResource(this,
+            "orgCustomResource",
             {
               onCreate: {
                 service: 'Organizations',
@@ -64,8 +64,8 @@ export class Organization extends core.Construct {
               )
             }
            );
-              
-           /*the lambda needs to have the iam:CreateServiceLinkedRole permission so that the AWS Organizations service can create 
+
+           /*the lambda needs to have the iam:CreateServiceLinkedRole permission so that the AWS Organizations service can create
            Service Linked Role on its behalf
            */
            org.grantPrincipal.addToPrincipalPolicy(PolicyStatement.fromJson(
@@ -79,8 +79,8 @@ export class Organization extends core.Construct {
 
           this.id = org.getResponseField('Organization.Id');
 
-          let root = new cr.AwsCustomResource(this, 
-            "RootCustomResource", 
+          let root = new cr.AwsCustomResource(this,
+            "RootCustomResource",
             {
               onCreate: {
                 service: 'Organizations',
@@ -116,11 +116,11 @@ export class Organization extends core.Construct {
           enableMultiAccountsSetupAWSServiceAccess.node.addDependency(org);
           enableSSMAWSServiceAccess.node.addDependency(enableMultiAccountsSetupAWSServiceAccess);
 
-          //adding an explicit dependency as CloudFormation won't infer that calling listRoots must be done only when Organization creation is finished as there is no implicit dependency between the 
-          //2 custom resources 
+          //adding an explicit dependency as CloudFormation won't infer that calling listRoots must be done only when Organization creation is finished as there is no implicit dependency between the
+          //2 custom resources
           root.node.addDependency(org);
 
-          this.rootId = root.getResponseField("Roots.0.Id");                        
+          this.rootId = root.getResponseField("Roots.0.Id");
     }
 
   private enableAWSServiceAccess(principal: string) {

@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as cdk from '@aws-cdk/core';
+import {Construct, IDependable} from 'constructs';
+import {Stack, StackProps} from 'aws-cdk-lib/core';
 import {Organization} from './organization';
 import {OrganizationalUnit} from './organizational-unit';
 import {Account, AccountType} from './account';
@@ -80,7 +81,7 @@ export interface OUSpec {
  * Properties for AWS SDLC Organizations Stack
  * @experimental
  */
-export interface AwsOrganizationsStackProps extends cdk.StackProps {
+export interface AwsOrganizationsStackProps extends StackProps {
 
   /**
    * Email address of the Root account
@@ -111,13 +112,13 @@ export interface AwsOrganizationsStackProps extends cdk.StackProps {
 /**
  * A Stack creating the Software Development Life Cycle (SDLC) Organization
  */
-export class AwsOrganizationsStack extends cdk.Stack {
+export class AwsOrganizationsStack extends Stack {
 
   private readonly emailPrefix?: string;
   private readonly domain?: string;
-  private readonly stageAccounts: Account[] = []; 
+  private readonly stageAccounts: Account[] = [];
 
-  private createOrganizationTree(oUSpec: OUSpec, parentId: string, previousSequentialConstruct: cdk.IDependable): cdk.IDependable {
+  private createOrganizationTree(oUSpec: OUSpec, parentId: string, previousSequentialConstruct: IDependable): IDependable {
 
     let organizationalUnit = new OrganizationalUnit(this, `${oUSpec.name}-OU`, {Name: oUSpec.name, ParentId: parentId});
     //adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
@@ -133,7 +134,7 @@ export class AwsOrganizationsStack extends cdk.Stack {
       }
       else if(this.emailPrefix && this.domain)
       {
-        accountEmail = `${this.emailPrefix}+${accountSpec.name}-${cdk.Stack.of(this).account}@${this.domain}`
+        accountEmail = `${this.emailPrefix}+${accountSpec.name}-${Stack.of(this).account}@${this.domain}`
       }
       else
       {
@@ -166,7 +167,7 @@ export class AwsOrganizationsStack extends cdk.Stack {
     return previousSequentialConstruct;
   }
 
-  constructor(scope: cdk.Construct, id: string, props: AwsOrganizationsStackProps) {
+  constructor(scope: Construct, id: string, props: AwsOrganizationsStackProps) {
     super(scope, id, {description: `Software development Landing Zone (uksb-1r7an8o45) (version:${version})`, ...props});
     const {email, nestedOU, forceEmailVerification = true} = props;
 
@@ -187,7 +188,7 @@ export class AwsOrganizationsStack extends cdk.Stack {
       let orgTrail = new OrganizationTrail(this, 'OrganizationTrail', {OrganizationId: org.id});
       orgTrail.node.addDependency(org);
 
-      let previousSequentialConstruct: cdk.IDependable = orgTrail;
+      let previousSequentialConstruct: IDependable = orgTrail;
 
       nestedOU.forEach(nestedOU => {
         previousSequentialConstruct = this.createOrganizationTree(nestedOU, org.rootId, previousSequentialConstruct);
@@ -203,7 +204,7 @@ export class AwsOrganizationsStack extends cdk.Stack {
         thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed?props.thirdPartyProviderDNSUsed:true
       });
     }
-    
+
     new SecureRootUser(this, 'SecureRootUser', email);
   }
 }

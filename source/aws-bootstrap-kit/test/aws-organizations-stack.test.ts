@@ -16,7 +16,7 @@ limitations under the License.
 
 import "@aws-cdk/assert/jest";
 import { AccountType, AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib";
-import { Stack } from "@aws-cdk/core";
+import { Stack } from "aws-cdk-lib/core";
 import {version} from '../package.json';
 
 const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
@@ -104,7 +104,7 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
             "region": "us-east-1"
           })
     });
-    
+
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
         "Create": {
@@ -207,7 +207,7 @@ test("should create root domain zone and stage based domain if rootHostedZoneDNS
     new Stack(),
     "AWSOrganizationsStack",
     {
-      ...awsOrganizationsStackProps, 
+      ...awsOrganizationsStackProps,
       rootHostedZoneDNSName: "yourdomain.com"
     }
   );

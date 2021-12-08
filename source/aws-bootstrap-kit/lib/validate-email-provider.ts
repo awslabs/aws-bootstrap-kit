@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -13,11 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+import {Construct} from 'constructs';
 import * as path from "path";
-import * as iam from "@aws-cdk/aws-iam";
-import * as lambda from "@aws-cdk/aws-lambda";
-import { Construct, Duration, Stack, NestedStack, StackProps } from "@aws-cdk/core";
-import { Provider } from "@aws-cdk/custom-resources";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import { Duration, Stack, NestedStack, StackProps } from "aws-cdk-lib/core";
+import { Provider } from "aws-cdk-lib/custom-resources";
 
 
 export interface ValidateEmailProviderProps extends StackProps {
@@ -37,7 +39,7 @@ export default class ValidateEmailProvider extends NestedStack {
    */
   public static getOrCreate(scope: Construct, props: ValidateEmailProviderProps) {
     const stack = Stack.of(scope);
-    const uid = "@aws-cdk/aws-bootstrap-kit.ValidateEmailProvider";
+    const uid = "aws-cdk-lib/aws-bootstrap-kit.ValidateEmailProvider";
     return (
       (stack.node.tryFindChild(uid) as ValidateEmailProvider) ||
       new ValidateEmailProvider(stack, uid, props)

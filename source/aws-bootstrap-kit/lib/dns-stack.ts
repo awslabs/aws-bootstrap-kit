@@ -1,4 +1,6 @@
-import * as cdk from '@aws-cdk/core';
+
+import {Construct} from 'constructs';
+import * as cdk from 'aws-cdk-lib/core';
 import {RootDns, RootDnsProps} from './dns';
 
 /**
@@ -16,8 +18,8 @@ export interface RootDNSStackProps extends cdk.StackProps {
  */
 export class RootDNSStack extends cdk.Stack {
   public rootDns: RootDns;
-  
-  constructor(scope: cdk.Construct, id: string, props: RootDNSStackProps) {
+
+  constructor(scope: Construct, id: string, props: RootDNSStackProps) {
     super(scope, id, props);
 
     this.rootDns = new RootDns(this, 'RootDNSZone', props.rootDnsProps);

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import {expect as expectCDK, haveResource} from "@aws-cdk/assert";
-import {Stack} from "@aws-cdk/core";
+import {Stack} from "aws-cdk-lib/core";
 import {SecureRootUser} from "../lib/secure-root-user";
 
 test("Get 2FA and Access key rules", () => {

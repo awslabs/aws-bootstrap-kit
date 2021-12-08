@@ -1,6 +1,6 @@
 /*
 Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  
+
 Licensed under the Apache License, Version 2.0 (the "License").
 You may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -14,19 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as cdk from '@aws-cdk/core';
-import * as iam from '@aws-cdk/aws-iam';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as cfg from '@aws-cdk/aws-config';
+import {Construct} from 'constructs';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as cfg from 'aws-cdk-lib/aws-config';
 
 
 // from https://github.com/aws-samples/aws-startup-blueprint/blob/mainline/lib/aws-config-packs.ts
-export class ConfigRecorder extends cdk.Construct {
+export class ConfigRecorder extends Construct {
 
-	constructor(scope: cdk.Construct, id: string) {
+	constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    
+
     const configBucket = new s3.Bucket(this, 'ConfigBucket', {blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL});
 
     configBucket.addToResourcePolicy(
@@ -78,7 +78,7 @@ export class ConfigRecorder extends cdk.Construct {
     const configRole = new iam.Role(this, 'ConfigRecorderRole', {
       assumedBy: new iam.ServicePrincipal('config.amazonaws.com'),
       managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSConfigRole')]
-    });    
+    });
 
     new cfg.CfnConfigurationRecorder(this, 'ConfigRecorder', {
       name: "BlueprintConfigRecorder",
