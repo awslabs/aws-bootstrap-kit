@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 import {Construct} from 'constructs';
 import * as core from "aws-cdk-lib/core";
 import * as config from "aws-cdk-lib/aws-config";
@@ -56,9 +55,13 @@ export class SecureRootUser extends Construct {
     const autoRemediationRole = new iam.Role(this, 'AutoRemediationRole', {
       assumedBy: new iam.CompositePrincipal(
           new iam.ServicePrincipal("events.amazonaws.com"),
-          new iam.ServicePrincipal("ssm.amazonaws.com"),
+          new iam.ServicePrincipal("ssm.amazonaws.com")
       )
     });
+
+    // See: https://github.com/aws/aws-cdk/issues/16188
+    const ssmaAsgRoleAsCfn = autoRemediationRole.node.defaultChild as iam.CfnRole;
+    ssmaAsgRoleAsCfn.addOverride('Properties.AssumeRolePolicyDocument.Statement.0.Principal.Service', ['events.amazonaws.com', 'ssm.amazonaws.com']);
 
     enforceMFARule.node.addDependency(configRecorder);
     enforceNoAccessKeyRule.node.addDependency(configRecorder);
