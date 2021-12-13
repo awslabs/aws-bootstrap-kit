@@ -1,6 +1,6 @@
 
 import {Construct} from 'constructs';
-import * as core from 'aws-cdk-lib/core';
+import * as core from 'aws-cdk-lib';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import {CrossAccountZoneDelegationRecord} from "./cross-account-zone-delegation-record";
 

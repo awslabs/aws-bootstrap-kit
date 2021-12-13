@@ -16,7 +16,7 @@ limitations under the License.
 
 import { expect as expectCDK, haveResource } from "@aws-cdk/assert";
 import { OrganizationTrail } from "../lib/organization-trail";
-import { Stack } from "aws-cdk-lib/core";
+import { Stack } from "aws-cdk-lib";
 
 test("OrganizationTrail creation", () => {
   const stack = new Stack();

@@ -16,7 +16,7 @@ limitations under the License.
 
 import "@aws-cdk/assert/jest";
 import { CrossAccountDNSDelegator } from "../lib/dns/cross-account-dns-delegator";
-import { Stack } from "aws-cdk-lib/core";
+import { Stack } from "aws-cdk-lib";
 
 test("subdomain created", () => {
   const stack = new Stack();

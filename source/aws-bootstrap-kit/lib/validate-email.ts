@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import {Construct} from 'constructs';
-import { CustomResource, Duration } from "aws-cdk-lib/core";
+import { CustomResource, Duration } from "aws-cdk-lib";
 import ValidateEmailProvider from "./validate-email-provider";
 
 /**
