@@ -1,6 +1,6 @@
 
 import {Construct} from 'constructs';
-import * as cdk from "aws-cdk-lib/core";
+import * as cdk from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import { RecordTarget } from "aws-cdk-lib/aws-route53";

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import {Construct, IDependable} from 'constructs';
-import {Stack, StackProps} from 'aws-cdk-lib/core';
+import {Stack, StackProps} from 'aws-cdk-lib';
 import {Organization} from './organization';
 import {OrganizationalUnit} from './organizational-unit';
 import {Account, AccountType} from './account';

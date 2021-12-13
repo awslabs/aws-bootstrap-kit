@@ -91,6 +91,9 @@ export async function isCompleteHandler(
 
   switch (event.RequestType) {
     case "Create":
+      if (CreateAccountStatus === "FAILED") {
+        throw new Error(`Error creating the account ${data.CreateAccountStatus?.AccountName}, cause: ${data.CreateAccountStatus?.FailureReason}`)
+      }
       return { IsComplete: CreateAccountStatus === "SUCCEEDED", Data: {AccountId: AccountId} };
     case "Update":
       if(AccountId) {

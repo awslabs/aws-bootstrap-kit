@@ -1,6 +1,6 @@
 
 import {Construct} from 'constructs';
-import * as cdk from 'aws-cdk-lib/core';
+import * as cdk from 'aws-cdk-lib';
 import {RootDns, RootDnsProps} from './dns';
 
 /**

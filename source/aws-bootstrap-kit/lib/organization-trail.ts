@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import {Construct} from 'constructs';
-import * as core from 'aws-cdk-lib/core';
+import * as core from 'aws-cdk-lib';
 import { AwsCustomResource, PhysicalResourceId, AwsCustomResourcePolicy } from "aws-cdk-lib/custom-resources";
 import { Bucket, BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';

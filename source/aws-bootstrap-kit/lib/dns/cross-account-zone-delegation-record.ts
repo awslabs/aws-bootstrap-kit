@@ -1,6 +1,6 @@
 
 import {Construct} from 'constructs';
-import * as core from "aws-cdk-lib/core";
+import * as core from "aws-cdk-lib";
 import {CrossAccountZoneDelegationRecordProvider} from "./cross-account-zone-delegation-record-provider";
 
 export interface CrossAccountZoneDelegationRecordProps {

@@ -18,7 +18,7 @@ import {Construct} from 'constructs';
 import * as path from "path";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Duration, Stack, NestedStack, StackProps } from "aws-cdk-lib/core";
+import { Duration, Stack, NestedStack, StackProps } from "aws-cdk-lib";
 import { Provider } from "aws-cdk-lib/custom-resources";
 
 

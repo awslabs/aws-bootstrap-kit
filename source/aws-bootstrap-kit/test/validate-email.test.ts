@@ -25,7 +25,7 @@ import {
   isCompleteHandler,
   onEventHandler
 } from "../lib/validate-email-handler";
-import { Stack } from "aws-cdk-lib/core";
+import { Stack } from "aws-cdk-lib";
 import { ValidateEmail } from "../lib/validate-email";
 
 test("Should throw Error if Email Prefix contains + ", () => {

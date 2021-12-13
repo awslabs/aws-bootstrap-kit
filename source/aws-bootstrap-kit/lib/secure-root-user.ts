@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import {Construct} from 'constructs';
-import * as core from "aws-cdk-lib/core";
+import * as core from "aws-cdk-lib";
 import * as config from "aws-cdk-lib/aws-config";
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as subs from 'aws-cdk-lib/aws-sns-subscriptions';

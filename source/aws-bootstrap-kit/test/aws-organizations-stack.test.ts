@@ -16,7 +16,7 @@ limitations under the License.
 
 import "@aws-cdk/assert/jest";
 import { AccountType, AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib";
-import { Stack } from "aws-cdk-lib/core";
+import { Stack } from "aws-cdk-lib";
 import {version} from '../package.json';
 
 const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
