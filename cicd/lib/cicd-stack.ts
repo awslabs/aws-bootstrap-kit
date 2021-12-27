@@ -30,15 +30,12 @@ export class PipelineStack extends cdk.Stack {
       branch: 'main',
       pipelineName: 'AWSBootsrapKit-cdk-constructs',
       notificationEmail: 'aws-emea-spe-build@amazon.com',
-      environment: {
-        NVM_USE_VERSION: "14",
-      },
+      buildImage: cdk.aws_codebuild.LinuxBuildImage.fromDockerRegistry('jsii/superchain:1-buster-slim-node14'),
       buildSpec: cdk.aws_codebuild.BuildSpec.fromObject({
         version: 0.2,
         phases: {
           install: {
             commands: [
-              'export PATH=$PATH:/usr/local/nvm/versions/node/v14.16.0/bin',
               'npm install npm lerna  -g', // Update npm itself
               'lerna bootstrap'
             ],
