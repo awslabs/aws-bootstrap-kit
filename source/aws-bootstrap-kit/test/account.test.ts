@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { expect as expectCDK, haveResource, countResourcesLike } from "@aws-cdk/assert";
-import { Account } from "../lib/account";
+import { Account, AccountType } from "../lib/account";
 import { Stack } from "aws-cdk-lib";
 
 test("HappyCase no DNS don't set delegation", () => {
@@ -23,6 +23,7 @@ test("HappyCase no DNS don't set delegation", () => {
   new Account(stack, "myAccount", {
     email: "fakeEmail",
     name: "fakeAccountName",
+    type: AccountType.PLAYGROUND,
     parentOrganizationalUnitId: "fakeOUId",
   });
 
@@ -32,6 +33,68 @@ test("HappyCase no DNS don't set delegation", () => {
       AccountName: "fakeAccountName",
     })
   );
+
+  expectCDK(stack).to(haveResource("Custom::AWS", {
+    "Create": {
+      "Fn::Join": [
+        "",
+        [
+          "{\"service\":\"Organizations\",\"action\":\"tagResource\",\"region\":\"us-east-1\",\"physicalResourceId\":{\"id\":\"tags-",
+          {
+            "Fn::GetAtt": [
+              "myAccountAccountfakeAccountNameA6CEFA53",
+              "AccountId"
+            ]
+          },
+          "\"},\"parameters\":{\"ResourceId\":\"",
+          {
+            "Fn::GetAtt": [
+              "myAccountAccountfakeAccountNameA6CEFA53",
+              "AccountId"
+            ]
+          },
+          "\",\"Tags\":[{\"Key\":\"Email\",\"Value\":\"fakeEmail\"},{\"Key\":\"AccountName\",\"Value\":\"fakeAccountName\"},{\"Key\":\"AccountType\",\"Value\":\"PLAYGROUND\"}]}}"
+        ]
+      ]
+    },
+    "Update": {
+      "Fn::Join": [
+        "",
+        [
+          "{\"service\":\"Organizations\",\"action\":\"tagResource\",\"region\":\"us-east-1\",\"physicalResourceId\":{\"id\":\"tags-",
+          {
+            "Fn::GetAtt": [
+              "myAccountAccountfakeAccountNameA6CEFA53",
+              "AccountId"
+            ]
+          },
+          "\"},\"parameters\":{\"ResourceId\":\"",
+          {
+            "Fn::GetAtt": [
+              "myAccountAccountfakeAccountNameA6CEFA53",
+              "AccountId"
+            ]
+          },
+          "\",\"Tags\":[{\"Key\":\"Email\",\"Value\":\"fakeEmail\"},{\"Key\":\"AccountName\",\"Value\":\"fakeAccountName\"},{\"Key\":\"AccountType\",\"Value\":\"PLAYGROUND\"}]}}"
+        ]
+      ]
+    },
+    "Delete": {
+      "Fn::Join": [
+        "",
+        [
+          "{\"service\":\"Organizations\",\"action\":\"untagResource\",\"region\":\"us-east-1\",\"parameters\":{\"ResourceId\":\"",
+          {
+            "Fn::GetAtt": [
+              "myAccountAccountfakeAccountNameA6CEFA53",
+              "AccountId"
+            ]
+          },
+          "\",\"TagKeys\":[\"Email\",\"AccountName\",\"AccountType\"]}}"
+        ]
+      ]
+    }
+  }));
 
   expectCDK(stack).to(countResourcesLike("Custom::AWS", 0, {
     "Create": {

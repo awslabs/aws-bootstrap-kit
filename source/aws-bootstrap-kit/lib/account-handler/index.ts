@@ -40,15 +40,10 @@ export async function onEventHandler(
     case "Create":
       const awsOrganizationsClient = new Organizations({region: 'us-east-1'});
       try {
-        const tags: { Key: string; Value: any; }[] = [];
-        Object.keys(event.ResourceProperties).forEach( propertyKey => {
-          if( propertyKey != 'ServiceToken' ) tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey]});
-        });
         const data = await awsOrganizationsClient
         .createAccount({
           Email: event.ResourceProperties.Email,
-          AccountName: event.ResourceProperties.AccountName,
-          Tags: tags
+          AccountName: event.ResourceProperties.AccountName
         })
         .promise();
         console.log("create account: %j", data);
@@ -56,10 +51,8 @@ export async function onEventHandler(
       } catch (error) {
         throw new Error(`Failed to create account: ${error}`);
       }
-    case "Update":
+    default: // just return the resource (we cannot update or delete an account)
       return { PhysicalResourceId: event.PhysicalResourceId, ResourceProperties: event.ResourceProperties };
-    default:
-      throw new Error(`${event.RequestType} is not a supported operation`);
   }
 
 }
@@ -80,14 +73,14 @@ export async function isCompleteHandler(
 
   const awsOrganizationsClient = new Organizations({region: 'us-east-1'});
 
-  const describeCreateAccountStatusParams : Organizations.DescribeCreateAccountStatusRequest = {CreateAccountRequestId: event.PhysicalResourceId}
-  const data: Organizations.DescribeCreateAccountStatusResponse  = await awsOrganizationsClient
-    .describeCreateAccountStatus(describeCreateAccountStatusParams).promise();
+      const describeCreateAccountStatusParams : Organizations.DescribeCreateAccountStatusRequest = {CreateAccountRequestId: event.PhysicalResourceId}
+      const data: Organizations.DescribeCreateAccountStatusResponse  = await awsOrganizationsClient
+        .describeCreateAccountStatus(describeCreateAccountStatusParams).promise();
 
-  console.log("Describe account: %j", data);
+      console.log("Describe account: %j", data);
 
-  const CreateAccountStatus = data.CreateAccountStatus?.State;
-  const AccountId = data.CreateAccountStatus?.AccountId;
+      const CreateAccountStatus = data.CreateAccountStatus?.State;
+      const AccountId = data.CreateAccountStatus?.AccountId;
 
   switch (event.RequestType) {
     case "Create":
@@ -95,24 +88,7 @@ export async function isCompleteHandler(
         throw new Error(`Error creating the account ${data.CreateAccountStatus?.AccountName}, cause: ${data.CreateAccountStatus?.FailureReason}`)
       }
       return { IsComplete: CreateAccountStatus === "SUCCEEDED", Data: {AccountId: AccountId} };
-    case "Update":
-      if(AccountId) {
-        console.log(`Add tags: type = ${event.ResourceProperties.AccountType}`);
-        const tags: { Key: string; Value: any; }[] = [];
-        Object.keys(event.ResourceProperties).forEach( propertyKey => {
-          if( propertyKey != 'ServiceToken' ) tags.push({Key: propertyKey, Value: event.ResourceProperties[propertyKey]});
-        });
-        const tagsUpdateRequestData = await awsOrganizationsClient
-        .tagResource({
-          ResourceId: AccountId!,
-          Tags: tags
-        })
-        .promise();
-        console.log("Updated account tags: %j", tagsUpdateRequestData);
-      }
-        return { IsComplete: CreateAccountStatus === "SUCCEEDED", Data: {AccountId: AccountId} };
-    case "Delete":
-      // TODO: figure out what to do here
-      throw new Error("DeleteAccount is not a supported operation");
+    default:
+      return { IsComplete: CreateAccountStatus === "SUCCEEDED", Data: {AccountId: AccountId} };
   }
 }

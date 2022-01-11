@@ -84,77 +84,132 @@ export class Account extends Construct {
   readonly accountName: string;
   readonly accountId: string;
   readonly accountStageName?: string;
+  readonly accountStageOrder?: number;
+
 
   constructor(scope: Construct, id: string, accountProps: IAccountProps) {
     super(scope, id);
 
     const accountProvider = AccountProvider.getOrCreate(this);
 
-    let account = new core.CustomResource(
-      this,
-      `Account-${accountProps.name}`,
-      {
-        serviceToken: accountProvider.provider.serviceToken,
-        resourceType: "Custom::AccountCreation",
-        properties: {
-          Email: accountProps.email,
-          AccountName: accountProps.name,
-          AccountType: accountProps.type,
-          StageName: accountProps.stageName,
-          StageOrder: accountProps.stageOrder?.toString(),
-          HostedServices: accountProps.hostedServices?accountProps.hostedServices.join(':'):undefined
-        },
+    let exitingAccount = false;
+    let accountId = accountProps.id;
+    let hostedServices = accountProps.hostedServices ? accountProps.hostedServices.join(':') : undefined;
+
+    // do not create account if we reuse one
+    let account;
+    if (accountId == null) {
+      account = new core.CustomResource(
+        this,
+        `Account-${accountProps.name}`,
+        {
+          serviceToken: accountProvider.provider.serviceToken,
+          resourceType: "Custom::AccountCreation",
+          properties: {
+            Email: accountProps.email,
+            AccountName: accountProps.name,
+            AccountType: accountProps.type,
+            StageName: accountProps.stageName,
+            StageOrder: accountProps.stageOrder?.toString(),
+            HostedServices: hostedServices
+          },
+        }
+      );
+      accountId = account.getAtt("AccountId").toString();
+      accountProps.id = accountId;
+    } else {
+      exitingAccount = true;
+
+      // retrieve existing account information (actual name and email) to update accountProps
+      const describeAccount = {
+        service: "Organizations",
+        action: "describeAccount",
+        physicalResourceId: cr.PhysicalResourceId.fromResponse(
+          "Account.Id"
+        ),
+        region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+        parameters: {
+          AccountId: accountId
+        }
+      };
+
+      account = new cr.AwsCustomResource(this, "ExistingAccountCustomResource", {
+        onCreate: describeAccount,
+        onUpdate: describeAccount,
+        onDelete: describeAccount,
+        policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
+          resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
+        })
+      });
+
+      accountProps.name = account.getResponseField("Account.Name");
+      accountProps.email = account.getResponseField("Account.Email");
+    }
+
+    // add tags
+    const tags: { Key: string; Value: any; }[] = [];
+    tags.push({Key: 'Email', Value: accountProps.email});
+    tags.push({Key: 'AccountName', Value: accountProps.name});
+    if (accountProps.type != null) tags.push({Key: 'AccountType', Value: accountProps.type});
+    if (accountProps.stageName != null) tags.push({Key: 'StageName', Value: accountProps.stageName});
+    if (accountProps.stageOrder != null) tags.push({Key: 'StageOrder', Value: accountProps.stageOrder.toString()});
+    if (hostedServices != null) tags.push({Key: 'HostedServices', Value: hostedServices});
+    const tagAccount = {
+      service: "Organizations",
+      action: "tagResource",
+      region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+      physicalResourceId: cr.PhysicalResourceId.of(`tags-${accountId}`),
+      parameters: {
+        ResourceId: accountId,
+        Tags: tags
       }
-    );
+    };
+    new cr.AwsCustomResource(this, "TagAccountCustomResource", {
+      onCreate: tagAccount,
+      onUpdate: tagAccount,
+      onDelete: {
+        service: "Organizations",
+        action: "untagResource",
+        region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+        parameters: {
+          ResourceId: accountId,
+          TagKeys: tags.map(t => t.Key)
+        }
+      },
+      policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
+        resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
+      })
+    });
 
-    let accountId = account.getAtt("AccountId").toString();
-
-    accountProps.id = accountId;
     this.accountName = accountProps.name;
     this.accountId = accountId;
     this.accountStageName = accountProps.stageName;
+    this.accountStageOrder = accountProps.stageOrder;
 
-    new ssm.StringParameter(this, `${accountProps.name}-AccountDetails`, {
+    let ssmParam = new ssm.StringParameter(this, exitingAccount?`${accountId}-AccountDetails`:`${accountProps.name}-AccountDetails`, {
       description: `Details of ${accountProps.name}`,
       parameterName: `/accounts/${accountProps.name}`,
+      simpleName: false,
       stringValue: JSON.stringify(accountProps),
     });
+    ssmParam.node.addDependency(account);
 
     if (accountProps.parentOrganizationalUnitId) {
+      const listParents = {
+        service: "Organizations",
+        action: "listParents",
+        physicalResourceId: cr.PhysicalResourceId.fromResponse(
+          "Parents.0.Id"
+        ),
+        region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+        parameters: {
+          ChildId: accountId,
+        },
+      };
       let parent = new cr.AwsCustomResource(this, "ListParentsCustomResource", {
-        onCreate: {
-          service: "Organizations",
-          action: "listParents",
-          physicalResourceId: cr.PhysicalResourceId.fromResponse(
-            "Parents.0.Id"
-          ),
-          region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
-          parameters: {
-            ChildId: accountId,
-          },
-        },
-        onUpdate: {
-          service: "Organizations",
-          action: "listParents",
-          physicalResourceId: cr.PhysicalResourceId.fromResponse(
-            "Parents.0.Id"
-          ),
-          region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
-          parameters: {
-            ChildId: accountId,
-          },
-        },
-        onDelete: {
-          service: "Organizations",
-          action: "listParents",
-          physicalResourceId: cr.PhysicalResourceId.fromResponse(
-            "Parents.0.Id"
-          ),
-          region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
-          parameters: {
-            ChildId: accountId,
-          },
-        },
+        onCreate: listParents,
+        onUpdate: listParents,
+        onDelete: listParents,
         policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
           resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
         }),
@@ -167,19 +222,21 @@ export class Account extends Construct {
           onCreate: {
             service: "Organizations",
             action: "moveAccount",
-            physicalResourceId: cr.PhysicalResourceId.of(accountId),
+            physicalResourceId: cr.PhysicalResourceId.of(`move-${accountId}`),
             region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
             parameters: {
               AccountId: accountId,
               DestinationParentId: accountProps.parentOrganizationalUnitId,
               SourceParentId: parent.getResponseField("Parents.0.Id"),
             },
+            ignoreErrorCodesMatching: 'DuplicateAccountException' // ignore if account is already there
           },
           policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
             resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
           }),
         }
       );
+
 
       // Enabling Organizations listAccounts call for auto resolution of stages and DNS accounts Ids and Names
       if (accountProps.type === AccountType.CICD) {
