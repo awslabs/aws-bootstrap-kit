@@ -15,7 +15,8 @@ limitations under the License.
 */
 
 import {Construct} from 'constructs';
-import * as cr from 'aws-cdk-lib/custom-resources';
+import { OrganizationalUnitProvider } from './organizational-unit-provider';
+import { CustomResource } from 'aws-cdk-lib';
 
 export interface OrganizationalUnitProps {
     Name: string,
@@ -29,50 +30,17 @@ export class OrganizationalUnit extends Construct {
     constructor(scope: Construct, id: string, props: OrganizationalUnitProps) {
         super(scope, id);
 
+        const ouProvider = OrganizationalUnitProvider.getOrCreate(this);
 
-          let ou = new cr.AwsCustomResource(this,
-            "OUCustomResource",
-            {
-              onCreate: {
-                service: 'Organizations',
-                action: 'createOrganizationalUnit', //@see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#createOrganizationalUnit-property
-                physicalResourceId: cr.PhysicalResourceId.fromResponse('OrganizationalUnit.Id'),
-                region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
-                parameters:
-                  {
-                    Name: props.Name,
-                    ParentId: props.ParentId
-                  }
-              },
-              onUpdate: {
-                service: 'Organizations',
-                action: 'updateOrganizationalUnit', //@see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#updateOrganizationalUnit-property
-                physicalResourceId: cr.PhysicalResourceId.fromResponse('OrganizationalUnit.Id'),
-                region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
-                parameters:
-                  {
-                    Name: props.Name,
-                    OrganizationalUnitId: new cr.PhysicalResourceIdReference()
-                  }
-              },
-              onDelete: {
-                service: 'Organizations',
-                action: 'deleteOrganizationalUnit', //@see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#deleteOrganizationalUnit-property
-                region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
-                parameters:
-                  {
-                    OrganizationalUnitId: new cr.PhysicalResourceIdReference()
-                  }
-              },
-              installLatestAwsSdk: false,
-              policy: cr.AwsCustomResourcePolicy.fromSdkCalls(
-                {
-                  resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE
-                }
-              )
-            },
-          );
+        let ou = new CustomResource(this, `OU-${props.Name}`, {
+          serviceToken: ouProvider.provider.serviceToken,
+          resourceType: "Custom::OUCreation",
+          properties: {
+            Name: props.Name,
+            ParentId: props.ParentId
+          }
+        });
 
-        this.id = ou.getResponseField("OrganizationalUnit.Id");
+        this.id = ou.getAtt("OrganizationalUnitId").toString();
     }
 }
