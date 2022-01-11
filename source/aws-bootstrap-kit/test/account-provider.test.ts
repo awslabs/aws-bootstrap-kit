@@ -61,17 +61,7 @@ const updateEvent: OnEventRequest = {
   RequestType: "Update",
   PhysicalResourceId: "fakeRequestCreateAccountStatusId"
 }
-const isCompleteUpdateEvent: IsCompleteRequest = {
-  ... isCompleteCreateEvent,
-  RequestType: "Update",
-  ResourceProperties: {
-    ServiceToken:  updateEvent.ResourceProperties.ServiceToken,
-    AccountType: updateEvent.ResourceProperties.AccountType,
-    StageName: updateEvent.ResourceProperties.StageName,
-    StageOrder: updateEvent.ResourceProperties.StageOrder,
-    HostedServices: updateEvent.ResourceProperties.HostedServices
-  }
-}
+
 
 afterEach(() => {
   AWS.restore();
@@ -89,33 +79,7 @@ test("on event creates account for Create requests", async () => {
 
   sinon.assert.calledWith(createAccountMock, {
     Email: "fakeAlias+fakeStage@amazon.com",
-    AccountName: "Workload-fakeStage",
-    Tags: [
-      {
-        Key: "Email",
-        Value: "fakeAlias+fakeStage@amazon.com"
-      },
-      {
-        Key: "AccountName",
-        Value: "Workload-fakeStage"
-      },
-      {
-        Key: 'AccountType',
-        Value: createEvent.ResourceProperties.AccountType
-      },
-      {
-        Key: 'StageName',
-        Value: createEvent.ResourceProperties.StageName
-      },
-      {
-        Key: 'StageOrder',
-        Value: createEvent.ResourceProperties.StageOrder.toString()
-      },
-      {
-        Key: 'HostedServices',
-        Value: createEvent.ResourceProperties.HostedServices
-      }
-    ],
+    AccountName: "Workload-fakeStage"
   });
 
   expect(data).toEqual({
@@ -200,72 +164,4 @@ test("is complete for create returns true when account creation is complete", as
 
   expect(data.IsComplete).toBeTruthy;
   expect(data.Data?.AccountId).toEqual("fakeAccountId");
-});
-
-test("is complete for update updates tags of the account", async () => {
-  const describeCreateAccountStatusMock = sinon.fake.resolves({
-    CreateAccountStatus: {
-        State: "SUCCEEDED",
-        AccountId: "fakeAccountId"
-    }
-  });
-  const tagResourceMock = sinon.fake.resolves({});
-
-  AWS.mock(
-    "Organizations",
-    "describeCreateAccountStatus",
-    describeCreateAccountStatusMock
-  );
-
-  AWS.mock(
-    "Organizations",
-    "tagResource",
-    tagResourceMock
-  );
-
-  const data = await isCompleteHandler(isCompleteUpdateEvent);
-
-  expect(data.IsComplete).toBeTruthy;
-  expect(data.Data?.AccountId).toEqual("fakeAccountId");
-
-  sinon.assert.calledWith(tagResourceMock, {
-    ResourceId: "fakeAccountId",
-    Tags: [
-      {
-        Key: 'AccountType',
-        Value: createEvent.ResourceProperties.AccountType
-      },
-      {
-        Key: 'StageName',
-        Value: createEvent.ResourceProperties.StageName
-      },
-      {
-        Key: 'StageOrder',
-        Value: createEvent.ResourceProperties.StageOrder.toString()
-      },
-      {
-        Key: 'HostedServices',
-        Value: createEvent.ResourceProperties.HostedServices
-      }
-    ],
-  });
-});
-
-test("is complete for delete  throws", async () => {
-  const describeCreateAccountStatusMock = sinon.fake.resolves({});
-
-  AWS.mock(
-    "Organizations",
-    "describeCreateAccountStatus",
-    describeCreateAccountStatusMock
-  );
-
-  try {
-    await isCompleteHandler({
-      ...isCompleteCreateEvent,
-      RequestType: "Delete",
-    });
-  } catch (error) {
-    expect(error.message).toEqual("DeleteAccount is not a supported operation");
-  }
 });
