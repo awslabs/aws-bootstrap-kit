@@ -69,6 +69,7 @@ Name | Type | Description
 **accountId** | <code>string</code> | <span></span>
 **accountName** | <code>string</code> | Constructor.
 **accountStageName**? | <code>string</code> | __*Optional*__
+**accountStageOrder**? | <code>number</code> | __*Optional*__
 
 ### Methods
 
@@ -319,6 +320,7 @@ Name | Type | Description
 **name** | <code>string</code> | The name of the AWS account.
 **email**? | <code>string</code> | The email associated to the AWS account.<br/>__*Optional*__
 **hostedServices**? | <code>Array<string></code> | List of your services that will be hosted in this account.<br/>__*Optional*__
+**reuseAccountId**? | <code>string</code> | The (optional) account id to reuse, instead of creating a new account.<br/>__*Optional*__
 **stageName**? | <code>string</code> | The (optional) Stage name to be used in CI/CD pipeline.<br/>__*Optional*__
 **stageOrder**? | <code>number</code> | The (optional) Stage deployment order.<br/>__*Optional*__
 **type**? | <code>[AccountType](#aws-bootstrap-kit-accounttype)</code> | The account type.<br/>__*Optional*__
