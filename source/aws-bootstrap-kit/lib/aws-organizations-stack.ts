@@ -34,7 +34,10 @@ export interface AccountSpec {
    * The name of the AWS account
    */
   readonly name: string,
-
+  /**
+   * The (optional) account id to reuse, instead of creating a new account
+   */
+  readonly reuseAccountId?: string,
   /**
    * The email associated to the AWS account
    */
@@ -148,13 +151,15 @@ export class AwsOrganizationsStack extends Stack {
         type: accountSpec.type,
         stageName: accountSpec.stageName,
         stageOrder: accountSpec.stageOrder,
-        hostedServices: accountSpec.hostedServices
+        hostedServices: accountSpec.hostedServices,
+        id: accountSpec.reuseAccountId
       });
       // Adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
       account.node.addDependency(previousSequentialConstruct);
       previousSequentialConstruct = account;
 
       // Building stageAccounts array to be used for DNS delegation system
+      // TODO would be better but doesnt work: if (accountSpec.type == AccountType.STAGE) {
       if(['Prod', 'SDLC'].includes(oUSpec.name)) {
         this.stageAccounts.push(account);
       }
@@ -193,8 +198,6 @@ export class AwsOrganizationsStack extends Stack {
       nestedOU.forEach(nestedOU => {
         previousSequentialConstruct = this.createOrganizationTree(nestedOU, org.rootId, previousSequentialConstruct);
       });
-
-
     }
 
     if(props.rootHostedZoneDNSName){
