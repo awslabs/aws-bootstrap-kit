@@ -45,7 +45,7 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
   ]
 };
 
-test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack should have 2 OU constructs and 3 account constructs", () => {
+test("when I define 1 OU with 3 accounts (1 existing) and 1 OU with 1 account then the stack should have 2 OU constructs and 3 account constructs", () => {
 
     const stack = new Stack();
     let awsOrganizationsStackProps: AwsOrganizationsStackProps;
@@ -66,6 +66,14 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
                         stageOrder: 1,
                         stageName: 'stage1',
                         hostedServices: ['app1', 'app2']
+                    },
+                    {
+                        name: 'Account4',
+                        type: AccountType.STAGE,
+                        stageOrder: 2,
+                        stageName: 'stage2',
+                        hostedServices: ['app1', 'app2'],
+                        reuseAccountId: '123456789012'
                     }
                 ]
             },
@@ -75,8 +83,8 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
                     {
                         name: 'Account3',
                         type: AccountType.STAGE,
-                        stageOrder: 2,
-                        stageName: 'stage2',
+                        stageOrder: 3,
+                        stageName: 'stage3',
                         hostedServices: ['app1', 'app2']
                     }
                 ]
@@ -89,40 +97,17 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
 
     expect(awsOrganizationsStack.templateOptions.description).toMatch(`(version:${version})`);
 
-    expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
-        "Create": JSON.stringify({
-            "service": "Organizations",
-            "action": "createOrganization",
-            "physicalResourceId": {
-              "responsePath": "Organization.Id"
-            },
-            "region": "us-east-1"
-          }),
-          "Delete": JSON.stringify({
-            "service": "Organizations",
-            "action": "deleteOrganization",
-            "region": "us-east-1"
-          })
-    });
+    expect(awsOrganizationsStack).toHaveResource("Custom::OrganizationCreation");
 
-
-    expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
-        "Create": {
-          "Fn::Join": [
-          "",
-          [
-            "{\"service\":\"Organizations\",\"action\":\"createOrganizationalUnit\",\"physicalResourceId\":{\"responsePath\":\"OrganizationalUnit.Id\"},\"region\":\"us-east-1\",\"parameters\":{\"Name\":\"Prod\",\"ParentId\":\"",
-            {
-              "Fn::GetAtt": [
-                "OrganizationRootCustomResource9416950B",
-                "Roots.0.Id"
-              ]
-            },
-            "\"}}"
-          ]
+    expect(awsOrganizationsStack).toHaveResource("Custom::OUCreation", {
+      "Name": "SDLC",
+      "ParentId": {
+        "Fn::GetAtt": [
+          "OrganizationRootCustomResource9416950B",
+          "Roots.0.Id"
         ]
-      },
-    });
+      }
+  });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
         "Email": {
@@ -162,22 +147,86 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           "HostedServices": "app1:app2"
     });
 
+    let descAccount = JSON.stringify({
+      "service": "Organizations",
+      "action": "describeAccount",
+      "physicalResourceId": {
+        "responsePath": "Account.Id"
+      },
+      "region": "us-east-1",
+      "parameters": {
+        "AccountId": '123456789012'
+      }
+    })
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
-        "Create": {
-          "Fn::Join": [
+      "Create": descAccount,
+      "Update": descAccount,
+      "Delete": descAccount
+    });
+
+    expect(awsOrganizationsStack).toHaveResource("Custom::OUCreation", {
+      "Name": "Prod",
+      "ParentId": {
+        "Fn::GetAtt": [
+          "OrganizationRootCustomResource9416950B",
+          "Roots.0.Id"
+        ]
+      }
+    });
+
+    expect(awsOrganizationsStack).toHaveResource("AWS::SSM::Parameter", {
+      "Type":"String",
+      "Value":{
+        "Fn::Join": [
+          "",
+          [
+            "{\"email\":\"",
+            {
+              "Fn::GetAtt": [
+                "Account4ExistingAccountCustomResource669615B0",
+                "Account.Email"
+              ]
+            },
+            "\",\"name\":\"",
+            {
+              "Fn::GetAtt": [
+                "Account4ExistingAccountCustomResource669615B0",
+                "Account.Name"
+              ]
+            },
+            "\",\"parentOrganizationalUnitId\":\"",
+            {
+              "Fn::GetAtt": [
+                "SDLCOUOUSDLC916764DE",
+                "OrganizationalUnitId"
+              ]
+            },
+            "\",\"type\":\"STAGE\",\"stageName\":\"stage2\",\"stageOrder\":2,\"hostedServices\":[\"app1\",\"app2\"],\"id\":\"123456789012\"}"
+          ]
+        ]
+      },
+      "Description": {
+        "Fn::Join": [
+          "",
+          ["Details of ",
+            {
+              "Fn::GetAtt": [
+                "Account4ExistingAccountCustomResource669615B0",
+                "Account.Name"
+              ]
+            }]]
+      },
+      "Name": {
+        "Fn::Join": [
             "",
-            [
-              "{\"service\":\"Organizations\",\"action\":\"createOrganizationalUnit\",\"physicalResourceId\":{\"responsePath\":\"OrganizationalUnit.Id\"},\"region\":\"us-east-1\",\"parameters\":{\"Name\":\"Prod\",\"ParentId\":\"",
+            ["/accounts/",
               {
                 "Fn::GetAtt": [
-                  "OrganizationRootCustomResource9416950B",
-                  "Roots.0.Id"
+                  "Account4ExistingAccountCustomResource669615B0",
+                  "Account.Name"
                 ]
-              },
-              "\"}}"
-            ]
-          ]
-        }
+              }]]
+      },
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
@@ -195,8 +244,8 @@ test("when I define 1 OU with 2 accounts and 1 OU with 1 account then the stack 
           },
           "AccountName": "Account3",
           "AccountType": AccountType.STAGE,
-          "StageName": "stage2",
-          "StageOrder": "2",
+          "StageName": "stage3",
+          "StageOrder": "3",
           "HostedServices": "app1:app2"
     });
 
