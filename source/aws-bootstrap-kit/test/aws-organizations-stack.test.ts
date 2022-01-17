@@ -28,9 +28,13 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
         {
           name: "Account1",
           stageName: 'theStage',
+          type: AccountType.STAGE,
+          stageOrder: 1
         },
         {
-          name: "Account2"
+          name: "Account2",
+          type: AccountType.STAGE,
+          stageOrder: 2
         }
       ]
     },
@@ -38,7 +42,9 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
       name: "Prod",
       accounts: [
         {
-          name: "Account3"
+          name: "Account3",
+          type: AccountType.STAGE,
+          stageOrder:3
         }
       ]
     }
