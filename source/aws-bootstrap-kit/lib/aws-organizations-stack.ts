@@ -159,8 +159,7 @@ export class AwsOrganizationsStack extends Stack {
       previousSequentialConstruct = account;
 
       // Building stageAccounts array to be used for DNS delegation system
-      // TODO would be better but doesnt work: if (accountSpec.type == AccountType.STAGE) {
-      if(['Prod', 'SDLC'].includes(oUSpec.name)) {
+      if (accountSpec.type == AccountType.STAGE) {
         this.stageAccounts.push(account);
       }
     });
