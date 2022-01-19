@@ -19,6 +19,7 @@ import * as core from "aws-cdk-lib";
 import { AccountProvider } from "./account-provider";
 import * as cr from "aws-cdk-lib/custom-resources";
 import * as ssm from "aws-cdk-lib/aws-ssm";
+import { RemovalPolicy } from 'aws-cdk-lib';
 
 /**
  * Properties of an AWS account
@@ -52,15 +53,20 @@ export interface IAccountProps {
    * The potential Organizational Unit Id the account should be placed in
    */
   parentOrganizationalUnitId?: string;
-    /**
+  /**
    * The potential Organizational Unit Name the account should be placed in
    */
   parentOrganizationalUnitName?: string;
-
-    /**
+  /**
    * The AWS account Id
    */
   id?: string;
+  /**
+   * RemovalPolicy of the account. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html#aws-attribute-deletionpolicy-options
+   *
+   * @default RemovalPolicy.RETAIN
+   */
+  removalPolicy?: RemovalPolicy;
 }
 
 export enum AccountType {
@@ -86,19 +92,18 @@ export class Account extends Construct {
   readonly accountStageName?: string;
   readonly accountStageOrder?: number;
 
-
   constructor(scope: Construct, id: string, accountProps: IAccountProps) {
     super(scope, id);
 
     const accountProvider = AccountProvider.getOrCreate(this);
 
-    let exitingAccount = false;
+    let existingAccount = false;
     let accountId = accountProps.id;
     let hostedServices = accountProps.hostedServices ? accountProps.hostedServices.join(':') : undefined;
 
     // do not create account if we reuse one
     let account;
-    if (accountId == null) {
+    if (!accountId) {
       account = new core.CustomResource(
         this,
         `Account-${accountProps.name}`,
@@ -108,35 +113,28 @@ export class Account extends Construct {
           properties: {
             Email: accountProps.email,
             AccountName: accountProps.name,
-            AccountType: accountProps.type,
-            StageName: accountProps.stageName,
-            StageOrder: accountProps.stageOrder?.toString(),
-            HostedServices: hostedServices
           },
-        }
+          removalPolicy: accountProps.removalPolicy || RemovalPolicy.RETAIN
+        },
       );
       accountId = account.getAtt("AccountId").toString();
       accountProps.id = accountId;
     } else {
-      exitingAccount = true;
+      existingAccount = true;
 
       // retrieve existing account information (actual name and email) to update accountProps
-      const describeAccount = {
-        service: "Organizations",
-        action: "describeAccount",
-        physicalResourceId: cr.PhysicalResourceId.fromResponse(
-          "Account.Id"
-        ),
-        region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
-        parameters: {
-          AccountId: accountId
-        }
-      };
-
       account = new cr.AwsCustomResource(this, "ExistingAccountCustomResource", {
-        onCreate: describeAccount,
-        onUpdate: describeAccount,
-        onDelete: describeAccount,
+        onUpdate: {
+          service: "Organizations",
+          action: "describeAccount",
+          physicalResourceId: cr.PhysicalResourceId.fromResponse(
+            "Account.Id"
+          ),
+          region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+          parameters: {
+            AccountId: accountId
+          }
+        },
         policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
           resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
         })
@@ -186,7 +184,7 @@ export class Account extends Construct {
     this.accountStageName = accountProps.stageName;
     this.accountStageOrder = accountProps.stageOrder;
 
-    let ssmParam = new ssm.StringParameter(this, exitingAccount?`${accountId}-AccountDetails`:`${accountProps.name}-AccountDetails`, {
+    let ssmParam = new ssm.StringParameter(this, existingAccount?`${accountId}-AccountDetails`:`${accountProps.name}-AccountDetails`, {
       description: `Details of ${accountProps.name}`,
       parameterName: `/accounts/${accountProps.name}`,
       simpleName: false,
@@ -195,31 +193,24 @@ export class Account extends Construct {
     ssmParam.node.addDependency(account);
 
     if (accountProps.parentOrganizationalUnitId) {
-      const listParents = {
-        service: "Organizations",
-        action: "listParents",
-        physicalResourceId: cr.PhysicalResourceId.fromResponse(
-          "Parents.0.Id"
-        ),
-        region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
-        parameters: {
-          ChildId: accountId,
-        },
-      };
       let parent = new cr.AwsCustomResource(this, "ListParentsCustomResource", {
-        onCreate: listParents,
-        onUpdate: listParents,
-        onDelete: listParents,
+        onUpdate: {
+          service: "Organizations",
+          action: "listParents",
+          physicalResourceId: cr.PhysicalResourceId.of(`${accountProps.parentOrganizationalUnitId}-${accountId}`),
+          region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+          parameters: {
+            ChildId: accountId,
+          },
+        },
         policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
           resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
         }),
       });
 
-      new cr.AwsCustomResource(
-        this,
-        "MoveAccountCustomResource",
+      new cr.AwsCustomResource(this, "MoveAccountCustomResource",
         {
-          onCreate: {
+          onUpdate: {
             service: "Organizations",
             action: "moveAccount",
             physicalResourceId: cr.PhysicalResourceId.of(`move-${accountId}`),

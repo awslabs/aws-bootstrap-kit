@@ -79,7 +79,7 @@ test("when I define 1 OU with 3 accounts (1 existing) and 1 OU with 1 account th
                         stageOrder: 2,
                         stageName: 'stage2',
                         hostedServices: ['app1', 'app2'],
-                        reuseAccountId: '123456789012'
+                        existingAccountId: '123456789012'
                     }
                 ]
             },
@@ -128,9 +128,7 @@ test("when I define 1 OU with 3 accounts (1 existing) and 1 OU with 1 account th
             ]
           ]
         },
-        "AccountName": "Account1",
-        "AccountType": AccountType.PLAYGROUND,
-        "HostedServices": "app1:app2"
+        "AccountName": "Account1"
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::AccountCreation", {
@@ -146,11 +144,7 @@ test("when I define 1 OU with 3 accounts (1 existing) and 1 OU with 1 account th
               ]
             ]
           },
-          "AccountName": "Account2",
-          "AccountType": AccountType.STAGE,
-          "StageName": "stage1",
-          "StageOrder": "1",
-          "HostedServices": "app1:app2"
+          "AccountName": "Account2"
     });
 
     let descAccount = JSON.stringify({
@@ -167,7 +161,6 @@ test("when I define 1 OU with 3 accounts (1 existing) and 1 OU with 1 account th
     expect(awsOrganizationsStack).toHaveResource("Custom::AWS", {
       "Create": descAccount,
       "Update": descAccount,
-      "Delete": descAccount
     });
 
     expect(awsOrganizationsStack).toHaveResource("Custom::OUCreation", {
@@ -249,10 +242,6 @@ test("when I define 1 OU with 3 accounts (1 existing) and 1 OU with 1 account th
             ]
           },
           "AccountName": "Account3",
-          "AccountType": AccountType.STAGE,
-          "StageName": "stage3",
-          "StageOrder": "3",
-          "HostedServices": "app1:app2"
     });
 
 });
