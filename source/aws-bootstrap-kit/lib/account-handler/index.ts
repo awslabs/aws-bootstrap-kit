@@ -24,37 +24,39 @@ import type {
 // eslint-disable-line import/no-extraneous-dependencies
 import { Organizations } from "aws-sdk";
 
-
 /**
  * A function capable of creating an account into an AWS Organisation
  * @param event An event with the following ResourceProperties: Email (coresponding to the account email) and AccountName (corresponding to the account name)
  * @returns Returns a PhysicalResourceId corresponding to the CreateAccount request's id necessary to check the status of the creation
  */
 
-export async function onEventHandler(
-  event: any
-): Promise<OnEventResponse> {
+export async function onEventHandler(event: any): Promise<OnEventResponse> {
   console.log("Event: %j", event);
 
   switch (event.RequestType) {
     case "Create":
-      const awsOrganizationsClient = new Organizations({region: 'us-east-1'});
+      const awsOrganizationsClient = new Organizations({ region: "us-east-1" });
       try {
         const data = await awsOrganizationsClient
-        .createAccount({
-          Email: event.ResourceProperties.Email,
-          AccountName: event.ResourceProperties.AccountName
-        })
-        .promise();
+          .createAccount({
+            Email: event.ResourceProperties.Email,
+            AccountName: event.ResourceProperties.AccountName,
+          })
+          .promise();
         console.log("create account: %j", data);
         return { PhysicalResourceId: data.CreateAccountStatus?.Id };
       } catch (error) {
         throw new Error(`Failed to create account: ${error}`);
       }
-    default: // just return the resource (we cannot update or delete an account)
-      return { PhysicalResourceId: event.PhysicalResourceId, ResourceProperties: event.ResourceProperties };
+    case "Delete": // only called if the removalPolicy is DESTROY
+      throw new Error(`Cannot delete account '${event.PhysicalResourceId}'. See https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html`);
+    default:
+      // just return the resource (we cannot update or delete an account)
+      return {
+        PhysicalResourceId: event.PhysicalResourceId,
+        ResourceProperties: event.ResourceProperties,
+      };
   }
-
 }
 
 /**
@@ -67,28 +69,39 @@ export async function isCompleteHandler(
 ): Promise<IsCompleteResponse> {
   console.log("Event: %j", event);
 
-  if(!event.PhysicalResourceId) {
+  if (!event.PhysicalResourceId) {
     throw new Error("Missing PhysicalResourceId parameter.");
   }
 
-  const awsOrganizationsClient = new Organizations({region: 'us-east-1'});
+  const awsOrganizationsClient = new Organizations({ region: "us-east-1" });
 
-      const describeCreateAccountStatusParams : Organizations.DescribeCreateAccountStatusRequest = {CreateAccountRequestId: event.PhysicalResourceId}
-      const data: Organizations.DescribeCreateAccountStatusResponse  = await awsOrganizationsClient
-        .describeCreateAccountStatus(describeCreateAccountStatusParams).promise();
+  const describeCreateAccountStatusParams: Organizations.DescribeCreateAccountStatusRequest =
+    { CreateAccountRequestId: event.PhysicalResourceId };
+  const data: Organizations.DescribeCreateAccountStatusResponse =
+    await awsOrganizationsClient
+      .describeCreateAccountStatus(describeCreateAccountStatusParams)
+      .promise();
 
-      console.log("Describe account: %j", data);
+  console.log("Describe account: %j", data);
 
-      const CreateAccountStatus = data.CreateAccountStatus?.State;
-      const AccountId = data.CreateAccountStatus?.AccountId;
+  const CreateAccountStatus = data.CreateAccountStatus?.State;
+  const AccountId = data.CreateAccountStatus?.AccountId;
 
   switch (event.RequestType) {
     case "Create":
       if (CreateAccountStatus === "FAILED") {
-        throw new Error(`Error creating the account ${data.CreateAccountStatus?.AccountName}, cause: ${data.CreateAccountStatus?.FailureReason}`)
+        throw new Error(
+          `Error creating the account ${data.CreateAccountStatus?.AccountName}, cause: ${data.CreateAccountStatus?.FailureReason}`
+        );
       }
-      return { IsComplete: CreateAccountStatus === "SUCCEEDED", Data: {AccountId: AccountId} };
+      return {
+        IsComplete: CreateAccountStatus === "SUCCEEDED",
+        Data: { AccountId: AccountId },
+      };
     default:
-      return { IsComplete: CreateAccountStatus === "SUCCEEDED", Data: {AccountId: AccountId} };
+      return {
+        IsComplete: CreateAccountStatus === "SUCCEEDED",
+        Data: { AccountId: AccountId },
+      };
   }
 }

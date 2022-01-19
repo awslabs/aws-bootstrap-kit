@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import {Construct, IDependable} from 'constructs';
-import {Stack, StackProps} from 'aws-cdk-lib';
+import {RemovalPolicy, Stack, StackProps} from 'aws-cdk-lib';
 import {Organization} from './organization';
 import {OrganizationalUnit} from './organizational-unit';
 import {Account, AccountType} from './account';
@@ -35,9 +35,9 @@ export interface AccountSpec {
    */
   readonly name: string,
   /**
-   * The (optional) account id to reuse, instead of creating a new account
+   * The (optional) id of the account to reuse, instead of creating a new account
    */
-  readonly reuseAccountId?: string,
+  readonly existingAccountId?: string,
   /**
    * The email associated to the AWS account
    */
@@ -58,6 +58,21 @@ export interface AccountSpec {
    *  List of your services that will be hosted in this account. Set it to [ALL] if you don't plan to have dedicated account for each service.
    */
   readonly hostedServices?: string[];
+  /**
+   * RemovalPolicy of the account (wether it must be retained or destroyed).
+   * See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html#aws-attribute-deletionpolicy-options
+   *
+   * As an account cannot be deleted, RETAIN is the default value.
+   *
+   * If you choose DESTROY instead (default behavior of CloudFormation), the stack deletion will fail and
+   * you will have to manually remove the account from the organization before retrying to delete the stack:
+   * https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html
+   *
+   * Note that existing accounts (when using `existingAccountId`) are retained whatever the removalPolicy is.
+   *
+   * @default RemovalPolicy.RETAIN
+   */
+  readonly removalPolicy?: RemovalPolicy;
 }
 
 /**
@@ -152,8 +167,10 @@ export class AwsOrganizationsStack extends Stack {
         stageName: accountSpec.stageName,
         stageOrder: accountSpec.stageOrder,
         hostedServices: accountSpec.hostedServices,
-        id: accountSpec.reuseAccountId
+        id: accountSpec.existingAccountId,
+        removalPolicy: accountSpec.removalPolicy,
       });
+
       // Adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
       account.node.addDependency(previousSequentialConstruct);
       previousSequentialConstruct = account;
