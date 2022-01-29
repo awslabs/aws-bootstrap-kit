@@ -71,7 +71,7 @@
     "constructs": "10.0.12"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "2.1.0",
-    "constructs": "10.0.12"
+    "aws-cdk-lib": "^2.1.0",
+    "constructs": "^10.0.12"
   }
 }
