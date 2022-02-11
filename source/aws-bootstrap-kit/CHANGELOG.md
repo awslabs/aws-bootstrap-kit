@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.15...v0.4.1) (2022-02-11)
+
+
+### Features
+
+* allow peer dependencies using newer cdk versions ([ff93f19](https://github.com/awslabs/aws-bootstrap-kit/commit/ff93f193c369f78b3f58fed2be8ca17747023979))
+
 ### [0.3.15](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.9...v0.3.15) (2021-10-08)
 
 
