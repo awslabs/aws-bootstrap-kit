@@ -2,5 +2,6 @@
   "packages": [
     "source/**"
   ],
-  "version": "0.2.0"
+  "version": "independent",
+  "message": "chore(release): %s [skip ci]"
 }
