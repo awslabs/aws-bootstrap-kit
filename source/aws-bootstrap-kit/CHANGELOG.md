@@ -1,3 +1,69 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# 0.5.0 (2022-02-15)
+
+
+### Features
+
+* allow peer dependencies using newer cdk versions ([ff93f19](https://github.com/awslabs/aws-bootstrap-kit/commit/ff93f193c369f78b3f58fed2be8ca17747023979))
+
+
+
+## 0.3.15 (2021-10-08)
+
+
+### Features
+
+* disable registerDelegatedAdministrator if not using DNS setup to unlock accounts creation ([0a7213e](https://github.com/awslabs/aws-bootstrap-kit/commit/0a7213e1380a03a225e898cc2fe4c9154ce6317c))
+
+
+
+## 0.3.9 (2021-04-01)
+
+
+### Bug Fixes
+
+* CVE-2020-7774 ([8f2fd54](https://github.com/awslabs/aws-bootstrap-kit/commit/8f2fd54660c329872fbc3a6ca7f1349db006ae81))
+
+
+
+## 0.3.5 (2021-02-09)
+
+
+
+## 0.3.4 (2021-02-09)
+
+
+
+## 0.3.3 (2021-02-08)
+
+
+
+## 0.3.2 (2021-02-03)
+
+
+
+## 0.3.1 (2021-02-01)
+
+
+
+## 0.2.9 (2021-01-18)
+
+
+
+## 0.2.7 (2020-11-24)
+
+
+
+## 0.2.6 (2020-11-09)
+
+
+
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.

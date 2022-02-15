@@ -3,5 +3,5 @@
     "source/**"
   ],
   "version": "independent",
-  "message": "chore(release): %s [skip ci]"
+  "message": "chore(release): auto bump [skip ci]"
 }
