@@ -1,0 +1,38 @@
+name: release
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GH_PUBLISH_TOKEN }}
+        fetch-depth: 0
+      #########################    
+      # Release new version
+      #########################
+    - name: "Use NodeJS 16"
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - name: Install packages
+      run: |
+        npm ci
+        npm run lerna-ci
+    - name: Run lint
+      run: npm run lerna-lint
+    - name: Run tests
+      run: npm run lerna-test
+    - name: "Version and publish"
+      env:
+        GH_TOKEN: ${{ secrets.GH_PUBLISH_TOKEN }}
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/$GITHUB_REPOSITORY
+        npx lerna version --conventional-commits --create-release github --yes
