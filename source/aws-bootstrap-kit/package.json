@@ -14,17 +14,6 @@
       "python": {
         "distName": "aws-ssabuilders.aws-bootstrap-kit",
         "module": "aws-ssabuilders.aws-bootstrap-kit"
-      },
-      "java": {
-        "package": "software.amazon.awsssabuilders.services.bootstrapKit",
-        "maven": {
-          "groupId": "software.amazon.awsssabuilders",
-          "artifactId": "bootstrap-kit"
-        }
-      },
-      "dotnet": {
-        "namespace": "Amazon.SSABUILDERS.AWS.BootstrapKit",
-        "packageId": "Amazon.SSABUILDERS.AWS.BootstrapKit"
       }
     }
   },
@@ -36,7 +25,7 @@
     "cdk": "cdk",
     "build": "tsc && jsii && jsii-docgen",
     "build:watch": "jsii -w",
-    "package": "jsii-pacmak --target js",
+    "package": "jsii-pacmak",
     "js-package": "jsii-pacmak --target js",
     "test": "tsc && jest",
     "watch": "tsc -w",

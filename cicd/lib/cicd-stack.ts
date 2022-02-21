@@ -59,5 +59,10 @@ export class PipelineStack extends cdk.Stack {
     pipeline.publishToNpm({
       npmTokenSecret: { secretArn: 'arn:aws:secretsmanager:us-west-2:226122282356:secret:spe-builders/npm-9jwNw0' },
     });
+    pipeline.publishToPyPI({
+      loginSecret: {
+        secretArn: 'arn:aws:secretsmanager:us-west-2:226122282356:secret:spe-builders/pypi-sIsz9M',
+      }
+    });
   }
 }
