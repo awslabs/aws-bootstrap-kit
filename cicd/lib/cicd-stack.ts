@@ -30,7 +30,7 @@ export class PipelineStack extends cdk.Stack {
       branch: 'main',
       pipelineName: 'AWSBootsrapKit-cdk-constructs',
       notificationEmail: 'aws-emea-spe-build@amazon.com',
-      buildImage: cdk.aws_codebuild.LinuxBuildImage.fromDockerRegistry('jsii/superchain:1-buster-slim-node14'),
+      buildImage: cdk.aws_codebuild.LinuxBuildImage.fromDockerRegistry('public.ecr.aws/jsii/superchain:1-buster-slim-node14'),
       buildSpec: cdk.aws_codebuild.BuildSpec.fromObject({
         version: 0.2,
         phases: {
