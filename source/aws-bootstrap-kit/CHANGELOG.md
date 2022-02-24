@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/awslabs/aws-bootstrap-kit/compare/aws-bootstrap-kit@0.6.0...aws-bootstrap-kit@0.6.1) (2022-02-24)
+
+
+### Bug Fixes
+
+* python package with underscore ([a80f478](https://github.com/awslabs/aws-bootstrap-kit/commit/a80f478da4b3e74f73b04b302a8f49daedabb044))
+
+
+
+
+
 # 0.6.0 (2022-02-15)
 
 
