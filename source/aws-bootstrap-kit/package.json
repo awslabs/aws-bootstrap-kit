@@ -12,8 +12,8 @@
     "outdir": "dist",
     "targets": {
       "python": {
-        "distName": "aws-ssabuilders.aws-bootstrap-kit",
-        "module": "aws-ssabuilders.aws-bootstrap-kit"
+        "distName": "aws_ssabuilders.aws_bootstrap_kit",
+        "module": "aws_ssabuilders.aws_bootstrap_kit"
       }
     }
   },
