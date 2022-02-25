@@ -33,7 +33,7 @@ export class Organization extends Construct {
      */
     readonly rootId: string;
 
-    constructor(scope: Construct, id: string) {
+    constructor(scope: Construct, id: string, organizationsExist: boolean) {
         super(scope, id)
 
         let org = new cr.AwsCustomResource(this,
@@ -41,7 +41,7 @@ export class Organization extends Construct {
             {
               onCreate: {
                 service: 'Organizations',
-                action: 'createOrganization',
+                action: organizationsExist ? 'describeOrganization' : 'createOrganization',
                 physicalResourceId: cr.PhysicalResourceId.fromResponse('Organization.Id'),
                 region: 'us-east-1' //AWS Organizations API are only available in us-east-1 for root actions
               },
@@ -109,12 +109,15 @@ export class Organization extends Construct {
             }
           );
 
-          // Enabling SSM AWS Service access to be able to register delegated adminstrator
-          const enableSSMAWSServiceAccess = this.enableAWSServiceAccess('ssm.amazonaws.com');
-          const enableMultiAccountsSetupAWSServiceAccess = this.enableAWSServiceAccess('config-multiaccountsetup.amazonaws.com');
+          if(!organizationsExist)
+          {
+            // Enabling SSM AWS Service access to be able to register delegated adminstrator
+            const enableSSMAWSServiceAccess = this.enableAWSServiceAccess('ssm.amazonaws.com');
+            const enableMultiAccountsSetupAWSServiceAccess = this.enableAWSServiceAccess('config-multiaccountsetup.amazonaws.com');
 
-          enableMultiAccountsSetupAWSServiceAccess.node.addDependency(org);
-          enableSSMAWSServiceAccess.node.addDependency(enableMultiAccountsSetupAWSServiceAccess);
+            enableMultiAccountsSetupAWSServiceAccess.node.addDependency(org);
+            enableSSMAWSServiceAccess.node.addDependency(enableMultiAccountsSetupAWSServiceAccess);
+          }
 
           //adding an explicit dependency as CloudFormation won't infer that calling listRoots must be done only when Organization creation is finished as there is no implicit dependency between the
           //2 custom resources

@@ -94,6 +94,10 @@ export interface AwsOrganizationsStackProps extends StackProps {
   readonly nestedOU: OUSpec[],
 
   /**
+   * A boolean used to set if AWS Organizations is already existed. If it sets to `true`, instead of creating the AWS Organizations, an existing one would be loaded
+   */
+  readonly organizationsExist?: boolean,
+  /**
    * The main DNS domain name to manage
    */
   readonly rootHostedZoneDNSName?: string,
@@ -169,11 +173,11 @@ export class AwsOrganizationsStack extends Stack {
 
   constructor(scope: Construct, id: string, props: AwsOrganizationsStackProps) {
     super(scope, id, {description: `Software development Landing Zone (uksb-1r7an8o45) (version:${version})`, ...props});
-    const {email, nestedOU, forceEmailVerification = true} = props;
+    const {email, organizationsExist = false, nestedOU, forceEmailVerification = true} = props;
 
     if(nestedOU.length > 0)
     {
-      let org = new Organization(this, "Organization");
+      let org = new Organization(this, "Organization", organizationsExist);
       if(email)
       {
         this.emailPrefix = email.split('@', 2)[0];
