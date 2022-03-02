@@ -16,3 +16,4 @@ cdk.out
 # ingore jsii
 .jsii
 dist
+tsconfig.tsbuildinfo

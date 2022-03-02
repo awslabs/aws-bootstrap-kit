@@ -117,6 +117,11 @@ export interface AwsOrganizationsStackProps extends StackProps {
   readonly rootHostedZoneDNSName?: string,
 
   /**
+   * The (optional) existing root hosted zone id to use instead of creating one
+   */
+  readonly existingRootHostedZoneId?: string,
+
+  /**
    * A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party
    */
   readonly thirdPartyProviderDNSUsed?: boolean,
@@ -135,6 +140,7 @@ export class AwsOrganizationsStack extends Stack {
   private readonly emailPrefix?: string;
   private readonly domain?: string;
   private readonly stageAccounts: Account[] = [];
+  public readonly rootDns?: RootDns;
 
   private createOrganizationTree(oUSpec: OUSpec, parentId: string, previousSequentialConstruct: IDependable): IDependable {
 
@@ -217,9 +223,10 @@ export class AwsOrganizationsStack extends Stack {
     }
 
     if(props.rootHostedZoneDNSName){
-      new RootDns(this, 'RootDNS', {
+      this.rootDns = new RootDns(this, 'RootDNS', {
         stagesAccounts: this.stageAccounts,
         rootHostedZoneDNSName: props.rootHostedZoneDNSName,
+        existingRootHostedZoneId: props.existingRootHostedZoneId,
         thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed?props.thirdPartyProviderDNSUsed:true
       });
     }

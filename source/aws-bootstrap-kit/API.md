@@ -118,10 +118,19 @@ new AwsOrganizationsStack(scope: Construct, id: string, props: AwsOrganizationsS
   * **terminationProtection** (<code>boolean</code>)  Whether to enable termination protection for this stack. __*Default*__: false
   * **email** (<code>string</code>)  Email address of the Root account. 
   * **nestedOU** (<code>Array<[OUSpec](#aws-bootstrap-kit-ouspec)></code>)  Specification of the sub Organizational Unit. 
+  * **existingRootHostedZoneId** (<code>string</code>)  The (optional) existing root hosted zone id to use instead of creating one. __*Optional*__
   * **forceEmailVerification** (<code>boolean</code>)  Enable Email Verification Process. __*Optional*__
   * **rootHostedZoneDNSName** (<code>string</code>)  The main DNS domain name to manage. __*Optional*__
   * **thirdPartyProviderDNSUsed** (<code>boolean</code>)  A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party. __*Optional*__
 
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**rootDns**? | <code>[RootDns](#aws-bootstrap-kit-rootdns)</code> | __*Optional*__
 
 
 
@@ -200,6 +209,7 @@ new RootDns(scope: Construct, id: string, props: RootDnsProps)
 * **props** (<code>[RootDnsProps](#aws-bootstrap-kit-rootdnsprops)</code>)  *No description*
   * **rootHostedZoneDNSName** (<code>string</code>)  The top level domain name. 
   * **stagesAccounts** (<code>Array<[Account](#aws-bootstrap-kit-account)></code>)  The stages Accounts taht will need their subzone delegation. 
+  * **existingRootHostedZoneId** (<code>string</code>)  The (optional) existing root hosted zone id to use instead of creating one. __*Optional*__
   * **thirdPartyProviderDNSUsed** (<code>boolean</code>)  A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported). __*Optional*__
 
 
@@ -210,6 +220,7 @@ new RootDns(scope: Construct, id: string, props: RootDnsProps)
 Name | Type | Description 
 -----|------|-------------
 **rootHostedZone** | <code>[aws_route53.IHostedZone](#aws-cdk-lib-aws-route53-ihostedzone)</code> | <span></span>
+**stagesHostedZones** | <code>Array<[aws_route53.HostedZone](#aws-cdk-lib-aws-route53-hostedzone)></code> | <span></span>
 
 ### Methods
 
@@ -233,16 +244,17 @@ __Returns__:
 
 
 ```ts
-createRootHostedZone(props: RootDnsProps): HostedZone
+createRootHostedZone(props: RootDnsProps): IHostedZone
 ```
 
 * **props** (<code>[RootDnsProps](#aws-bootstrap-kit-rootdnsprops)</code>)  *No description*
   * **rootHostedZoneDNSName** (<code>string</code>)  The top level domain name. 
   * **stagesAccounts** (<code>Array<[Account](#aws-bootstrap-kit-account)></code>)  The stages Accounts taht will need their subzone delegation. 
+  * **existingRootHostedZoneId** (<code>string</code>)  The (optional) existing root hosted zone id to use instead of creating one. __*Optional*__
   * **thirdPartyProviderDNSUsed** (<code>boolean</code>)  A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported). __*Optional*__
 
 __Returns__:
-* <code>[aws_route53.HostedZone](#aws-cdk-lib-aws-route53-hostedzone)</code>
+* <code>[aws_route53.IHostedZone](#aws-cdk-lib-aws-route53-ihostedzone)</code>
 
 #### createStageSubZone(account, rootHostedZoneDNSName) <a id="aws-bootstrap-kit-rootdns-createstagesubzone"></a>
 
@@ -342,6 +354,7 @@ Name | Type | Description
 **analyticsReporting**?🔹 | <code>boolean</code> | Include runtime versioning information in this Stack.<br/>__*Default*__: `analyticsReporting` setting of containing `App`, or value of 'aws:cdk:version-reporting' context key
 **description**?🔹 | <code>string</code> | A description of the stack.<br/>__*Default*__: No description.
 **env**?🔹 | <code>[Environment](#aws-cdk-lib-environment)</code> | The AWS environment (account/region) where this stack will be deployed.<br/>__*Default*__: The environment of the containing `Stage` if available, otherwise create the stack will be environment-agnostic.
+**existingRootHostedZoneId**?🔹 | <code>string</code> | The (optional) existing root hosted zone id to use instead of creating one.<br/>__*Optional*__
 **forceEmailVerification**?🔹 | <code>boolean</code> | Enable Email Verification Process.<br/>__*Optional*__
 **rootHostedZoneDNSName**?🔹 | <code>string</code> | The main DNS domain name to manage.<br/>__*Optional*__
 **stackName**?🔹 | <code>string</code> | Name to deploy the stack with.<br/>__*Default*__: Derived from construct path.
@@ -418,6 +431,7 @@ Name | Type | Description
 -----|------|-------------
 **rootHostedZoneDNSName** | <code>string</code> | The top level domain name.
 **stagesAccounts** | <code>Array<[Account](#aws-bootstrap-kit-account)></code> | The stages Accounts taht will need their subzone delegation.
+**existingRootHostedZoneId**? | <code>string</code> | The (optional) existing root hosted zone id to use instead of creating one.<br/>__*Optional*__
 **thirdPartyProviderDNSUsed**? | <code>boolean</code> | A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported).<br/>__*Optional*__
 
 

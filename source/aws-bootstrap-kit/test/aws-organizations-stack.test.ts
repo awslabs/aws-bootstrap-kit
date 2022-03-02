@@ -256,6 +256,9 @@ test("should create root domain zone and stage based domain if rootHostedZoneDNS
     }
   );
 
+  expect(awsOrganizationsStack.rootDns?.rootHostedZone.zoneName).toEqual("yourdomain.com");
+  expect(awsOrganizationsStack.rootDns?.stagesHostedZones.length).toEqual(3);
+
   expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
     Name: "yourdomain.com."
   });
@@ -292,6 +295,26 @@ test("should not create any zone if no domain is provided", () => {
   );
 
   expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone",0);
+});
+
+test("should not create root zone if existing root zone id is provided", () => {
+  const awsOrganizationsStack = new AwsOrganizationsStack(
+    new Stack(),
+    "AWSOrganizationsStack",
+    {
+      ...awsOrganizationsStackProps,
+      rootHostedZoneDNSName: "yourdomain.com",
+      existingRootHostedZoneId: "existing-root-zone-id"
+    }
+  );
+
+  // Check root zone not created
+  expect(awsOrganizationsStack).not.toHaveResource("AWS::Route53::HostedZone", {
+    Name: "yourdomain.com."
+  });
+
+  // Check child zones created
+  expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone", 3);
 });
 
 test("should have have email validation stack with forceEmailVerification set to true", () => {
