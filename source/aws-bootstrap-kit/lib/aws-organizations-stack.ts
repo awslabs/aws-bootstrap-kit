@@ -99,6 +99,11 @@ export interface AwsOrganizationsStackProps extends StackProps {
   readonly rootHostedZoneDNSName?: string,
 
   /**
+   * The (optional) existing root hosted zone id to use instead of creating one
+   */
+  readonly existingRootHostedZoneId?: string,
+
+  /**
    * A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party
    */
   readonly thirdPartyProviderDNSUsed?: boolean,
@@ -202,6 +207,7 @@ export class AwsOrganizationsStack extends Stack {
       this.rootDns = new RootDns(this, 'RootDNS', {
         stagesAccounts: this.stageAccounts,
         rootHostedZoneDNSName: props.rootHostedZoneDNSName,
+        existingRootHostedZoneId: props.existingRootHostedZoneId,
         thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed?props.thirdPartyProviderDNSUsed:true
       });
     }

@@ -253,6 +253,20 @@ test("should not create any zone if no domain is provided", () => {
   expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone",0);
 });
 
+test("should not create root zone if existing root zone id is provided", () => {
+  const awsOrganizationsStack = new AwsOrganizationsStack(
+    new Stack(),
+    "AWSOrganizationsStack",
+    {
+      ...awsOrganizationsStackProps,
+      rootHostedZoneDNSName: "yourdomain.com",
+      existingRootHostedZoneId: "existing-root-zone-id"
+    }
+  );
+
+  expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone", 3);
+});
+
 test("should have have email validation stack with forceEmailVerification set to true", () => {
 
   const awsOrganizationsStack = new AwsOrganizationsStack(

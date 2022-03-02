@@ -21,6 +21,11 @@ export interface RootDnsProps {
   readonly rootHostedZoneDNSName: string;
 
   /**
+   * The (optional) existing root hosted zone id to use instead of creating one
+   */
+  readonly existingRootHostedZoneId?: string;
+
+  /**
    * A boolean indicating if Domain name has already been registered to a third party or if you want this contruct to create it (the latter is not yet supported)
    */
   readonly thirdPartyProviderDNSUsed?: boolean;
@@ -67,8 +72,10 @@ export class RootDns extends Construct {
         value: cdk.Fn.join(",", this.rootHostedZone.hostedZoneNameServers),
       });
     } else {
-      throw new Error("Creation of DNS domain is not yet supported");
-      // TODO: implement call to https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Route53Domains.html#registerDomain-property
+      if (!props.existingRootHostedZoneId) {
+        throw new Error("Creation of DNS domain is not yet supported");
+        // TODO: implement call to https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Route53Domains.html#registerDomain-property
+      }
     }
   }
 
@@ -113,8 +120,15 @@ export class RootDns extends Construct {
   }
 
   createRootHostedZone(props: RootDnsProps) {
-    return new route53.HostedZone(this, "RootHostedZone", {
-      zoneName: props.rootHostedZoneDNSName,
-    });
+    if (!props.existingRootHostedZoneId) {
+      return new route53.HostedZone(this, 'RootHostedZone', {
+        zoneName: props.rootHostedZoneDNSName,
+      });
+    } else {
+      return route53.HostedZone.fromHostedZoneAttributes(this, 'RootHostedZone', {
+        zoneName: props.rootHostedZoneDNSName,
+        hostedZoneId: props.existingRootHostedZoneId
+      });
+    }
   }
 }
