@@ -117,6 +117,7 @@ export class AwsOrganizationsStack extends Stack {
   private readonly emailPrefix?: string;
   private readonly domain?: string;
   private readonly stageAccounts: Account[] = [];
+  public readonly rootDns?: RootDns;
 
   private createOrganizationTree(oUSpec: OUSpec, parentId: string, previousSequentialConstruct: IDependable): IDependable {
 
@@ -198,7 +199,7 @@ export class AwsOrganizationsStack extends Stack {
     }
 
     if(props.rootHostedZoneDNSName){
-      new RootDns(this, 'RootDNS', {
+      this.rootDns = new RootDns(this, 'RootDNS', {
         stagesAccounts: this.stageAccounts,
         rootHostedZoneDNSName: props.rootHostedZoneDNSName,
         thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed?props.thirdPartyProviderDNSUsed:true

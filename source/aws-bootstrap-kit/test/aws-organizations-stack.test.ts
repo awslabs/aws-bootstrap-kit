@@ -212,6 +212,9 @@ test("should create root domain zone and stage based domain if rootHostedZoneDNS
     }
   );
 
+  expect(awsOrganizationsStack.rootDns?.rootHostedZone.zoneName).toEqual("yourdomain.com");
+  expect(awsOrganizationsStack.rootDns?.stagesHostedZones.length).toEqual(3);
+
   expect(awsOrganizationsStack).toHaveResource("AWS::Route53::HostedZone",{
     Name: "yourdomain.com."
   });

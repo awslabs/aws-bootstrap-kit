@@ -30,7 +30,8 @@ export interface RootDnsProps {
  * A class creating the main hosted zone and a role assumable by stages account to be able to set sub domain delegation
  */
 export class RootDns extends Construct {
-  rootHostedZone: route53.IHostedZone;
+  public readonly rootHostedZone: route53.IHostedZone;
+  public readonly stagesHostedZones: route53.HostedZone[] = [];
 
   constructor(scope: Construct, id: string, props: RootDnsProps) {
     super(scope, id);
@@ -42,6 +43,7 @@ export class RootDns extends Construct {
         account,
         props.rootHostedZoneDNSName
       );
+      this.stagesHostedZones.push(stageSubZone);
       this.createDNSAutoUpdateRole(account, stageSubZone);
       if (stageSubZone.hostedZoneNameServers) {
         new route53.RecordSet(
