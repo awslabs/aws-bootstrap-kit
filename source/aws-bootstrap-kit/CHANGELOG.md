@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/awslabs/aws-bootstrap-kit/compare/aws-bootstrap-kit@0.6.1...aws-bootstrap-kit@0.7.0) (2022-03-03)
+
+
+### Bug Fixes
+
+* use account type STAGE instead of OU names ([decbba1](https://github.com/awslabs/aws-bootstrap-kit/commit/decbba137fdd907c58cf1603939bfc5394dc08e6))
+
+
+### Features
+
+* expose dns resources ([59c470c](https://github.com/awslabs/aws-bootstrap-kit/commit/59c470c6726969bb00b3ed4d621afec2b399407a))
+
+
+
+
+
 ## [0.6.1](https://github.com/awslabs/aws-bootstrap-kit/compare/aws-bootstrap-kit@0.6.0...aws-bootstrap-kit@0.6.1) (2022-02-24)
 
 
