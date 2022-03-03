@@ -264,6 +264,12 @@ test("should not create root zone if existing root zone id is provided", () => {
     }
   );
 
+  // Check root zone not created
+  expect(awsOrganizationsStack).not.toHaveResource("AWS::Route53::HostedZone", {
+    Name: "yourdomain.com."
+  });
+
+  // Check child zones created
   expect(awsOrganizationsStack).toCountResources("AWS::Route53::HostedZone", 3);
 });
 
