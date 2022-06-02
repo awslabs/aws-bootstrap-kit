@@ -25,7 +25,7 @@
     "aws-delivlib": "13.0.5",
     "lerna": "^4.0.0",
     "monocdk": "1.113.0",
-    "npm": "^8.3.0",
+    "npm": "^8.11.0",
     "source-map-support": "0.5.19"
   }
 }
