@@ -35,7 +35,7 @@ Name|Description
 
 Name|Description
 ----|-----------
-[AccountType](#aws-bootstrap-kit-accounttype)|*No description*
+[AccountType](#aws-bootstrap-kit-accounttype)|The type of the AWS account.
 
 
 
@@ -452,13 +452,12 @@ Name | Type | Description
 
 ## enum AccountType  <a id="aws-bootstrap-kit-accounttype"></a>
 
-
+The type of the AWS account.
 
 Name | Description
 -----|-----
-**CICD** |
-**DNS** |
-**STAGE** |
-**PLAYGROUND** |
+**CICD** |The account used to deploy CI/CD pipelines (See [here](https://cs.github.com/?scopeName=bk&scope=repo%3Aawslabs%2Faws-bootstrap-kit&q=AccountType.CICD) for internal usage).
+**STAGE** |Accounts which will be used to deploy Stage environments (staging/prod ...). (See [here](https://cs.github.com/?scopeName=bk&scope=repo%3Aawslabs%2Faws-bootstrap-kit&q=AccountType.STAGE) for internal usage).
+**PLAYGROUND** |Accounts dedicated to developpers work.
 
 

@@ -19,7 +19,7 @@ import * as core from "aws-cdk-lib";
 import { AccountProvider } from "./account-provider";
 import * as cr from "aws-cdk-lib/custom-resources";
 import * as ssm from "aws-cdk-lib/aws-ssm";
-import { RemovalPolicy } from 'aws-cdk-lib';
+import { NestedStack, RemovalPolicy } from 'aws-cdk-lib';
 
 /**
  * Properties of an AWS account
@@ -69,10 +69,21 @@ export interface IAccountProps {
   removalPolicy?: RemovalPolicy;
 }
 
+/**
+ * The type of the AWS account 
+ **/
 export enum AccountType {
+  /**
+   * The account used to deploy CI/CD pipelines (See [here](https://cs.github.com/?scopeName=bk&scope=repo%3Aawslabs%2Faws-bootstrap-kit&q=AccountType.CICD) for internal usage).
+   */
   CICD = "CICD",
-  DNS = "DNS",
+  /**
+   * Accounts which will be used to deploy Stage environments (staging/prod ...). (See [here](https://cs.github.com/?scopeName=bk&scope=repo%3Aawslabs%2Faws-bootstrap-kit&q=AccountType.STAGE) for internal usage)
+  **/
   STAGE = "STAGE",
+  /**
+   * Accounts dedicated to developpers work. 
+   */
   PLAYGROUND = "PLAYGROUND"
 }
 
@@ -97,6 +108,12 @@ export class Account extends Construct {
 
     const accountProvider = AccountProvider.getOrCreate(this);
 
+    const children = this.node.findAll();
+    for (const child of children) {
+      if (child instanceof NestedStack) {
+  
+      }
+    }
     let existingAccount = false;
     let accountId = accountProps.id;
     let hostedServices = accountProps.hostedServices ? accountProps.hostedServices.join(':') : undefined;
