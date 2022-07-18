@@ -10,7 +10,7 @@
   "author": "AWS EMEA SA Specialist Builders",
   "license": "Apache-2.0",
   "repository": {
-    "url": "https://github.com/awslabs/aws-bootstrap-kit/source/cdk-sso-sync",
+    "url": "https://github.com/awslabs/aws-bootstrap-kit/tree/main/source/cdk-sso-sync",
     "type": "git"
   },
   "dependencies": {
