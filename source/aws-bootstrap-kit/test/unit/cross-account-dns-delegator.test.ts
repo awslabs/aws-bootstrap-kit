@@ -14,8 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * @group unit/cross-account-dns-delegator
+ */
+
 import "@aws-cdk/assert/jest";
-import { CrossAccountDNSDelegator } from "../lib/dns/cross-account-dns-delegator";
+import { CrossAccountDNSDelegator } from "../../lib/dns/cross-account-dns-delegator";
 import { Stack } from "aws-cdk-lib";
 
 test("subdomain created", () => {

@@ -14,8 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * @group unit/organizational-trail
+ */
+
 import { expect as expectCDK, haveResource } from "@aws-cdk/assert";
-import { OrganizationTrail } from "../lib/organization-trail";
+import { OrganizationTrail } from "../../lib/organization-trail";
 import { Stack } from "aws-cdk-lib";
 
 test("OrganizationTrail creation", () => {

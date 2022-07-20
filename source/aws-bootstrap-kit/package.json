@@ -27,13 +27,16 @@
     "build:watch": "jsii -w",
     "package": "jsii-pacmak",
     "js-package": "jsii-pacmak --target js",
-    "test": "tsc && jest",
+    "test": "npm run test:unit",
+    "test:unit": "tsc && jest --group=unit",
+    "test:integ": "tsc && jest --group=integ",
     "watch": "tsc -w",
     "release": "standard-version",
     "docgen": "jsii-docgen"
   },
   "devDependencies": {
     "@aws-cdk/assert": "2.1.0",
+    "@aws-cdk/cx-api": "2.1.0",
     "@types/aws-lambda": "8.10.77",
     "@types/jest": "26.0.23",
     "@types/node": "15.12.0",
@@ -53,7 +56,8 @@
     "stringify-package": "^1.0.1",
     "ts-jest": "27.0.2",
     "ts-node": "10.0.0",
-    "typescript": "~4.3.2"
+    "typescript": "~4.3.2",
+    "jest-runner-groups": "^2.2.0"
   },
   "dependencies": {
     "aws-cdk-lib": "2.1.0",

@@ -14,8 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * @group unit/account
+ */
+
 import { expect as expectCDK, haveResource, countResourcesLike } from "@aws-cdk/assert";
-import { Account, AccountType } from "../lib/account";
+import { Account, AccountType } from "../../lib/account";
 import { Stack } from "aws-cdk-lib";
 
 test("HappyCase no DNS don't set delegation", () => {

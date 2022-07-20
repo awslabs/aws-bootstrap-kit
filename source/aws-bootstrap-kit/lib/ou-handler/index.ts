@@ -51,6 +51,7 @@ import type {
         return { PhysicalResourceId: OU?.Id, Data: { OrganizationalUnitId: OU?.Id, ExistingOU: existingOU } };
 
       case "Update":
+        console.log(`updating OU ${event.PhysicalResourceId} with ${event.ResourceProperties.Name} under ${event.ResourceProperties.ParentId}`);
         await awsOrganizationsClient.updateOrganizationalUnit({
           OrganizationalUnitId: event.PhysicalResourceId,
           Name: event.ResourceProperties.Name

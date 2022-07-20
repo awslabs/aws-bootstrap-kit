@@ -14,9 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * @group unit/secure-root-user
+ */
+
 import {expect as expectCDK, haveResource} from "@aws-cdk/assert";
 import {Stack} from "aws-cdk-lib";
-import {SecureRootUser} from "../lib/secure-root-user";
+import {SecureRootUser} from "../../lib/secure-root-user";
 
 test("Get 2FA and Access key rules", () => {
   const stack = new Stack();

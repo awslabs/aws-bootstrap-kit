@@ -13,10 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+/**
+ * @group unit/organizational-provider
+ */
+
 import { OnEventRequest } from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 import * as AWS from "aws-sdk-mock";
 import * as sinon from "sinon";
-import { onEventHandler } from "../lib/organization-handler";
+import { onEventHandler } from "../../lib/organization-handler";
 
 AWS.setSDK(require.resolve("aws-sdk"));
 

@@ -14,12 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * @group unit/cross-account-dns-delegator
+ */
+
 import { OnEventRequest } from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 import * as AWS from "aws-sdk-mock";
 import { examples as stsExamples } from 'aws-sdk/apis/sts-2011-06-15.examples.json';
 import { examples as route53Examples } from 'aws-sdk/apis/route53-2013-04-01.examples.json';
 import * as sinon from "sinon";
-import { onEventHandler } from "../lib/dns/delegation-record-handler/index";
+import { onEventHandler } from "../../lib/dns/delegation-record-handler/index";
 
 AWS.setSDK(require.resolve("aws-sdk"));
 

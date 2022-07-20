@@ -14,11 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * @group unit/account-provider
+ */
+
 import { OnEventRequest, IsCompleteRequest } from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 import * as AWS from "aws-sdk-mock";
 import * as sinon from "sinon";
-import { AccountType } from "../lib";
-import { isCompleteHandler, onEventHandler } from "../lib/account-handler";
+import { AccountType } from "../../lib";
+import { isCompleteHandler, onEventHandler } from "../../lib/account-handler";
 
 AWS.setSDK(require.resolve("aws-sdk"));
 

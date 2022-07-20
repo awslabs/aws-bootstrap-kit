@@ -14,6 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * @group unit/validate-email
+ */
+
 import "@aws-cdk/assert/jest";
 import {
   OnEventRequest,
@@ -24,9 +28,9 @@ import * as sinon from "sinon";
 import {
   isCompleteHandler,
   onEventHandler
-} from "../lib/validate-email-handler";
+} from "../../lib/validate-email-handler";
 import { Stack } from "aws-cdk-lib";
-import { ValidateEmail } from "../lib/validate-email";
+import { ValidateEmail } from "../../lib/validate-email";
 
 test("Should throw Error if Email Prefix contains + ", () => {
   const validateEmailStack = () =>

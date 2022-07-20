@@ -14,10 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * @group unit/aws-organizations-stack
+ */
+
 import "@aws-cdk/assert/jest";
-import { AccountType, AwsOrganizationsStack, AwsOrganizationsStackProps } from "../lib";
+import { AccountType, AwsOrganizationsStack, AwsOrganizationsStackProps } from "../../lib";
 import { Stack } from "aws-cdk-lib";
-import {version} from '../package.json';
+import {version} from '../../package.json';
 
 const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
   email: "test@test.com",
