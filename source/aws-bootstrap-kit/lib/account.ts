@@ -19,7 +19,7 @@ import * as core from "aws-cdk-lib";
 import { AccountProvider } from "./account-provider";
 import * as cr from "aws-cdk-lib/custom-resources";
 import * as ssm from "aws-cdk-lib/aws-ssm";
-import { NestedStack, RemovalPolicy } from 'aws-cdk-lib';
+import { RemovalPolicy } from 'aws-cdk-lib';
 
 /**
  * Properties of an AWS account
@@ -82,7 +82,7 @@ export enum AccountType {
   **/
   STAGE = "STAGE",
   /**
-   * Accounts dedicated to developers work. 
+   * Sandbox accounts dedicated to developers work. 
    */
   PLAYGROUND = "PLAYGROUND"
 }
@@ -108,12 +108,6 @@ export class Account extends Construct {
 
     const accountProvider = AccountProvider.getOrCreate(this);
 
-    const children = this.node.findAll();
-    for (const child of children) {
-      if (child instanceof NestedStack) {
-  
-      }
-    }
     let existingAccount = false;
     let accountId = accountProps.id;
     let hostedServices = accountProps.hostedServices ? accountProps.hostedServices.join(':') : undefined;
