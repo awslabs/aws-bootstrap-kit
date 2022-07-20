@@ -82,7 +82,7 @@ export enum AccountType {
   **/
   STAGE = "STAGE",
   /**
-   * Accounts dedicated to developpers work. 
+   * Accounts dedicated to developers work. 
    */
   PLAYGROUND = "PLAYGROUND"
 }
