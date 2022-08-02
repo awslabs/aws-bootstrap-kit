@@ -16,11 +16,14 @@ limitations under the License.
 
 import delivlib = require('aws-delivlib');
 import * as cdk from 'aws-cdk-lib';
+import * as path from 'path';
 
 export class PipelineStack extends cdk.Stack {
   constructor(parent : cdk.App, id : string, props : cdk.StackProps = { }) {
     super(parent, id, props);
 
+
+    console.log(`PATH: ${path.join(__dirname, 'superchain')}`);
     const pipeline = new delivlib.Pipeline(this, 'AWSBootrapKitPipeline', {
       repo: new delivlib.GitHubRepo({
         repository: 'awslabs/aws-bootstrap-kit',
@@ -30,13 +33,15 @@ export class PipelineStack extends cdk.Stack {
       branch: 'main',
       pipelineName: 'AWSBootsrapKit-cdk-constructs',
       notificationEmail: 'aws-emea-spe-build@amazon.com',
-      buildImage: cdk.aws_codebuild.LinuxBuildImage.fromDockerRegistry('public.ecr.aws/jsii/superchain:1-buster-slim-node14'),
+      buildImage: cdk.aws_codebuild.LinuxBuildImage.fromAsset(this, 'Superchain', {
+        directory: path.join(__dirname, 'superchain'),
+      }),
       buildSpec: cdk.aws_codebuild.BuildSpec.fromObject({
         version: 0.2,
         phases: {
           install: {
             commands: [
-              'npm install npm lerna  -g', // Update npm itself
+              'npm install lerna  -g', // Update npm itself
               'lerna bootstrap'
             ],
           },
