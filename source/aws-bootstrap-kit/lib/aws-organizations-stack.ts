@@ -87,7 +87,7 @@ export interface OUSpec {
   /**
    * Accounts' specification inside in this Organizational Unit
    */
-  readonly accounts: AccountSpec[],
+  readonly accounts?: AccountSpec[],
 
   /**
    * Specification of sub Organizational Unit
@@ -150,7 +150,7 @@ export class AwsOrganizationsStack extends Stack {
 
     previousSequentialConstruct = organizationalUnit;
 
-    oUSpec.accounts.forEach(accountSpec => {
+    oUSpec.accounts?.forEach(accountSpec => {
       let accountEmail: string;
       if(accountSpec.email)
       {

@@ -55,6 +55,65 @@ const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
   ]
 };
 
+
+
+test("when I define nestedOUs it create the right OUs", () => {
+
+  const stack = new Stack();
+  let awsOrganizationsStackProps: AwsOrganizationsStackProps;
+  awsOrganizationsStackProps = {
+      email: "test@test.com",
+      nestedOU: [
+          {
+              name: 'SDLC',
+              nestedOU:[{
+                  name: 'App1',
+                  accounts: [
+                    {
+                        name: 'Account1',
+                        type: AccountType.PLAYGROUND,
+                        hostedServices: ['app1']
+                    }
+                ]
+              },
+              {
+                name: 'Sandbox',
+                accounts: [
+                  {
+                      name: 'App2',
+                      type: AccountType.PLAYGROUND,
+                      hostedServices: ['app2']
+                  }
+              ]
+            }]
+          },
+          {
+              name: 'Prod',
+              accounts: [
+                  {
+                      name: 'Account3',
+                      type: AccountType.STAGE,
+                      stageOrder: 3,
+                      stageName: 'stage3',
+                      hostedServices: ['app1', 'app2']
+                  }
+              ]
+          }
+      ]
+  };
+
+
+  const awsOrganizationsStack = new AwsOrganizationsStack(stack, "AWSOrganizationsStack", awsOrganizationsStackProps);
+
+  expect(awsOrganizationsStack.templateOptions.description).toMatch(`(version:${version})`);
+
+  expect(awsOrganizationsStack).toHaveResource("Custom::OrganizationCreation");
+
+  expect(awsOrganizationsStack).toCountResources("Custom::AccountCreation", 3);
+  expect(awsOrganizationsStack).toCountResources("Custom::OUCreation", 4);
+});
+
+
 test("when I define 1 OU with 3 accounts (1 existing) and 1 OU with 1 account then the stack should have 2 OU constructs and 3 account constructs", () => {
 
     const stack = new Stack();
