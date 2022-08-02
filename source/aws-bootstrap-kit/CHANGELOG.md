@@ -1,7 +1,21 @@
-# Change Log
+# Changelog
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [0.7.4](https://github.com/awslabs/aws-bootstrap-kit/compare/v0.3.15...v0.7.4) (2022-08-02)
+
+
+### Features
+
+* allow peer dependencies using newer cdk versions ([ff93f19](https://github.com/awslabs/aws-bootstrap-kit/commit/ff93f193c369f78b3f58fed2be8ca17747023979))
+* expose dns resources ([59c470c](https://github.com/awslabs/aws-bootstrap-kit/commit/59c470c6726969bb00b3ed4d621afec2b399407a))
+
+
+### Bug Fixes
+
+* nestedOUs where raising error due to required accounts list in parent. Made accounts optional ([4fb745b](https://github.com/awslabs/aws-bootstrap-kit/commit/4fb745b0148cf6127e951723dae751672e979dcd))
+* python package with underscore ([a80f478](https://github.com/awslabs/aws-bootstrap-kit/commit/a80f478da4b3e74f73b04b302a8f49daedabb044))
+* use account type STAGE instead of OU names ([decbba1](https://github.com/awslabs/aws-bootstrap-kit/commit/decbba137fdd907c58cf1603939bfc5394dc08e6))
 
 ## [0.7.3](https://github.com/awslabs/aws-bootstrap-kit/compare/aws-bootstrap-kit@0.7.2...aws-bootstrap-kit@0.7.3) (2022-07-20)
 
