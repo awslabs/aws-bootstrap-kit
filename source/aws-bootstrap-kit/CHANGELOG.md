@@ -1,3 +1,23 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [0.7.5](https://github.com/awslabs/aws-bootstrap-kit/compare/aws-bootstrap-kit@0.7.3...aws-bootstrap-kit@0.7.5) (2022-10-12)
+
+
+
+## 0.7.4 (2022-08-02)
+
+
+### Bug Fixes
+
+* nestedOUs where raising error due to required accounts list in parent. Made accounts optional ([4fb745b](https://github.com/awslabs/aws-bootstrap-kit/commit/4fb745b0148cf6127e951723dae751672e979dcd))
+
+
+
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
