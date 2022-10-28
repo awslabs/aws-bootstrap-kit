@@ -77,7 +77,7 @@ export class ConfigRecorder extends Construct {
 
     const configRole = new iam.Role(this, 'ConfigRecorderRole', {
       assumedBy: new iam.ServicePrincipal('config.amazonaws.com'),
-      managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSConfigRole')]
+      managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWS_ConfigRole')]
     });
 
     new cfg.CfnConfigurationRecorder(this, 'ConfigRecorder', {
