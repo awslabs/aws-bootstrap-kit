@@ -41,7 +41,7 @@ export class PipelineStack extends cdk.Stack {
         phases: {
           install: {
             commands: [
-              'npm install lerna  -g', // Update npm itself
+              'npm install -g lerna', // Update npm itself
               'lerna bootstrap'
             ],
           },
