@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.7](https://github.com/awslabs/aws-bootstrap-kit/compare/aws-bootstrap-kit@0.7.6...aws-bootstrap-kit@0.7.7) (2023-01-12)
+
+
+### Bug Fixes
+
+* upgrade dependencies ([ae4a7eb](https://github.com/awslabs/aws-bootstrap-kit/commit/ae4a7ebed1cd3e3cb22afe7b1b55911f7187ed6a))
+
+
+
+
+
 ## [0.7.6](https://github.com/awslabs/aws-bootstrap-kit/compare/aws-bootstrap-kit@0.7.5...aws-bootstrap-kit@0.7.6) (2022-10-28)
 
 **Note:** Version bump only for package aws-bootstrap-kit
