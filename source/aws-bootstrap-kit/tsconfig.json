@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
+    "declarationMap": false,
+    "inlineSourceMap": true,
+    "inlineSources": true,
     "alwaysStrict": true,
     "charset": "utf8",
     "declaration": true,
     "experimentalDecorators": true,
     "incremental": true,
-    "inlineSourceMap": true,
-    "inlineSources": true,
     "lib": [
-      "es2019"
+      "es2020"
     ],
     "module": "CommonJS",
     "newLine": "lf",
@@ -20,11 +21,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "stripInternal": false,
-    "target": "ES2019",
+    "target": "ES2020",
     "composite": false,
     "tsBuildInfoFile": "tsconfig.tsbuildinfo"
   },

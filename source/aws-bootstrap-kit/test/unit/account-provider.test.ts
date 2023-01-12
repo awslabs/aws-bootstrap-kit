@@ -130,7 +130,7 @@ test("is complete for create throw without requestId", async () => {
     sinon.assert.fail();
   }  catch (error) {
     sinon.assert.notCalled(describeCreateAccountStatusMock);
-    expect(error.message).toEqual("Missing PhysicalResourceId parameter.");
+    expect((error as Error).message).toEqual("Missing PhysicalResourceId parameter.");
   }
 });
 

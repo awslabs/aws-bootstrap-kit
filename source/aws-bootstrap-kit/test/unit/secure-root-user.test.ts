@@ -61,6 +61,13 @@ test("Get 2FA and Access key rules", () => {
                 "ssm.amazonaws.com"
               ]
             }
+          },
+          {
+            "Action": "sts:AssumeRole",
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "ssm.amazonaws.com"
+            }
           }
         ],
         "Version": "2012-10-17"

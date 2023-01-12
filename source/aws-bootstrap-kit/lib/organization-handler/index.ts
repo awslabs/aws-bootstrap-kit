@@ -20,7 +20,7 @@ import type {
 } from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
 
   // eslint-disable-line import/no-extraneous-dependencies
-  import { Organizations } from "aws-sdk";
+  import { AWSError, Organizations } from "aws-sdk";
 
   /**
    * A function capable of creating an Organisation if not already created
@@ -46,7 +46,7 @@ import type {
             existingOrg = true;
             console.log("existing organization: %j", result);
         } catch (error) {
-            if (error.code === 'AWSOrganizationsNotInUseException') {
+            if ((error as AWSError).code === 'AWSOrganizationsNotInUseException') {
                 result = await awsOrganizationsClient
                             .createOrganization()
                             .promise();
