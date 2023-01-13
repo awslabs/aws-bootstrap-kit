@@ -24,4 +24,4 @@ As of today we expose only one global package which expose a set of stacks and c
 
 ## Contributing
 
-Check [CONTRIBUTING.md](/source/aws-bootstrap-kit/CONTRIBUTING.md))
+Check [CONTRIBUTING.md](./CONTRIBUTING.md))
