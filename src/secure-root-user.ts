@@ -13,13 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {Construct} from 'constructs';
-import * as core from "aws-cdk-lib";
-import * as config from "aws-cdk-lib/aws-config";
+import * as core from 'aws-cdk-lib';
+import * as config from 'aws-cdk-lib/aws-config';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import * as subs from 'aws-cdk-lib/aws-sns-subscriptions';
-import {ConfigRecorder} from "./aws-config-recorder";
-import * as iam from 'aws-cdk-lib/aws-iam';
+import { Construct } from 'constructs';
+import { ConfigRecorder } from './aws-config-recorder';
 
 
 export class SecureRootUser extends Construct {
@@ -32,10 +32,10 @@ export class SecureRootUser extends Construct {
 
 
     // Enforce MFA
-    const configRecorder = new ConfigRecorder(this, "ConfigRecorder");
+    const configRecorder = new ConfigRecorder(this, 'ConfigRecorder');
 
-    const enforceMFARule = new config.ManagedRule(this, "EnableRootMfa", {
-      identifier: "ROOT_ACCOUNT_MFA_ENABLED",
+    const enforceMFARule = new config.ManagedRule(this, 'EnableRootMfa', {
+      identifier: 'ROOT_ACCOUNT_MFA_ENABLED',
       maximumExecutionFrequency:
       config.MaximumExecutionFrequency.TWENTY_FOUR_HOURS,
     });
@@ -43,20 +43,20 @@ export class SecureRootUser extends Construct {
     // Enforce No root access key
     const enforceNoAccessKeyRule = new config.ManagedRule(
       this,
-      "NoRootAccessKey",
+      'NoRootAccessKey',
       {
-        identifier: "IAM_ROOT_ACCESS_KEY_CHECK",
+        identifier: 'IAM_ROOT_ACCESS_KEY_CHECK',
         maximumExecutionFrequency:
         config.MaximumExecutionFrequency.TWENTY_FOUR_HOURS,
-      }
+      },
     );
 
     // Create role used for auto remediation
     const autoRemediationRole = new iam.Role(this, 'AutoRemediationRole', {
       assumedBy: new iam.CompositePrincipal(
-          new iam.ServicePrincipal("events.amazonaws.com"),
-          new iam.ServicePrincipal("ssm.amazonaws.com")
-      )
+        new iam.ServicePrincipal('events.amazonaws.com'),
+        new iam.ServicePrincipal('ssm.amazonaws.com'),
+      ),
     });
 
     // See: https://github.com/aws/aws-cdk/issues/16188
@@ -81,9 +81,9 @@ export class SecureRootUser extends Construct {
   private addNotCompliancyNotificationMechanism(enforceMFARule: config.ManagedRule, autoRemediationRole: iam.Role, secureRootUserConfigTopic: sns.Topic, message: string) {
     new config.CfnRemediationConfiguration(this, `Notification-${enforceMFARule.node.id}`, {
       configRuleName: enforceMFARule.configRuleName,
-      targetId: "AWS-PublishSNSNotification",
-      targetType: "SSM_DOCUMENT",
-      targetVersion: "1",
+      targetId: 'AWS-PublishSNSNotification',
+      targetType: 'SSM_DOCUMENT',
+      targetVersion: '1',
       automatic: true,
       maximumAutomaticAttempts: 1,
       retryAttemptSeconds: 60,
@@ -91,26 +91,26 @@ export class SecureRootUser extends Construct {
         AutomationAssumeRole: {
           StaticValue: {
             Values: [
-              autoRemediationRole.roleArn
-            ]
-          }
+              autoRemediationRole.roleArn,
+            ],
+          },
         },
         TopicArn: {
           StaticValue: {
             Values: [
-              secureRootUserConfigTopic.topicArn
-            ]
-          }
+              secureRootUserConfigTopic.topicArn,
+            ],
+          },
         },
         Message: {
           StaticValue: {
             Values: [
               // WARNING: Limited to 256 char
-              message
-            ]
-          }
-        }
-      }
+              message,
+            ],
+          },
+        },
+      },
     });
   }
 }

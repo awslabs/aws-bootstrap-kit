@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { SES, config } from "aws-sdk";
 import type {
   IsCompleteRequest,
   IsCompleteResponse,
-  OnEventResponse
-} from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
+  OnEventResponse,
+} from 'aws-cdk-lib/custom-resources/lib/provider-framework/types';
+import { SES, config } from 'aws-sdk';
 
-config.update({ region: "us-east-1" });
+config.update({ region: 'us-east-1' });
 
 /**
  * A function that send a verification email
@@ -29,11 +29,11 @@ config.update({ region: "us-east-1" });
  * @returns Returns a PhysicalResourceId
  */
 export async function onEventHandler(
-  event: any
+  event: any,
 ): Promise<OnEventResponse | void> {
-  console.log("Event: %j", event);
+  console.log('Event: %j', event);
 
-  if (event.RequestType === "Create") {
+  if (event.RequestType === 'Create') {
     const ses = new SES();
     await ses
       .verifyEmailIdentity({ EmailAddress: event.ResourceProperties.email })
@@ -42,7 +42,7 @@ export async function onEventHandler(
     return { PhysicalResourceId: 'validateEmail' };
   }
 
-  if (event.RequestType === "Delete") {
+  if (event.RequestType === 'Delete') {
     return { PhysicalResourceId: event.PhysicalResourceId };
   }
 }
@@ -53,29 +53,29 @@ export async function onEventHandler(
  * @returns A payload containing the IsComplete Flag requested by cdk Custom Resource to figure out if the email has been verified and if not retries later
  */
 export async function isCompleteHandler(
-  event: IsCompleteRequest
+  event: IsCompleteRequest,
 ): Promise<IsCompleteResponse | void> {
-  console.log("Event: %j", event);
+  console.log('Event: %j', event);
 
   if (!event.PhysicalResourceId) {
-    throw new Error("Missing PhysicalResourceId parameter.");
+    throw new Error('Missing PhysicalResourceId parameter.');
   }
 
   const email = event.ResourceProperties.email;
-  if (event.RequestType === "Create") {
+  if (event.RequestType === 'Create') {
     const ses = new SES();
     const response = await ses
       .getIdentityVerificationAttributes({
-        Identities: [email]
+        Identities: [email],
       })
       .promise();
 
     return {
       IsComplete:
-        response.VerificationAttributes[email]?.VerificationStatus === "Success"
+        response.VerificationAttributes[email]?.VerificationStatus === 'Success',
     };
   }
-  if (event.RequestType === "Delete") {
+  if (event.RequestType === 'Delete') {
     return { IsComplete: true };
   }
 }

@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct} from 'constructs';
 import * as path from 'path';
+import { Duration, NestedStack, Stack } from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
-import { Duration, NestedStack, Stack } from 'aws-cdk-lib';
 import * as cr from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 
 
 /**
@@ -64,14 +64,14 @@ export class AccountProvider extends NestedStack {
     });
 
     this.onEventHandler.addToRolePolicy(
-        new iam.PolicyStatement({
-          actions: [
-            'organizations:CreateAccount',
-            'organizations:TagResource'
-          ],
-          resources: ['*'],
-        }),
-      );
+      new iam.PolicyStatement({
+        actions: [
+          'organizations:CreateAccount',
+          'organizations:TagResource',
+        ],
+        resources: ['*'],
+      }),
+    );
 
     // Checks if account is ready
     this.isCompleteHandler = new lambda.Function(this, 'IsCompleteHandler', {
@@ -82,15 +82,15 @@ export class AccountProvider extends NestedStack {
     });
 
     this.isCompleteHandler.addToRolePolicy(
-        new iam.PolicyStatement({
-          actions: [
-              'organizations:CreateAccount',
-              'organizations:DescribeCreateAccountStatus',
-              'organizations:TagResource'
-            ],
-          resources: ['*'],
-        }),
-      );
+      new iam.PolicyStatement({
+        actions: [
+          'organizations:CreateAccount',
+          'organizations:DescribeCreateAccountStatus',
+          'organizations:TagResource',
+        ],
+        resources: ['*'],
+      }),
+    );
 
     this.provider = new cr.Provider(this, 'AccountProvider', {
       onEventHandler: this.onEventHandler,

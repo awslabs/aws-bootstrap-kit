@@ -20,8 +20,8 @@ limitations under the License.
 
 import '@aws-cdk/assert/jest';
 import { Stack } from 'aws-cdk-lib';
-import { AccountType, AwsOrganizationsStack, AwsOrganizationsStackProps } from '../../src';
 import { version } from '../../package.json';
+import { AccountType, AwsOrganizationsStack, AwsOrganizationsStackProps } from '../../src';
 
 const awsOrganizationsStackProps: AwsOrganizationsStackProps = {
   email: 'test@test.com',

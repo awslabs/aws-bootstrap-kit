@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct} from 'constructs';
-import * as core from "aws-cdk-lib";
-import { AccountProvider } from "./account-provider";
-import * as cr from "aws-cdk-lib/custom-resources";
-import * as ssm from "aws-cdk-lib/aws-ssm";
+import * as core from 'aws-cdk-lib';
 import { RemovalPolicy } from 'aws-cdk-lib';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
+import * as cr from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
+import { AccountProvider } from './account-provider';
 
 /**
  * Properties of an AWS account
@@ -70,21 +70,21 @@ export interface IAccountProps {
 }
 
 /**
- * The type of the AWS account 
+ * The type of the AWS account
  **/
 export enum AccountType {
   /**
    * The account used to deploy CI/CD pipelines (See [here](https://cs.github.com/?scopeName=bk&scope=repo%3Aawslabs%2Faws-bootstrap-kit&q=AccountType.CICD) for internal usage).
    */
-  CICD = "CICD",
+  CICD = 'CICD',
   /**
    * Accounts which will be used to deploy Stage environments (staging/prod ...). (See [here](https://cs.github.com/?scopeName=bk&scope=repo%3Aawslabs%2Faws-bootstrap-kit&q=AccountType.STAGE) for internal usage)
   **/
-  STAGE = "STAGE",
+  STAGE = 'STAGE',
   /**
-   * Sandbox accounts dedicated to developers work. 
+   * Sandbox accounts dedicated to developers work.
    */
-  PLAYGROUND = "PLAYGROUND"
+  PLAYGROUND = 'PLAYGROUND'
 }
 
 /**
@@ -120,74 +120,74 @@ export class Account extends Construct {
         `Account-${accountProps.name}`,
         {
           serviceToken: accountProvider.provider.serviceToken,
-          resourceType: "Custom::AccountCreation",
+          resourceType: 'Custom::AccountCreation',
           properties: {
             Email: accountProps.email,
             AccountName: accountProps.name,
           },
-          removalPolicy: accountProps.removalPolicy || RemovalPolicy.RETAIN
+          removalPolicy: accountProps.removalPolicy || RemovalPolicy.RETAIN,
         },
       );
-      accountId = account.getAtt("AccountId").toString();
+      accountId = account.getAtt('AccountId').toString();
       accountProps.id = accountId;
     } else {
       existingAccount = true;
 
       // retrieve existing account information (actual name and email) to update accountProps
-      account = new cr.AwsCustomResource(this, "ExistingAccountCustomResource", {
+      account = new cr.AwsCustomResource(this, 'ExistingAccountCustomResource', {
         onUpdate: {
-          service: "Organizations",
-          action: "describeAccount",
+          service: 'Organizations',
+          action: 'describeAccount',
           physicalResourceId: cr.PhysicalResourceId.fromResponse(
-            "Account.Id"
+            'Account.Id',
           ),
-          region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+          region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
           parameters: {
-            AccountId: accountId
-          }
+            AccountId: accountId,
+          },
         },
         policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
           resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
-        })
+        }),
       });
 
-      accountProps.name = account.getResponseField("Account.Name");
-      accountProps.email = account.getResponseField("Account.Email");
+      accountProps.name = account.getResponseField('Account.Name');
+      accountProps.email = account.getResponseField('Account.Email');
     }
 
     // add tags
-    const tags: { Key: string; Value: any; }[] = [];
-    tags.push({Key: 'Email', Value: accountProps.email});
-    tags.push({Key: 'AccountName', Value: accountProps.name});
-    if (accountProps.type != null) tags.push({Key: 'AccountType', Value: accountProps.type});
-    if (accountProps.stageName != null) tags.push({Key: 'StageName', Value: accountProps.stageName});
-    if (accountProps.stageOrder != null) tags.push({Key: 'StageOrder', Value: accountProps.stageOrder.toString()});
-    if (hostedServices != null) tags.push({Key: 'HostedServices', Value: hostedServices});
+    const tags: { Key: string; Value: any }[] = [];
+    tags.push({ Key: 'Email', Value: accountProps.email });
+    tags.push({ Key: 'AccountName', Value: accountProps.name });
+    if (accountProps.type != null) tags.push({ Key: 'AccountType', Value: accountProps.type });
+    if (accountProps.stageName != null) tags.push({ Key: 'StageName', Value: accountProps.stageName });
+    if (accountProps.stageOrder != null) tags.push({ Key: 'StageOrder', Value: accountProps.stageOrder.toString() });
+    if (hostedServices != null) tags.push({ Key: 'HostedServices', Value: hostedServices });
     const tagAccount = {
-      service: "Organizations",
-      action: "tagResource",
-      region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+      service: 'Organizations',
+      action: 'tagResource',
+      region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
       physicalResourceId: cr.PhysicalResourceId.of(`tags-${accountId}`),
       parameters: {
         ResourceId: accountId,
-        Tags: tags
-      }
+        Tags: tags,
+      },
     };
-    new cr.AwsCustomResource(this, "TagAccountCustomResource", {
+    new cr.AwsCustomResource(this, 'TagAccountCustomResource', {
       onCreate: tagAccount,
       onUpdate: tagAccount,
       onDelete: {
-        service: "Organizations",
-        action: "untagResource",
-        region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+        service: 'Organizations',
+        action: 'untagResource',
+        region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
         parameters: {
           ResourceId: accountId,
-          TagKeys: tags.map(t => t.Key)
-        }
+          TagKeys: tags.map(t => t.Key),
+        },
       },
       policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
         resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
-      })
+      }),
     });
 
     this.accountName = accountProps.name;
@@ -204,12 +204,12 @@ export class Account extends Construct {
     ssmParam.node.addDependency(account);
 
     if (accountProps.parentOrganizationalUnitId) {
-      let parent = new cr.AwsCustomResource(this, "ListParentsCustomResource", {
+      let parent = new cr.AwsCustomResource(this, 'ListParentsCustomResource', {
         onUpdate: {
-          service: "Organizations",
-          action: "listParents",
+          service: 'Organizations',
+          action: 'listParents',
           physicalResourceId: cr.PhysicalResourceId.of(`${accountProps.parentOrganizationalUnitId}-${accountId}`),
-          region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+          region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
           parameters: {
             ChildId: accountId,
           },
@@ -219,24 +219,24 @@ export class Account extends Construct {
         }),
       });
 
-      new cr.AwsCustomResource(this, "MoveAccountCustomResource",
+      new cr.AwsCustomResource(this, 'MoveAccountCustomResource',
         {
           onUpdate: {
-            service: "Organizations",
-            action: "moveAccount",
+            service: 'Organizations',
+            action: 'moveAccount',
             physicalResourceId: cr.PhysicalResourceId.of(`move-${accountId}`),
-            region: "us-east-1", //AWS Organizations API are only available in us-east-1 for root actions
+            region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
             parameters: {
               AccountId: accountId,
               DestinationParentId: accountProps.parentOrganizationalUnitId,
-              SourceParentId: parent.getResponseField("Parents.0.Id"),
+              SourceParentId: parent.getResponseField('Parents.0.Id'),
             },
-            ignoreErrorCodesMatching: 'DuplicateAccountException' // ignore if account is already there
+            ignoreErrorCodesMatching: 'DuplicateAccountException', // ignore if account is already there
           },
           policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
             resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
           }),
-        }
+        },
       );
 
 
@@ -244,10 +244,9 @@ export class Account extends Construct {
       if (accountProps.type === AccountType.CICD) {
         this.registerAsDelegatedAdministrator(accountId, 'ssm.amazonaws.com');
       } else {
-       // Switching to another principal to workaround the max number of delegated administrators (which is set to 3 by default).
-       const needsToBeDelegatedForDNSZOneNameResolution = this.node.tryGetContext('domain_name') ?? false;
-       if(needsToBeDelegatedForDNSZOneNameResolution)
-        this.registerAsDelegatedAdministrator(accountId, 'config-multiaccountsetup.amazonaws.com');
+        // Switching to another principal to workaround the max number of delegated administrators (which is set to 3 by default).
+        const needsToBeDelegatedForDNSZOneNameResolution = this.node.tryGetContext('domain_name') ?? false;
+        if (needsToBeDelegatedForDNSZOneNameResolution) {this.registerAsDelegatedAdministrator(accountId, 'config-multiaccountsetup.amazonaws.com');}
       }
 
     }
@@ -255,7 +254,7 @@ export class Account extends Construct {
 
   registerAsDelegatedAdministrator(accountId: string, servicePrincipal: string) {
     new cr.AwsCustomResource(this,
-      "registerDelegatedAdministrator",
+      'registerDelegatedAdministrator',
       {
         onCreate: {
           service: 'Organizations',
@@ -264,8 +263,8 @@ export class Account extends Construct {
           region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
           parameters: {
             AccountId: accountId,
-            ServicePrincipal: servicePrincipal
-          }
+            ServicePrincipal: servicePrincipal,
+          },
         },
         onDelete: {
           service: 'Organizations',
@@ -274,16 +273,16 @@ export class Account extends Construct {
           region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
           parameters: {
             AccountId: accountId,
-            ServicePrincipal: servicePrincipal
-          }
+            ServicePrincipal: servicePrincipal,
+          },
         },
         installLatestAwsSdk: false,
         policy: cr.AwsCustomResourcePolicy.fromSdkCalls(
           {
-            resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE
-          }
-        )
-      }
+            resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
+          },
+        ),
+      },
     );
   }
 }

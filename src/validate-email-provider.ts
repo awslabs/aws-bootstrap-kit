@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct} from 'constructs';
-import * as path from "path";
-import * as iam from "aws-cdk-lib/aws-iam";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Duration, Stack, NestedStack, StackProps } from "aws-cdk-lib";
-import { Provider } from "aws-cdk-lib/custom-resources";
+import * as path from 'path';
+import { Duration, Stack, NestedStack, StackProps } from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { Provider } from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 
 
 export interface ValidateEmailProviderProps extends StackProps {
@@ -39,7 +39,7 @@ export default class ValidateEmailProvider extends NestedStack {
    */
   public static getOrCreate(scope: Construct, props: ValidateEmailProviderProps) {
     const stack = Stack.of(scope);
-    const uid = "aws-cdk-lib/aws-bootstrap-kit.ValidateEmailProvider";
+    const uid = 'aws-cdk-lib/aws-bootstrap-kit.ValidateEmailProvider';
     return (
       (stack.node.tryFindChild(uid) as ValidateEmailProvider) ||
       new ValidateEmailProvider(stack, uid, props)
@@ -56,41 +56,41 @@ export default class ValidateEmailProvider extends NestedStack {
     super(scope, id);
 
     const code = lambda.Code.fromAsset(
-      path.join(__dirname, "validate-email-handler")
+      path.join(__dirname, 'validate-email-handler'),
     );
 
-    const onEventHandler = new lambda.Function(this, "OnEventHandler", {
+    const onEventHandler = new lambda.Function(this, 'OnEventHandler', {
       code,
       runtime: lambda.Runtime.NODEJS_14_X,
-      handler: "index.onEventHandler",
-      timeout: Duration.minutes(5)
+      handler: 'index.onEventHandler',
+      timeout: Duration.minutes(5),
     });
 
     onEventHandler.addToRolePolicy(
       new iam.PolicyStatement({
-        actions: ["ses:verifyEmailIdentity"],
-        resources: ["*"]
-      })
+        actions: ['ses:verifyEmailIdentity'],
+        resources: ['*'],
+      }),
     );
 
-    const isCompleteHandler = new lambda.Function(this, "IsCompleteHandler", {
+    const isCompleteHandler = new lambda.Function(this, 'IsCompleteHandler', {
       code,
       runtime: lambda.Runtime.NODEJS_14_X,
-      handler: "index.isCompleteHandler",
-      timeout: props.timeout ? props.timeout : Duration.minutes(10)
+      handler: 'index.isCompleteHandler',
+      timeout: props.timeout ? props.timeout : Duration.minutes(10),
     });
 
     isCompleteHandler.addToRolePolicy(
       new iam.PolicyStatement({
-        actions: ["ses:getIdentityVerificationAttributes"],
-        resources: ["*"]
-      })
+        actions: ['ses:getIdentityVerificationAttributes'],
+        resources: ['*'],
+      }),
     );
 
-    this.provider = new Provider(this, "EmailValidationProvider", {
+    this.provider = new Provider(this, 'EmailValidationProvider', {
       onEventHandler: onEventHandler,
       isCompleteHandler: isCompleteHandler,
-      queryInterval: Duration.seconds(10)
+      queryInterval: Duration.seconds(10),
     });
   }
 }

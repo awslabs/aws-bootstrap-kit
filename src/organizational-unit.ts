@@ -14,33 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct} from 'constructs';
-import { OrganizationalUnitProvider } from './organizational-unit-provider';
 import { CustomResource } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { OrganizationalUnitProvider } from './organizational-unit-provider';
 
 export interface OrganizationalUnitProps {
-    Name: string,
-    ParentId: string
+  Name: string;
+  ParentId: string;
 }
 
 export class OrganizationalUnit extends Construct {
 
-    readonly id: string;
+  readonly id: string;
 
-    constructor(scope: Construct, id: string, props: OrganizationalUnitProps) {
-        super(scope, id);
+  constructor(scope: Construct, id: string, props: OrganizationalUnitProps) {
+    super(scope, id);
 
-        const ouProvider = OrganizationalUnitProvider.getOrCreate(this);
+    const ouProvider = OrganizationalUnitProvider.getOrCreate(this);
 
-        let ou = new CustomResource(this, `OU-${props.Name}`, {
-          serviceToken: ouProvider.provider.serviceToken,
-          resourceType: "Custom::OUCreation",
-          properties: {
-            Name: props.Name,
-            ParentId: props.ParentId
-          }
-        });
+    let ou = new CustomResource(this, `OU-${props.Name}`, {
+      serviceToken: ouProvider.provider.serviceToken,
+      resourceType: 'Custom::OUCreation',
+      properties: {
+        Name: props.Name,
+        ParentId: props.ParentId,
+      },
+    });
 
-        this.id = ou.getAtt("OrganizationalUnitId").toString();
-    }
+    this.id = ou.getAtt('OrganizationalUnitId').toString();
+  }
 }

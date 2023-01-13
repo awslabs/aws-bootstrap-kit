@@ -16,50 +16,50 @@ limitations under the License.
 
 /* eslint-disable no-console */
 import type {
-    OnEventResponse,
-} from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
+  OnEventResponse,
+} from 'aws-cdk-lib/custom-resources/lib/provider-framework/types';
 
-  // eslint-disable-line import/no-extraneous-dependencies
-  import { AWSError, Organizations } from "aws-sdk";
+// eslint-disable-line import/no-extraneous-dependencies
+import { AWSError, Organizations } from 'aws-sdk';
 
-  /**
+/**
    * A function capable of creating an Organisation if not already created
    * @param event An event with no ResourceProperties
    * @returns Returns a PhysicalResourceId corresponding to the Organization id (no need to wait and check for completion)
    */
-   export async function onEventHandler(
-    event: any
-  ): Promise<OnEventResponse> {
-    console.log("Event: %j", event);
+export async function onEventHandler(
+  event: any,
+): Promise<OnEventResponse> {
+  console.log('Event: %j', event);
 
-    const awsOrganizationsClient = new Organizations({region: 'us-east-1'});
+  const awsOrganizationsClient = new Organizations({ region: 'us-east-1' });
 
-    switch (event.RequestType) {
-      case "Create":
-        let result;
-        let existingOrg = false;
-        try {
-            result = await awsOrganizationsClient
-                            .describeOrganization()
-                            .promise();
+  switch (event.RequestType) {
+    case 'Create':
+      let result;
+      let existingOrg = false;
+      try {
+        result = await awsOrganizationsClient
+          .describeOrganization()
+          .promise();
 
-            existingOrg = true;
-            console.log("existing organization: %j", result);
-        } catch (error) {
-            if ((error as AWSError).code === 'AWSOrganizationsNotInUseException') {
-                result = await awsOrganizationsClient
-                            .createOrganization()
-                            .promise();
+        existingOrg = true;
+        console.log('existing organization: %j', result);
+      } catch (error) {
+        if ((error as AWSError).code === 'AWSOrganizationsNotInUseException') {
+          result = await awsOrganizationsClient
+            .createOrganization()
+            .promise();
 
-                console.log("created organization: %j", result);
-            } else {
-                throw error;
-            }
+          console.log('created organization: %j', result);
+        } else {
+          throw error;
         }
-        return { PhysicalResourceId: result.Organization?.Id, Data: { OrganizationId: result.Organization?.Id, ExistingOrg: existingOrg } };
-      default:
-        // we don't delete the org, just the custom resource
-        return { PhysicalResourceId: event.PhysicalResourceId, Data: { OrganizationId: event.PhysicalResourceId } };
-    }
-
+      }
+      return { PhysicalResourceId: result.Organization?.Id, Data: { OrganizationId: result.Organization?.Id, ExistingOrg: existingOrg } };
+    default:
+      // we don't delete the org, just the custom resource
+      return { PhysicalResourceId: event.PhysicalResourceId, Data: { OrganizationId: event.PhysicalResourceId } };
   }
+
+}

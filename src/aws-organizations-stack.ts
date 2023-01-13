@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct, IDependable} from 'constructs';
-import {RemovalPolicy, Stack, StackProps} from 'aws-cdk-lib';
-import {Organization} from './organization';
-import {OrganizationalUnit} from './organizational-unit';
-import {Account, AccountType} from './account';
-import {SecureRootUser} from './secure-root-user';
-import {OrganizationTrail} from './organization-trail';
+import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { Construct, IDependable } from 'constructs';
+import { Account, AccountType } from './account';
 import { RootDns } from './dns';
+import { Organization } from './organization';
+import { OrganizationTrail } from './organization-trail';
+import { OrganizationalUnit } from './organizational-unit';
+import { SecureRootUser } from './secure-root-user';
 import { ValidateEmail } from './validate-email';
 
 const version = require('../package.json').version;
@@ -34,15 +34,15 @@ export interface AccountSpec {
   /**
    * The name of the AWS account
    */
-  readonly name: string,
+  readonly name: string;
   /**
    * The (optional) id of the account to reuse, instead of creating a new account
    */
-  readonly existingAccountId?: string,
+  readonly existingAccountId?: string;
   /**
    * The email associated to the AWS account
    */
-  readonly email?: string
+  readonly email?: string;
   /**
    * The account type
    */
@@ -83,17 +83,17 @@ export interface OUSpec {
   /**
    * Name of the Organizational Unit
    */
-  readonly name: string,
+  readonly name: string;
 
   /**
    * Accounts' specification inside in this Organizational Unit
    */
-  readonly accounts?: AccountSpec[],
+  readonly accounts?: AccountSpec[];
 
   /**
    * Specification of sub Organizational Unit
    */
-  readonly nestedOU?: OUSpec[]
+  readonly nestedOU?: OUSpec[];
 }
 
 /**
@@ -105,32 +105,32 @@ export interface AwsOrganizationsStackProps extends StackProps {
   /**
    * Email address of the Root account
    */
-  readonly email: string,
+  readonly email: string;
 
   /**
    * Specification of the sub Organizational Unit
    */
-  readonly nestedOU: OUSpec[],
+  readonly nestedOU: OUSpec[];
 
   /**
    * The main DNS domain name to manage
    */
-  readonly rootHostedZoneDNSName?: string,
+  readonly rootHostedZoneDNSName?: string;
 
   /**
    * The (optional) existing root hosted zone id to use instead of creating one
    */
-  readonly existingRootHostedZoneId?: string,
+  readonly existingRootHostedZoneId?: string;
 
   /**
    * A boolean used to decide if domain should be requested through this delpoyment or if already registered through a third party
    */
-  readonly thirdPartyProviderDNSUsed?: boolean,
+  readonly thirdPartyProviderDNSUsed?: boolean;
 
   /**
   * Enable Email Verification Process
   */
-  readonly forceEmailVerification?: boolean,
+  readonly forceEmailVerification?: boolean;
 }
 
 /**
@@ -145,7 +145,7 @@ export class AwsOrganizationsStack extends Stack {
 
   private createOrganizationTree(oUSpec: OUSpec, parentId: string, previousSequentialConstruct: IDependable): IDependable {
 
-    let organizationalUnit = new OrganizationalUnit(this, `${oUSpec.name}-OU`, {Name: oUSpec.name, ParentId: parentId});
+    let organizationalUnit = new OrganizationalUnit(this, `${oUSpec.name}-OU`, { Name: oUSpec.name, ParentId: parentId });
     //adding an explicit dependency as CloudFormation won't infer that Organization, Organizational Units and Accounts must be created or modified sequentially
     organizationalUnit.node.addDependency(previousSequentialConstruct);
 
@@ -153,17 +153,12 @@ export class AwsOrganizationsStack extends Stack {
 
     oUSpec.accounts?.forEach(accountSpec => {
       let accountEmail: string;
-      if(accountSpec.email)
-      {
+      if (accountSpec.email) {
         accountEmail = accountSpec.email;
-      }
-      else if(this.emailPrefix && this.domain)
-      {
-        accountEmail = `${this.emailPrefix}+${accountSpec.name}-${Stack.of(this).account}@${this.domain}`
-      }
-      else
-      {
-        throw new Error(`Master account email must be provided or an account email for account ${accountSpec.name}`)
+      } else if (this.emailPrefix && this.domain) {
+        accountEmail = `${this.emailPrefix}+${accountSpec.name}-${Stack.of(this).account}@${this.domain}`;
+      } else {
+        throw new Error(`Master account email must be provided or an account email for account ${accountSpec.name}`);
       }
 
       let account = new Account(this, accountSpec.name, {
@@ -196,24 +191,22 @@ export class AwsOrganizationsStack extends Stack {
   }
 
   constructor(scope: Construct, id: string, props: AwsOrganizationsStackProps) {
-    super(scope, id, {description: `Software development Landing Zone (uksb-1r7an8o45) (version:${version})`, ...props});
-    const {email, nestedOU, forceEmailVerification = true} = props;
+    super(scope, id, { description: `Software development Landing Zone (uksb-1r7an8o45) (version:${version})`, ...props });
+    const { email, nestedOU, forceEmailVerification = true } = props;
 
-    if(nestedOU.length > 0)
-    {
-      let org = new Organization(this, "Organization");
-      if(email)
-      {
+    if (nestedOU.length > 0) {
+      let org = new Organization(this, 'Organization');
+      if (email) {
         this.emailPrefix = email.split('@', 2)[0];
         this.domain = email.split('@', 2)[1];
 
-        if(forceEmailVerification) {
+        if (forceEmailVerification) {
           const validateEmail = new ValidateEmail(this, 'EmailValidation', { email });
           org.node.addDependency(validateEmail);
         }
       }
 
-      let orgTrail = new OrganizationTrail(this, 'OrganizationTrail', {OrganizationId: org.id});
+      let orgTrail = new OrganizationTrail(this, 'OrganizationTrail', { OrganizationId: org.id });
       orgTrail.node.addDependency(org);
 
       let previousSequentialConstruct: IDependable = orgTrail;
@@ -223,12 +216,12 @@ export class AwsOrganizationsStack extends Stack {
       });
     }
 
-    if(props.rootHostedZoneDNSName){
+    if (props.rootHostedZoneDNSName) {
       this.rootDns = new RootDns(this, 'RootDNS', {
         stagesAccounts: this.stageAccounts,
         rootHostedZoneDNSName: props.rootHostedZoneDNSName,
         existingRootHostedZoneId: props.existingRootHostedZoneId,
-        thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed?props.thirdPartyProviderDNSUsed:true
+        thirdPartyProviderDNSUsed: props.thirdPartyProviderDNSUsed?props.thirdPartyProviderDNSUsed:true,
       });
     }
 

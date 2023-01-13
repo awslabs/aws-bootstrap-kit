@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct} from 'constructs';
-import { CustomResource, Duration } from "aws-cdk-lib";
-import ValidateEmailProvider from "./validate-email-provider";
+import { CustomResource, Duration } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import ValidateEmailProvider from './validate-email-provider';
 
 /**
  * Properties of ValidateEmail
@@ -43,22 +43,22 @@ export class ValidateEmail extends Construct {
   constructor(scope: Construct, id: string, props: ValidateEmailProps) {
     super(scope, id);
 
-    const [prefix, domain] = props.email.split("@");
+    const [prefix, domain] = props.email.split('@');
 
-    if (prefix?.includes("+")) {
-      throw new Error("Root Email should be without + in it");
+    if (prefix?.includes('+')) {
+      throw new Error('Root Email should be without + in it');
     }
 
-    const subAddressedEmail = prefix + "+aws@" + domain;
+    const subAddressedEmail = prefix + '+aws@' + domain;
 
-    const { provider } = ValidateEmailProvider.getOrCreate(this, {timeout: props.timeout});
+    const { provider } = ValidateEmailProvider.getOrCreate(this, { timeout: props.timeout });
 
-    new CustomResource(this, "EmailValidateResource", {
+    new CustomResource(this, 'EmailValidateResource', {
       serviceToken: provider.serviceToken,
-      resourceType: "Custom::EmailValidation",
+      resourceType: 'Custom::EmailValidation',
       properties: {
-        email: subAddressedEmail
-      }
+        email: subAddressedEmail,
+      },
     });
   }
 }

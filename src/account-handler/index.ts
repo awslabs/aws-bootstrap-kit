@@ -19,10 +19,10 @@ import type {
   IsCompleteRequest,
   IsCompleteResponse,
   OnEventResponse,
-} from "aws-cdk-lib/custom-resources/lib/provider-framework/types";
+} from 'aws-cdk-lib/custom-resources/lib/provider-framework/types';
 
 // eslint-disable-line import/no-extraneous-dependencies
-import { Organizations } from "aws-sdk";
+import { Organizations } from 'aws-sdk';
 
 /**
  * A function capable of creating an account into an AWS Organisation
@@ -31,11 +31,11 @@ import { Organizations } from "aws-sdk";
  */
 
 export async function onEventHandler(event: any): Promise<OnEventResponse> {
-  console.log("Event: %j", event);
+  console.log('Event: %j', event);
 
   switch (event.RequestType) {
-    case "Create":
-      const awsOrganizationsClient = new Organizations({ region: "us-east-1" });
+    case 'Create':
+      const awsOrganizationsClient = new Organizations({ region: 'us-east-1' });
       try {
         const data = await awsOrganizationsClient
           .createAccount({
@@ -43,12 +43,12 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
             AccountName: event.ResourceProperties.AccountName,
           })
           .promise();
-        console.log("create account: %j", data);
+        console.log('create account: %j', data);
         return { PhysicalResourceId: data.CreateAccountStatus?.Id };
       } catch (error) {
         throw new Error(`Failed to create account: ${error}`);
       }
-    case "Delete": // only called if the removalPolicy is DESTROY
+    case 'Delete': // only called if the removalPolicy is DESTROY
       throw new Error(`Cannot delete account '${event.PhysicalResourceId}'. See https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html`);
     default:
       // just return the resource (we cannot update or delete an account)
@@ -65,15 +65,15 @@ export async function onEventHandler(event: any): Promise<OnEventResponse> {
  * @returns A payload containing the IsComplete Flag requested by cdk Custom Resource fwk to figure out if the resource has been created or failed to be or if it needs to retry
  */
 export async function isCompleteHandler(
-  event: IsCompleteRequest
+  event: IsCompleteRequest,
 ): Promise<IsCompleteResponse> {
-  console.log("Event: %j", event);
+  console.log('Event: %j', event);
 
   if (!event.PhysicalResourceId) {
-    throw new Error("Missing PhysicalResourceId parameter.");
+    throw new Error('Missing PhysicalResourceId parameter.');
   }
 
-  const awsOrganizationsClient = new Organizations({ region: "us-east-1" });
+  const awsOrganizationsClient = new Organizations({ region: 'us-east-1' });
 
   const describeCreateAccountStatusParams: Organizations.DescribeCreateAccountStatusRequest =
     { CreateAccountRequestId: event.PhysicalResourceId };
@@ -82,25 +82,25 @@ export async function isCompleteHandler(
       .describeCreateAccountStatus(describeCreateAccountStatusParams)
       .promise();
 
-  console.log("Describe account: %j", data);
+  console.log('Describe account: %j', data);
 
   const CreateAccountStatus = data.CreateAccountStatus?.State;
   const AccountId = data.CreateAccountStatus?.AccountId;
 
   switch (event.RequestType) {
-    case "Create":
-      if (CreateAccountStatus === "FAILED") {
+    case 'Create':
+      if (CreateAccountStatus === 'FAILED') {
         throw new Error(
-          `Error creating the account ${data.CreateAccountStatus?.AccountName}, cause: ${data.CreateAccountStatus?.FailureReason}`
+          `Error creating the account ${data.CreateAccountStatus?.AccountName}, cause: ${data.CreateAccountStatus?.FailureReason}`,
         );
       }
       return {
-        IsComplete: CreateAccountStatus === "SUCCEEDED",
+        IsComplete: CreateAccountStatus === 'SUCCEEDED',
         Data: { AccountId: AccountId },
       };
     default:
       return {
-        IsComplete: CreateAccountStatus === "SUCCEEDED",
+        IsComplete: CreateAccountStatus === 'SUCCEEDED',
         Data: { AccountId: AccountId },
       };
   }

@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Construct } from "constructs";
-import * as path from "path";
-import * as iam from "aws-cdk-lib/aws-iam";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Duration } from "aws-cdk-lib";
-import { Provider } from "aws-cdk-lib/custom-resources";
+import * as path from 'path';
+import { Duration } from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { Provider } from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 
 /**
  * A Custom Resource provider capable of creating AWS Organization or reusing an existing one
@@ -33,21 +33,21 @@ export class OrganizationProvider extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    let createOrgHandler = new lambda.Function(this, "OnEventHandler", {
-      code: lambda.Code.fromAsset(path.join(__dirname, "organization-handler")),
+    let createOrgHandler = new lambda.Function(this, 'OnEventHandler', {
+      code: lambda.Code.fromAsset(path.join(__dirname, 'organization-handler')),
       runtime: lambda.Runtime.NODEJS_14_X,
-      handler: "index.onEventHandler",
+      handler: 'index.onEventHandler',
       timeout: Duration.minutes(5),
     });
 
     createOrgHandler.addToRolePolicy(
       new iam.PolicyStatement({
         actions: [
-          "organizations:CreateOrganization",
-          "organizations:DescribeOrganization",
+          'organizations:CreateOrganization',
+          'organizations:DescribeOrganization',
         ],
-        resources: ["*"],
-      })
+        resources: ['*'],
+      }),
     );
 
     /*
@@ -56,13 +56,13 @@ export class OrganizationProvider extends Construct {
     */
     createOrgHandler.addToRolePolicy(
       new iam.PolicyStatement({
-        actions: ["iam:CreateServiceLinkedRole"],
-        resources: ["arn:aws:iam::*:role/*"],
-      })
+        actions: ['iam:CreateServiceLinkedRole'],
+        resources: ['arn:aws:iam::*:role/*'],
+      }),
     );
 
-    this.provider = new Provider(this, "orgProvider", {
-      onEventHandler: createOrgHandler
+    this.provider = new Provider(this, 'orgProvider', {
+      onEventHandler: createOrgHandler,
     });
   }
 }

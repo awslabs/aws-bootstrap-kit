@@ -14,20 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct} from 'constructs';
+import * as cfg from 'aws-cdk-lib/aws-config';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import * as cfg from 'aws-cdk-lib/aws-config';
+import { Construct } from 'constructs';
 
 
 // from https://github.com/aws-samples/aws-startup-blueprint/blob/mainline/lib/aws-config-packs.ts
 export class ConfigRecorder extends Construct {
 
-	constructor(scope: Construct, id: string) {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
 
 
-    const configBucket = new s3.Bucket(this, 'ConfigBucket', {blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL});
+    const configBucket = new s3.Bucket(this, 'ConfigBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
 
     configBucket.addToResourcePolicy(
       new iam.PolicyStatement({
@@ -70,24 +70,23 @@ export class ConfigRecorder extends Construct {
 
     new cfg.CfnDeliveryChannel(this, 'ConfigDeliveryChannel', {
       s3BucketName: configBucket.bucketName,
-      name: "ConfigDeliveryChannel"
+      name: 'ConfigDeliveryChannel',
     });
-
 
 
     const configRole = new iam.Role(this, 'ConfigRecorderRole', {
       assumedBy: new iam.ServicePrincipal('config.amazonaws.com'),
-      managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWS_ConfigRole')]
+      managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWS_ConfigRole')],
     });
 
     new cfg.CfnConfigurationRecorder(this, 'ConfigRecorder', {
-      name: "BlueprintConfigRecorder",
+      name: 'BlueprintConfigRecorder',
       roleArn: configRole.roleArn,
       recordingGroup: {
         resourceTypes: [
-          "AWS::IAM::User"
-        ]
-      }
+          'AWS::IAM::User',
+        ],
+      },
     });
   }
 }

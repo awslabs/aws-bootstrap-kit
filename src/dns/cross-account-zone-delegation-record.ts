@@ -1,15 +1,15 @@
 
-import {Construct} from 'constructs';
-import * as core from "aws-cdk-lib";
-import {CrossAccountZoneDelegationRecordProvider} from "./cross-account-zone-delegation-record-provider";
+import * as core from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import { CrossAccountZoneDelegationRecordProvider } from './cross-account-zone-delegation-record-provider';
 
 export interface CrossAccountZoneDelegationRecordProps {
-    targetAccount?: string;
-    targetRoleToAssume?: string;
-    targetHostedZoneId?: string;
-    recordName: string;
-    toDelegateNameServers: string[];
-    currentAccountId: string;
+  targetAccount?: string;
+  targetRoleToAssume?: string;
+  targetHostedZoneId?: string;
+  recordName: string;
+  toDelegateNameServers: string[];
+  currentAccountId: string;
 }
 
 /**
@@ -17,32 +17,32 @@ export interface CrossAccountZoneDelegationRecordProps {
  */
 export class CrossAccountZoneDelegationRecord extends Construct {
 
-    constructor(scope: Construct, id: string, props: CrossAccountZoneDelegationRecordProps) {
-        super(scope, id);
+  constructor(scope: Construct, id: string, props: CrossAccountZoneDelegationRecordProps) {
+    super(scope, id);
 
-        const { targetAccount, targetRoleToAssume } = props;
-        const roleArnToAssume = targetAccount && targetRoleToAssume ?
-        `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`
-        :undefined;
+    const { targetAccount, targetRoleToAssume } = props;
+    const roleArnToAssume = targetAccount && targetRoleToAssume ?
+      `arn:aws:iam::${targetAccount}:role/${targetRoleToAssume}`
+      :undefined;
 
-        const stack = core.Stack.of(this);
-        const crossAccountZoneDelegationRecordProvider = new CrossAccountZoneDelegationRecordProvider(
-            stack,
-            'CrossAccountZoneDelegationRecordProvider',
-            roleArnToAssume,
-        );
+    const stack = core.Stack.of(this);
+    const crossAccountZoneDelegationRecordProvider = new CrossAccountZoneDelegationRecordProvider(
+      stack,
+      'CrossAccountZoneDelegationRecordProvider',
+      roleArnToAssume,
+    );
 
-        new core.CustomResource(
-            this,
-            `CrossAccountZoneDelegationRecord-${props.recordName}`,
-            {
-                serviceToken: crossAccountZoneDelegationRecordProvider.provider.serviceToken,
-                resourceType: "Custom::CrossAccountZoneDelegationRecord",
-                properties: {
-                    ...props
-                },
-            }
-        );
+    new core.CustomResource(
+      this,
+      `CrossAccountZoneDelegationRecord-${props.recordName}`,
+      {
+        serviceToken: crossAccountZoneDelegationRecordProvider.provider.serviceToken,
+        resourceType: 'Custom::CrossAccountZoneDelegationRecord',
+        properties: {
+          ...props,
+        },
+      },
+    );
 
-    }
+  }
 }

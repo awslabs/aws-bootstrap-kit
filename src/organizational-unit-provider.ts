@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Construct } from "constructs";
-import * as path from "path";
-import * as iam from "aws-cdk-lib/aws-iam";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import { Duration, NestedStack, Stack } from "aws-cdk-lib";
-import { Provider } from "aws-cdk-lib/custom-resources";
+import * as path from 'path';
+import { Duration, NestedStack, Stack } from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { Provider } from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 
 /**
  * A Custom Resource provider capable of creating AWS Organizational Units (OUs) or reusing an existing one
@@ -29,7 +29,7 @@ export class OrganizationalUnitProvider extends NestedStack {
   /**
    * Creates a stack-singleton resource provider nested stack.
    */
-   public static getOrCreate(scope: Construct) {
+  public static getOrCreate(scope: Construct) {
     const stack = Stack.of(scope);
     const uid = '@aws-cdk/aws-bootstrap-kit.OUProvider';
     return stack.node.tryFindChild(uid) as OrganizationalUnitProvider || new OrganizationalUnitProvider(stack, uid);
@@ -43,26 +43,26 @@ export class OrganizationalUnitProvider extends NestedStack {
   private constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    let createOUHandler = new lambda.Function(this, "OnEventHandler", {
-      code: lambda.Code.fromAsset(path.join(__dirname, "ou-handler")),
+    let createOUHandler = new lambda.Function(this, 'OnEventHandler', {
+      code: lambda.Code.fromAsset(path.join(__dirname, 'ou-handler')),
       runtime: lambda.Runtime.NODEJS_14_X,
-      handler: "index.onEventHandler",
+      handler: 'index.onEventHandler',
       timeout: Duration.minutes(5),
     });
 
     createOUHandler.addToRolePolicy(
       new iam.PolicyStatement({
         actions: [
-          "organizations:ListOrganizationalUnitsForParent",
-          "organizations:CreateOrganizationalUnit",
-          "organizations:UpdateOrganizationalUnit",
+          'organizations:ListOrganizationalUnitsForParent',
+          'organizations:CreateOrganizationalUnit',
+          'organizations:UpdateOrganizationalUnit',
         ],
-        resources: ["*"],
-      })
+        resources: ['*'],
+      }),
     );
 
-    this.provider = new Provider(this, "OUProvider", {
-      onEventHandler: createOUHandler
+    this.provider = new Provider(this, 'OUProvider', {
+      onEventHandler: createOUHandler,
     });
   }
 }

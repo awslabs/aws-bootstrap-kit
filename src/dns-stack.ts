@@ -1,7 +1,7 @@
 
-import {Construct} from 'constructs';
 import * as cdk from 'aws-cdk-lib';
-import {RootDns, RootDnsProps} from './dns';
+import { Construct } from 'constructs';
+import { RootDns, RootDnsProps } from './dns';
 
 /**
  * Properties of the Root DNS Stack

@@ -14,20 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct} from 'constructs';
 import * as core from 'aws-cdk-lib';
-import { AwsCustomResource, PhysicalResourceId, AwsCustomResourcePolicy } from "aws-cdk-lib/custom-resources";
-import { Bucket, BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Bucket, BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
+import { AwsCustomResource, PhysicalResourceId, AwsCustomResourcePolicy } from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 
 /**
  * The properties of an OrganizationTrail
  */
 export interface IOrganizationTrailProps {
-    /**
+  /**
      * The Id of the organization which the trail works on
      */
-    OrganizationId: string
+  OrganizationId: string;
 }
 
 /**
@@ -40,161 +40,160 @@ export interface IOrganizationTrailProps {
  */
 export class OrganizationTrail extends Construct {
 
-    constructor(scope: Construct, id: string, props: IOrganizationTrailProps) {
-        super(scope, id);
+  constructor(scope: Construct, id: string, props: IOrganizationTrailProps) {
+    super(scope, id);
 
-        const orgTrailBucket = new Bucket(this, 'OrganizationTrailBucket', {blockPublicAccess: BlockPublicAccess.BLOCK_ALL});
+    const orgTrailBucket = new Bucket(this, 'OrganizationTrailBucket', { blockPublicAccess: BlockPublicAccess.BLOCK_ALL });
 
-        orgTrailBucket.addToResourcePolicy(new PolicyStatement({
-            actions: ['s3:GetBucketAcl'],
-            effect: Effect.ALLOW,
-            principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
-            resources: [orgTrailBucket.bucketArn]
-        }));
+    orgTrailBucket.addToResourcePolicy(new PolicyStatement({
+      actions: ['s3:GetBucketAcl'],
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
+      resources: [orgTrailBucket.bucketArn],
+    }));
 
-        orgTrailBucket.addToResourcePolicy(new PolicyStatement({
-            actions: ['s3:PutObject'],
-            effect: Effect.ALLOW,
-            principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
-            resources: [orgTrailBucket.bucketArn + '/AWSLogs/' + props.OrganizationId + '/*'],
-            conditions: {
-                StringEquals:
+    orgTrailBucket.addToResourcePolicy(new PolicyStatement({
+      actions: ['s3:PutObject'],
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
+      resources: [orgTrailBucket.bucketArn + '/AWSLogs/' + props.OrganizationId + '/*'],
+      conditions: {
+        StringEquals:
                 {
-                    "s3:x-amz-acl": "bucket-owner-full-control"
-                }
-            }
-        }));
+                  's3:x-amz-acl': 'bucket-owner-full-control',
+                },
+      },
+    }));
 
-        orgTrailBucket.addToResourcePolicy(new PolicyStatement({
-            actions: ['s3:PutObject'],
-            effect: Effect.ALLOW,
-            principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
-            resources: [orgTrailBucket.bucketArn + '/AWSLogs/' + core.Stack.of(this).account + '/*'],
-            conditions: {
-                StringEquals:
+    orgTrailBucket.addToResourcePolicy(new PolicyStatement({
+      actions: ['s3:PutObject'],
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('cloudtrail.amazonaws.com')],
+      resources: [orgTrailBucket.bucketArn + '/AWSLogs/' + core.Stack.of(this).account + '/*'],
+      conditions: {
+        StringEquals:
                 {
-                    "s3:x-amz-acl": "bucket-owner-full-control"
-                }
-            }
-        }));
-
-        const enableAWSServiceAccess = new AwsCustomResource(this,
-            "EnableAWSServiceAccess",
-            {
-                onCreate: {
-                    service: 'Organizations',
-                    action: 'enableAWSServiceAccess', //call enableAWSServiceAcces of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#enableAWSServiceAccess-property
-                    physicalResourceId: PhysicalResourceId.of('EnableAWSServiceAccess'),
-                    region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
-                    parameters:
-                    {
-                        ServicePrincipal: 'cloudtrail.amazonaws.com',
-                    }
+                  's3:x-amz-acl': 'bucket-owner-full-control',
                 },
-                onDelete: {
-                    service: 'Organizations',
-                    action: 'disableAWSServiceAccess', //call disableAWSServiceAcces of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#disableAWSServiceAccess-property
-                    region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
-                    parameters:
-                    {
-                        ServicePrincipal: 'cloudtrail.amazonaws.com',
-                    }
-                },
-                installLatestAwsSdk: false,
-                policy: AwsCustomResourcePolicy.fromSdkCalls(
-                    {
-                        resources: AwsCustomResourcePolicy.ANY_RESOURCE
-                    }
-                )
-            }
-        );
+      },
+    }));
 
-        const organizationTrailName = 'OrganizationTrail';
+    const enableAWSServiceAccess = new AwsCustomResource(this,
+      'EnableAWSServiceAccess',
+      {
+        onCreate: {
+          service: 'Organizations',
+          action: 'enableAWSServiceAccess', //call enableAWSServiceAcces of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#enableAWSServiceAccess-property
+          physicalResourceId: PhysicalResourceId.of('EnableAWSServiceAccess'),
+          region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
+          parameters:
+                    {
+                      ServicePrincipal: 'cloudtrail.amazonaws.com',
+                    },
+        },
+        onDelete: {
+          service: 'Organizations',
+          action: 'disableAWSServiceAccess', //call disableAWSServiceAcces of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Organizations.html#disableAWSServiceAccess-property
+          region: 'us-east-1', //AWS Organizations API are only available in us-east-1 for root actions
+          parameters:
+                    {
+                      ServicePrincipal: 'cloudtrail.amazonaws.com',
+                    },
+        },
+        installLatestAwsSdk: false,
+        policy: AwsCustomResourcePolicy.fromSdkCalls(
+          {
+            resources: AwsCustomResourcePolicy.ANY_RESOURCE,
+          },
+        ),
+      },
+    );
 
-        let organizationTrailCreate = new AwsCustomResource(this,
-            "OrganizationTrailCreate",
-            {
-                onCreate: {
-                    service: 'CloudTrail',
-                    action: 'createTrail', //call createTrail of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#createTrail-property
-                    physicalResourceId: PhysicalResourceId.of('OrganizationTrailCreate'),
-                    parameters:
-                    {
-                        IsMultiRegionTrail: true,
-                        IsOrganizationTrail: true,
-                        Name: organizationTrailName,
-                        S3BucketName: orgTrailBucket.bucketName
-                    }
-                },
-                onDelete: {
-                    service: 'CloudTrail',
-                    action: 'deleteTrail', //call deleteTrail of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#deleteTrail-property
-                    parameters:
-                    {
-                        Name: organizationTrailName
-                    }
+    const organizationTrailName = 'OrganizationTrail';
 
-                },
-                installLatestAwsSdk: false,
-                policy: AwsCustomResourcePolicy.fromSdkCalls(
+    let organizationTrailCreate = new AwsCustomResource(this,
+      'OrganizationTrailCreate',
+      {
+        onCreate: {
+          service: 'CloudTrail',
+          action: 'createTrail', //call createTrail of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#createTrail-property
+          physicalResourceId: PhysicalResourceId.of('OrganizationTrailCreate'),
+          parameters:
                     {
-                        resources: AwsCustomResourcePolicy.ANY_RESOURCE
-                    }
-                )
-            }
-        );
-        organizationTrailCreate.node.addDependency(enableAWSServiceAccess);
-        // need to add an explicit dependency on the bucket policy to avoid the creation of the trail before the policy is set up
-        if(orgTrailBucket.policy)
-        {
-            organizationTrailCreate.node.addDependency(orgTrailBucket.policy);
-        }
+                      IsMultiRegionTrail: true,
+                      IsOrganizationTrail: true,
+                      Name: organizationTrailName,
+                      S3BucketName: orgTrailBucket.bucketName,
+                    },
+        },
+        onDelete: {
+          service: 'CloudTrail',
+          action: 'deleteTrail', //call deleteTrail of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#deleteTrail-property
+          parameters:
+                    {
+                      Name: organizationTrailName,
+                    },
 
-        organizationTrailCreate.grantPrincipal.addToPrincipalPolicy(PolicyStatement.fromJson(
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "iam:GetRole",
-                    "organizations:EnableAWSServiceAccess",
-                    "organizations:ListAccounts",
-                    "iam:CreateServiceLinkedRole",
-                    "organizations:DisableAWSServiceAccess",
-                    "organizations:DescribeOrganization",
-                    "organizations:ListAWSServiceAccessForOrganization"
-                ],
-                "Resource": "*"
-            }
-        ));
-
-        const startLogging =  new AwsCustomResource(this,
-            "OrganizationTrailStartLogging",
-            {
-                onCreate: {
-                    service: 'CloudTrail',
-                    action: 'startLogging', //call startLogging of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#startLogging-property
-                    physicalResourceId: PhysicalResourceId.of('OrganizationTrailStartLogging'),
-                    parameters:
-                    {
-                        Name: organizationTrailName
-                    }
-                },
-                onDelete: {
-                    service: 'CloudTrail',
-                    action: 'stopLogging', //call stopLogging of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#stopLogging-property
-                    physicalResourceId: PhysicalResourceId.of('OrganizationTrailStartLogging'),
-                    parameters:
-                    {
-                        Name: organizationTrailName
-                    }
-                },
-                installLatestAwsSdk: false,
-                policy: AwsCustomResourcePolicy.fromSdkCalls(
-                    {
-                        resources: AwsCustomResourcePolicy.ANY_RESOURCE
-                    }
-                )
-            }
-        );
-        startLogging.node.addDependency(organizationTrailCreate);
+        },
+        installLatestAwsSdk: false,
+        policy: AwsCustomResourcePolicy.fromSdkCalls(
+          {
+            resources: AwsCustomResourcePolicy.ANY_RESOURCE,
+          },
+        ),
+      },
+    );
+    organizationTrailCreate.node.addDependency(enableAWSServiceAccess);
+    // need to add an explicit dependency on the bucket policy to avoid the creation of the trail before the policy is set up
+    if (orgTrailBucket.policy) {
+      organizationTrailCreate.node.addDependency(orgTrailBucket.policy);
     }
+
+    organizationTrailCreate.grantPrincipal.addToPrincipalPolicy(PolicyStatement.fromJson(
+      {
+        Effect: 'Allow',
+        Action: [
+          'iam:GetRole',
+          'organizations:EnableAWSServiceAccess',
+          'organizations:ListAccounts',
+          'iam:CreateServiceLinkedRole',
+          'organizations:DisableAWSServiceAccess',
+          'organizations:DescribeOrganization',
+          'organizations:ListAWSServiceAccessForOrganization',
+        ],
+        Resource: '*',
+      },
+    ));
+
+    const startLogging = new AwsCustomResource(this,
+      'OrganizationTrailStartLogging',
+      {
+        onCreate: {
+          service: 'CloudTrail',
+          action: 'startLogging', //call startLogging of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#startLogging-property
+          physicalResourceId: PhysicalResourceId.of('OrganizationTrailStartLogging'),
+          parameters:
+                    {
+                      Name: organizationTrailName,
+                    },
+        },
+        onDelete: {
+          service: 'CloudTrail',
+          action: 'stopLogging', //call stopLogging of the Javascript SDK https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudTrail.html#stopLogging-property
+          physicalResourceId: PhysicalResourceId.of('OrganizationTrailStartLogging'),
+          parameters:
+                    {
+                      Name: organizationTrailName,
+                    },
+        },
+        installLatestAwsSdk: false,
+        policy: AwsCustomResourcePolicy.fromSdkCalls(
+          {
+            resources: AwsCustomResourcePolicy.ANY_RESOURCE,
+          },
+        ),
+      },
+    );
+    startLogging.node.addDependency(organizationTrailCreate);
+  }
 }

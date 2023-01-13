@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Construct} from 'constructs';
 import * as path from 'path';
+import { Duration } from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
-import { Duration } from 'aws-cdk-lib';
 import * as cr from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 
 /**
  * A Custom Resource provider capable of creating a NS record with zone delegation
@@ -30,49 +30,49 @@ import * as cr from 'aws-cdk-lib/custom-resources';
  * The newly created record will be temporarily pending (a few seconds).
  */
 export class CrossAccountZoneDelegationRecordProvider extends Construct {
-    /**
+  /**
      * The custom resource provider.
      */
-    public readonly provider: cr.Provider;
+  public readonly provider: cr.Provider;
 
-    /**
+  /**
      * The onEvent handler
      */
-    public readonly onEventHandler: lambda.Function;
+  public readonly onEventHandler: lambda.Function;
 
-    constructor(scope: Construct, id: string, roleArnToAssume?: string) {
-        super(scope, id);
+  constructor(scope: Construct, id: string, roleArnToAssume?: string) {
+    super(scope, id);
 
-        const code = lambda.Code.fromAsset(path.join(__dirname, 'delegation-record-handler'));
+    const code = lambda.Code.fromAsset(path.join(__dirname, 'delegation-record-handler'));
 
-        // Handle CREATE/UPDATE/DELETE cross account
-        this.onEventHandler = new lambda.Function(this, 'OnEventHandler', {
-            code,
-            runtime: lambda.Runtime.NODEJS_14_X,
-            handler: 'index.onEventHandler',
-            timeout: Duration.minutes(5),
-            description: 'Cross-account zone delegation record OnEventHandler'
-        });
+    // Handle CREATE/UPDATE/DELETE cross account
+    this.onEventHandler = new lambda.Function(this, 'OnEventHandler', {
+      code,
+      runtime: lambda.Runtime.NODEJS_14_X,
+      handler: 'index.onEventHandler',
+      timeout: Duration.minutes(5),
+      description: 'Cross-account zone delegation record OnEventHandler',
+    });
 
-        // Allow to assume DNS account's updater role
-        // roleArn, if not provided will be resolved in the lambda itself but still need to be allowed to assume it.
-        this.onEventHandler.addToRolePolicy(
-            new iam.PolicyStatement({
-                actions: ['sts:AssumeRole'],
-                resources: [ roleArnToAssume ? roleArnToAssume : '*'],
-            })
-        );
+    // Allow to assume DNS account's updater role
+    // roleArn, if not provided will be resolved in the lambda itself but still need to be allowed to assume it.
+    this.onEventHandler.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['sts:AssumeRole'],
+        resources: [roleArnToAssume ? roleArnToAssume : '*'],
+      }),
+    );
 
-        //Allow to retrieve dynamically the zoneId and the target accountId
-        this.onEventHandler.addToRolePolicy(
-            new iam.PolicyStatement({
-                actions: ['route53:listHostedZonesByName', 'organizations:ListAccounts'],
-                resources: ['*'],
-            })
-        );
+    //Allow to retrieve dynamically the zoneId and the target accountId
+    this.onEventHandler.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['route53:listHostedZonesByName', 'organizations:ListAccounts'],
+        resources: ['*'],
+      }),
+    );
 
-        this.provider = new cr.Provider(this, 'CrossAccountZoneDelegationRecordProvider', {
-            onEventHandler: this.onEventHandler,
-        });
-    }
+    this.provider = new cr.Provider(this, 'CrossAccountZoneDelegationRecordProvider', {
+      onEventHandler: this.onEventHandler,
+    });
+  }
 }

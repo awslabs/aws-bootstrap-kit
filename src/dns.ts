@@ -1,10 +1,10 @@
 
-import {Construct} from 'constructs';
-import * as cdk from "aws-cdk-lib";
-import * as iam from "aws-cdk-lib/aws-iam";
-import * as route53 from "aws-cdk-lib/aws-route53";
-import { RecordTarget } from "aws-cdk-lib/aws-route53";
-import {Account} from './account';
+import * as cdk from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import { RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { Construct } from 'constructs';
+import { Account } from './account';
 import * as utils from './dns/delegation-record-handler/utils';
 
 /**
@@ -46,7 +46,7 @@ export class RootDns extends Construct {
       const account = props.stagesAccounts[accountIndex];
       const stageSubZone = this.createStageSubZone(
         account,
-        props.rootHostedZoneDNSName
+        props.rootHostedZoneDNSName,
       );
       this.stagesHostedZones.push(stageSubZone);
       this.createDNSAutoUpdateRole(account, stageSubZone);
@@ -59,7 +59,7 @@ export class RootDns extends Construct {
             target: RecordTarget.fromValues(...stageSubZone.hostedZoneNameServers?stageSubZone.hostedZoneNameServers:''),
             recordName: stageSubZone.zoneName,
             zone: this.rootHostedZone,
-          }
+          },
         );
       }
     }
@@ -68,12 +68,12 @@ export class RootDns extends Construct {
       props.thirdPartyProviderDNSUsed &&
       this.rootHostedZone.hostedZoneNameServers
     ) {
-      new cdk.CfnOutput(this, `NS records`, {
-        value: cdk.Fn.join(",", this.rootHostedZone.hostedZoneNameServers),
+      new cdk.CfnOutput(this, 'NS records', {
+        value: cdk.Fn.join(',', this.rootHostedZone.hostedZoneNameServers),
       });
     } else {
       if (!props.existingRootHostedZoneId) {
-        throw new Error("Creation of DNS domain is not yet supported");
+        throw new Error('Creation of DNS domain is not yet supported');
         // TODO: implement call to https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Route53Domains.html#registerDomain-property
       }
     }
@@ -81,7 +81,7 @@ export class RootDns extends Construct {
 
   createStageSubZone(
     account: Account,
-    rootHostedZoneDNSName: string
+    rootHostedZoneDNSName: string,
   ): route53.HostedZone {
     const subDomainPrefix = utils.getSubdomainPrefix(account.accountName, account.accountStageName);
     return new route53.HostedZone(this, `${subDomainPrefix}StageSubZone`, {
@@ -91,30 +91,30 @@ export class RootDns extends Construct {
 
   createDNSAutoUpdateRole(
     account: Account,
-    stageSubZone: route53.HostedZone
+    stageSubZone: route53.HostedZone,
   ) {
     const dnsAutoUpdateRole = new iam.Role(this, stageSubZone.zoneName, {
       assumedBy: new iam.AccountPrincipal(account.accountId),
-      roleName: utils.getDNSUpdateRoleNameFromSubZoneName(stageSubZone.zoneName)
+      roleName: utils.getDNSUpdateRoleNameFromSubZoneName(stageSubZone.zoneName),
     });
 
     dnsAutoUpdateRole.addToPolicy(
       new iam.PolicyStatement({
         resources: [stageSubZone.hostedZoneArn],
         actions: [
-          "route53:GetHostedZone",
-          "route53:ChangeResourceRecordSets",
-          "route53:TestDNSAnswer",
+          'route53:GetHostedZone',
+          'route53:ChangeResourceRecordSets',
+          'route53:TestDNSAnswer',
         ],
-      })
+      }),
     );
     dnsAutoUpdateRole.addToPolicy(
       new iam.PolicyStatement({
         resources: ['*'],
         actions: [
-          "route53:ListHostedZonesByName"
+          'route53:ListHostedZonesByName',
         ],
-      })
+      }),
     );
     return dnsAutoUpdateRole;
   }
@@ -127,7 +127,7 @@ export class RootDns extends Construct {
     } else {
       return route53.HostedZone.fromHostedZoneAttributes(this, 'RootHostedZone', {
         zoneName: props.rootHostedZoneDNSName,
-        hostedZoneId: props.existingRootHostedZoneId
+        hostedZoneId: props.existingRootHostedZoneId,
       });
     }
   }

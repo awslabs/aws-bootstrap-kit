@@ -1,33 +1,33 @@
 
-import {Construct} from 'constructs';
 import * as core from 'aws-cdk-lib';
 import * as route53 from 'aws-cdk-lib/aws-route53';
-import {CrossAccountZoneDelegationRecord} from "./cross-account-zone-delegation-record";
+import { Construct } from 'constructs';
+import { CrossAccountZoneDelegationRecord } from './cross-account-zone-delegation-record';
 
 /**
  * Properties to create delegated subzone of a zone hosted in a different account
  *
  */
 export interface ICrossAccountDNSDelegatorProps {
-    /**
+  /**
      * The Account hosting the parent zone
      * Optional since can be resolved if the system has been setup with aws-bootstrap-kit
      */
-    targetAccount?: string;
-    /**
+  targetAccount?: string;
+  /**
      * The role to Assume in the parent zone's account which has permissions to update the parent zone
      * Optional since can be resolved if the system has been setup with aws-bootstrap-kit
      */
-    targetRoleToAssume?: string;
-    /**
+  targetRoleToAssume?: string;
+  /**
      * The parent zone Id to add the sub zone delegation NS record to
      * Optional since can be resolved if the system has been setup with aws-bootstrap-kit
      */
-    targetHostedZoneId?: string;
-    /**
+  targetHostedZoneId?: string;
+  /**
      * The sub zone name to be created
      */
-    zoneName: string;
+  zoneName: string;
 }
 
 /**
@@ -60,33 +60,33 @@ export interface ICrossAccountDNSDelegatorProps {
  * new CrossAccountDNSDelegator(this, 'CrossAccountDNSDelegatorStack', crossAccountDNSDelegatorProps);
  */
 export class CrossAccountDNSDelegator extends Construct {
-    readonly hostedZone: route53.HostedZone;
-    constructor(scope: Construct, id: string, props: ICrossAccountDNSDelegatorProps) {
-        super(scope, id);
+  readonly hostedZone: route53.HostedZone;
+  constructor(scope: Construct, id: string, props: ICrossAccountDNSDelegatorProps) {
+    super(scope, id);
 
-        const {
-            targetAccount,
-            targetRoleToAssume,
-            targetHostedZoneId,
-            zoneName,
-        } = props;
+    const {
+      targetAccount,
+      targetRoleToAssume,
+      targetHostedZoneId,
+      zoneName,
+    } = props;
 
-        const hostedZone = new route53.HostedZone(this, 'HostedZone', {
-            zoneName: zoneName
-        });
+    const hostedZone = new route53.HostedZone(this, 'HostedZone', {
+      zoneName: zoneName,
+    });
 
-        this.hostedZone = hostedZone;
+    this.hostedZone = hostedZone;
 
-        const delegatedNameServers: string[] = hostedZone.hostedZoneNameServers!;
+    const delegatedNameServers: string[] = hostedZone.hostedZoneNameServers!;
 
-        const currentAccountId = core.Stack.of(this).account;
-        new CrossAccountZoneDelegationRecord(this, 'CrossAccountZoneDelegationRecord', {
-            targetAccount: targetAccount,
-            targetRoleToAssume: targetRoleToAssume,
-            targetHostedZoneId: targetHostedZoneId,
-            recordName: zoneName,
-            toDelegateNameServers: delegatedNameServers,
-            currentAccountId: currentAccountId
-        });
-    }
+    const currentAccountId = core.Stack.of(this).account;
+    new CrossAccountZoneDelegationRecord(this, 'CrossAccountZoneDelegationRecord', {
+      targetAccount: targetAccount,
+      targetRoleToAssume: targetRoleToAssume,
+      targetHostedZoneId: targetHostedZoneId,
+      recordName: zoneName,
+      toDelegateNameServers: delegatedNameServers,
+      currentAccountId: currentAccountId,
+    });
+  }
 }

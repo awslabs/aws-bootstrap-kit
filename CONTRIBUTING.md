@@ -13,7 +13,7 @@ you end up with a tgz package into dist folder importable into your cdk app with
 ```
 "dependencies": {
 ...
-    "aws-bootstrap-kit": "file:../../source/aws-bootstrap-kit/dist/js/aws-bootstrap-kit@0.2.4.jsii.tgz",
+    "aws-bootstrap-kit": "file:../../dist/js/aws-bootstrap-kit@0.2.4.jsii.tgz",
 ...
   }
 ```
