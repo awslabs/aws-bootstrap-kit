@@ -1,7 +1,0 @@
-{
-  "packages": [
-    "source/**"
-  ],
-  "version": "independent",
-  "message": "chore(release): auto bump [skip ci]"
-}

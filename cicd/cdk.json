@@ -1,7 +1,0 @@
-{
-  "app": "npx ts-node bin/cicd.ts",
-  "context": {
-    "aws-cdk:enableDiffNoFail": "true",
-    "@aws-cdk/core:bootstrapQualifier": "awsbk"
-  }
-}
